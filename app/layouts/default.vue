@@ -59,20 +59,16 @@
           </NuxtLink>
         </div>
 
-        <!-- Separator -->
-        <div class="h-5 w-px bg-rp-overlay/50" />
-
         <!-- Language Selector -->
-        <div class="relative">
+        <div ref="langSelectorRef" class="relative">
           <button
-            class="flex items-center gap-1.5 rounded-xl px-2 py-1.5 text-sm font-medium text-rp-subtle transition-all hover:bg-rp-overlay/50 hover:text-rp-text"
+            class="flex items-center gap-1.5 rounded-xl border border-rp-overlay/50 bg-rp-overlay/30 px-2.5 py-1.5 text-sm font-medium text-rp-text transition-all hover:border-rp-iris/50 hover:bg-rp-overlay/50"
             @click="isLangMenuOpen = !isLangMenuOpen"
           >
-            <UIcon name="i-heroicons-language" class="size-4" />
-            <span class="text-xs font-bold">{{ currentLocaleCode }}</span>
+            <span class="text-xs font-bold uppercase">{{ locale }}</span>
             <UIcon
               name="i-heroicons-chevron-down"
-              class="size-3 transition-transform"
+              class="size-3.5 text-rp-subtle transition-transform"
               :class="isLangMenuOpen ? 'rotate-180' : ''"
             />
           </button>
@@ -81,21 +77,21 @@
           <Transition name="dropdown">
             <div
               v-if="isLangMenuOpen"
-              class="absolute right-0 top-full mt-2 min-w-36 overflow-hidden rounded-xl border border-rp-overlay/50 bg-rp-surface/95 p-1 shadow-xl backdrop-blur-xl"
+              class="absolute right-0 top-full z-50 mt-2 min-w-40 overflow-hidden rounded-xl border border-rp-overlay bg-rp-surface p-1.5 shadow-2xl"
             >
               <button
                 v-for="loc in availableLocales"
                 :key="loc.code"
-                class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-all hover:bg-rp-overlay/50"
-                :class="locale === loc.code ? 'text-rp-iris bg-rp-iris/10' : 'text-rp-text'"
-                @click="switchLocale(loc.code as 'en' | 'es' | 'ja')"
+                class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-all"
+                :class="locale === loc.code ? 'bg-rp-iris/20 text-rp-iris' : 'text-rp-text hover:bg-rp-overlay'"
+                @click="switchLocale(loc.code)"
               >
-                <span class="w-6 text-xs font-bold uppercase text-rp-muted">{{ loc.code }}</span>
-                <span>{{ loc.name }}</span>
+                <span class="w-7 text-xs font-bold uppercase">{{ loc.code }}</span>
+                <span class="font-medium">{{ loc.name }}</span>
                 <UIcon
                   v-if="locale === loc.code"
                   name="i-heroicons-check"
-                  class="ml-auto size-4 text-rp-iris"
+                  class="ml-auto size-4"
                 />
               </button>
             </div>
@@ -249,35 +245,33 @@ const footerHeight = ref(0)
 const isLangMenuOpen = ref(false)
 const searchInputRef = ref<HTMLInputElement | null>(null)
 const footerRef = ref<HTMLElement | null>(null)
+const langSelectorRef = ref<HTMLElement | null>(null)
 
 // Language selector
+type LocaleCode = 'en' | 'es' | 'ja'
+
 interface LocaleConfig {
-  code: string
+  code: LocaleCode
   name: string
 }
 
-const availableLocales = computed(() => {
+const availableLocales = computed<LocaleConfig[]>(() => {
   return locales.value.map((loc) => {
     if (typeof loc === 'string') {
-      return { code: loc, name: loc }
+      return { code: loc as LocaleCode, name: loc }
     }
-    return loc as LocaleConfig
+    return { code: loc.code as LocaleCode, name: loc.name || loc.code }
   })
 })
 
-const currentLocaleCode = computed(() => {
-  return locale.value.toUpperCase()
-})
-
-const switchLocale = (code: 'en' | 'es' | 'ja') => {
+const switchLocale = (code: LocaleCode) => {
   setLocale(code)
   isLangMenuOpen.value = false
 }
 
 // Close language menu when clicking outside
 const handleClickOutside = (e: MouseEvent) => {
-  const target = e.target as HTMLElement
-  if (!target.closest('.relative')) {
+  if (langSelectorRef.value && !langSelectorRef.value.contains(e.target as Node)) {
     isLangMenuOpen.value = false
   }
 }
