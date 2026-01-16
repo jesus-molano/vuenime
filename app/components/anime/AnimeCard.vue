@@ -3,11 +3,11 @@
   <article
     class="group relative cursor-pointer overflow-hidden rounded-lg bg-rp-surface shadow-md border border-rp-overlay transition-all duration-300 hover:border-rp-iris/50 hover:shadow-rp-iris/20 focus-rp sm:rounded-xl sm:shadow-lg md:rounded-2xl md:shadow-2xl"
     :style="{ viewTransitionName: isNavigating ? `anime-card-${anime.mal_id}` : '' }"
-    @click="navigateToDetail"
-    @keydown.enter="navigateToDetail"
     tabindex="0"
     role="article"
     :aria-labelledby="`anime-title-${anime.mal_id}`"
+    @click="navigateToDetail"
+    @keydown.enter="navigateToDetail"
   >
     <!-- Mobile: Horizontal layout -->
     <div class="flex sm:hidden">
@@ -19,7 +19,7 @@
           :style="{ viewTransitionName: isNavigating ? `anime-image-${anime.mal_id}` : '' }"
           class="size-full object-cover"
           loading="lazy"
-        />
+        >
         <!-- Badge de puntuación -->
         <div
           v-if="anime.score"
@@ -82,7 +82,7 @@
         :style="{ viewTransitionName: isNavigating ? `anime-image-${anime.mal_id}` : '' }"
         class="size-full object-cover transition-transform duration-500 group-hover:scale-110"
         loading="lazy"
-      />
+      >
 
       <!-- Gradiente oscuro Rosé Pine -->
       <div class="absolute inset-0 bg-gradient-rp-card" />

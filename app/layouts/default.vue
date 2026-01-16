@@ -58,6 +58,49 @@
             <span class="hidden sm:inline">{{ $t('nav.favorites') }}</span>
           </NuxtLink>
         </div>
+
+        <!-- Separator -->
+        <div class="h-5 w-px bg-rp-overlay/50" />
+
+        <!-- Language Selector -->
+        <div class="relative">
+          <button
+            class="flex items-center gap-1.5 rounded-xl px-2 py-1.5 text-sm font-medium text-rp-subtle transition-all hover:bg-rp-overlay/50 hover:text-rp-text"
+            @click="isLangMenuOpen = !isLangMenuOpen"
+          >
+            <UIcon name="i-heroicons-language" class="size-4" />
+            <span class="text-xs font-bold">{{ currentLocaleCode }}</span>
+            <UIcon
+              name="i-heroicons-chevron-down"
+              class="size-3 transition-transform"
+              :class="isLangMenuOpen ? 'rotate-180' : ''"
+            />
+          </button>
+
+          <!-- Dropdown -->
+          <Transition name="dropdown">
+            <div
+              v-if="isLangMenuOpen"
+              class="absolute right-0 top-full mt-2 min-w-36 overflow-hidden rounded-xl border border-rp-overlay/50 bg-rp-surface/95 p-1 shadow-xl backdrop-blur-xl"
+            >
+              <button
+                v-for="loc in availableLocales"
+                :key="loc.code"
+                class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-all hover:bg-rp-overlay/50"
+                :class="locale === loc.code ? 'text-rp-iris bg-rp-iris/10' : 'text-rp-text'"
+                @click="switchLocale(loc.code as 'en' | 'es' | 'ja')"
+              >
+                <span class="w-6 text-xs font-bold uppercase text-rp-muted">{{ loc.code }}</span>
+                <span>{{ loc.name }}</span>
+                <UIcon
+                  v-if="locale === loc.code"
+                  name="i-heroicons-check"
+                  class="ml-auto size-4 text-rp-iris"
+                />
+              </button>
+            </div>
+          </Transition>
+        </div>
       </nav>
     </header>
 
@@ -69,8 +112,8 @@
         :style="{ bottom: `calc(${footerHeight + 24}px)` }"
       >
         <button
-          @click="toggleSearch"
           class="group flex items-center gap-3 rounded-2xl border border-rp-overlay/50 bg-rp-surface/95 px-5 py-3 shadow-2xl shadow-rp-base/50 backdrop-blur-xl transition-all hover:border-rp-iris/50 hover:shadow-rp-iris/20"
+          @click="toggleSearch"
         >
           <UIcon name="i-heroicons-magnifying-glass" class="size-5 text-rp-muted transition-colors group-hover:text-rp-iris" />
           <span class="text-sm text-rp-subtle">{{ $t('home.searchPlaceholder') }}</span>
@@ -89,7 +132,7 @@
         <div class="w-full max-w-2xl px-4">
           <div class="overflow-hidden rounded-2xl border border-rp-overlay/50 bg-rp-surface shadow-2xl shadow-rp-iris/10">
             <!-- Search Input -->
-            <form @submit.prevent="handleModalSearch" class="flex items-center gap-3 border-b border-rp-overlay/50 px-5 py-4">
+            <form class="flex items-center gap-3 border-b border-rp-overlay/50 px-5 py-4" @submit.prevent="handleModalSearch">
               <UIcon name="i-heroicons-magnifying-glass" class="size-6 text-rp-iris" />
               <input
                 ref="searchInputRef"
@@ -98,7 +141,7 @@
                 :placeholder="$t('home.searchPlaceholder')"
                 class="flex-1 bg-transparent text-lg text-rp-text placeholder-rp-muted outline-none"
                 @keydown.escape="toggleSearch"
-              />
+              >
               <kbd class="rounded-lg bg-rp-overlay px-2.5 py-1 text-xs font-medium text-rp-text">ESC</kbd>
             </form>
 
@@ -145,8 +188,8 @@
           </NuxtLink>
 
           <button
-            @click="toggleSearch"
             class="group flex items-center justify-center rounded-xl bg-gradient-to-r from-rp-iris to-rp-love p-3 text-white shadow-lg shadow-rp-iris/30 transition-all hover:shadow-rp-iris/50 active:scale-95"
+            @click="toggleSearch"
           >
             <UIcon name="i-heroicons-magnifying-glass" class="size-6" />
           </button>
@@ -197,14 +240,47 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
 const router = useRouter()
 const { isSearchOpen, searchQuery, toggleSearch } = useSearch()
+const { locale, locales, setLocale } = useI18n()
 
 const isScrolled = ref(false)
 const footerHeight = ref(0)
+const isLangMenuOpen = ref(false)
 const searchInputRef = ref<HTMLInputElement | null>(null)
 const footerRef = ref<HTMLElement | null>(null)
+
+// Language selector
+interface LocaleConfig {
+  code: string
+  name: string
+}
+
+const availableLocales = computed(() => {
+  return locales.value.map((loc) => {
+    if (typeof loc === 'string') {
+      return { code: loc, name: loc }
+    }
+    return loc as LocaleConfig
+  })
+})
+
+const currentLocaleCode = computed(() => {
+  return locale.value.toUpperCase()
+})
+
+const switchLocale = (code: 'en' | 'es' | 'ja') => {
+  setLocale(code)
+  isLangMenuOpen.value = false
+}
+
+// Close language menu when clicking outside
+const handleClickOutside = (e: MouseEvent) => {
+  const target = e.target as HTMLElement
+  if (!target.closest('.relative')) {
+    isLangMenuOpen.value = false
+  }
+}
 
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 100
@@ -252,12 +328,14 @@ const handleKeydown = (e: KeyboardEvent) => {
 onMounted(() => {
   window.addEventListener('scroll', handleScroll, { passive: true })
   window.addEventListener('keydown', handleKeydown)
+  window.addEventListener('click', handleClickOutside)
   handleScroll()
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
   window.removeEventListener('keydown', handleKeydown)
+  window.removeEventListener('click', handleClickOutside)
 })
 </script>
 
@@ -305,5 +383,17 @@ onUnmounted(() => {
 .search-modal-enter-from > div > div,
 .search-modal-leave-to > div > div {
   transform: scale(0.95) translateY(-20px);
+}
+
+/* Dropdown animation */
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dropdown-enter-from,
+.dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.95);
 }
 </style>

@@ -1,5 +1,6 @@
+import { RATE_LIMIT, CACHE_TTL } from '~~/shared/constants/api'
+
 const requestQueue: number[] = []
-import { RATE_LIMIT, CACHE_TTL } from '~~/shared/constants/api';
 
 const waitForRateLimit = async (): Promise<void> => { 
 

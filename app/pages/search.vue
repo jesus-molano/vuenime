@@ -14,8 +14,8 @@
 
       <!-- Search Input -->
       <form
-        @submit.prevent="handleSearch"
         class="mb-6 flex items-center gap-2 rounded-xl border border-rp-overlay/50 bg-rp-surface/50 px-4 py-2 backdrop-blur-sm transition-all focus-within:border-rp-iris/50 focus-within:bg-rp-surface/80 sm:mb-8 sm:rounded-2xl sm:px-5 sm:py-3"
+        @submit.prevent="handleSearch"
       >
         <UIcon name="i-heroicons-magnifying-glass" class="size-5 shrink-0 text-rp-muted" />
         <input
@@ -23,12 +23,12 @@
           type="text"
           :placeholder="$t('home.searchPlaceholder')"
           class="min-w-0 flex-1 bg-transparent text-sm text-rp-text placeholder-rp-muted outline-none sm:text-base"
-        />
+        >
         <button
           v-if="searchInput"
           type="button"
-          @click="searchInput = ''"
           class="shrink-0 rounded-lg p-1 text-rp-muted transition-colors hover:bg-rp-overlay/50 hover:text-rp-text"
+          @click="searchInput = ''"
         >
           <UIcon name="i-heroicons-x-mark" class="size-4" />
         </button>
