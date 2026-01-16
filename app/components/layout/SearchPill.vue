@@ -1,11 +1,11 @@
 <template>
-  <Transition name="search-slide">
-    <div
-      v-if="isVisible"
-      class="fixed left-1/2 z-40 hidden -translate-x-1/2 transition-all duration-300 md:block"
-      :style="{ bottom: `calc(${footerHeight + 24}px)` }"
-    >
+  <div
+    class="fixed inset-x-0 z-40 hidden justify-center md:flex"
+    :style="{ bottom: `calc(${footerHeight + 24}px)` }"
+  >
+    <Transition name="search-slide">
       <button
+        v-if="isVisible"
         class="group flex items-center gap-3 rounded-2xl border border-rp-overlay/50 bg-rp-surface/95 px-5 py-3 shadow-2xl shadow-rp-base/50 backdrop-blur-xl transition-all hover:border-rp-iris/50 hover:shadow-rp-iris/20"
         @click="$emit('click')"
       >
@@ -20,8 +20,8 @@
           >&#8984;K</kbd
         >
       </button>
-    </div>
-  </Transition>
+    </Transition>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -44,6 +44,6 @@ defineEmits<{
 .search-slide-enter-from,
 .search-slide-leave-to {
   opacity: 0;
-  transform: translate(-50%, 100%);
+  transform: translateY(20px);
 }
 </style>

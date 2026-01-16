@@ -1,13 +1,15 @@
 <template>
   <Transition name="search-modal">
-    <div v-if="isOpen"
+    <div
+v-if="isOpen"
       class="fixed inset-0 z-60 flex items-start justify-center bg-rp-base/90 pt-[12vh] backdrop-blur-md"
       @click.self="$emit('close')">
       <div class="w-full max-w-2xl px-4">
         <div class="overflow-hidden rounded-2xl border border-rp-overlay/50 bg-rp-surface shadow-2xl shadow-rp-iris/10">
           <form class="flex items-center gap-3 border-b border-rp-overlay/50 px-5 py-4" @submit.prevent="handleSearch">
             <UIcon name="i-heroicons-magnifying-glass" class="size-6 text-rp-iris" />
-            <input ref="inputRef" v-model="query" type="text" :placeholder="$t('home.searchPlaceholder')"
+            <input
+ref="inputRef" v-model="query" type="text" :placeholder="$t('home.searchPlaceholder')"
               class="flex-1 bg-transparent text-lg text-rp-text placeholder-rp-muted outline-none"
               @keydown.escape="$emit('close')">
             <kbd class="rounded-lg bg-rp-overlay px-2.5 py-1 text-xs font-medium text-rp-text">ESC</kbd>

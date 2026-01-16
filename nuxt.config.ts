@@ -11,7 +11,7 @@ export default defineNuxtConfig({
   // TypeScript strict mode
   typescript: {
     strict: true,
-    typeCheck: true, 
+    typeCheck: 'build',
   },
 
   // Modules
@@ -84,12 +84,6 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      ],
-      style: [
-        {
-          // Critical CSS to prevent FOUC - hide body until Vue hydrates
-          innerHTML: `html{background:#191724}body{opacity:0}.hydrated body{opacity:1;transition:opacity 0.15s ease-out}`,
-        },
       ],
     },
   },
