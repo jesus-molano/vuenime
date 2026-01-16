@@ -1,0 +1,106 @@
+<template>
+  <Transition name="search-modal">
+    <div v-if="isOpen"
+      class="fixed inset-0 z-60 flex items-start justify-center bg-rp-base/90 pt-[12vh] backdrop-blur-md"
+      @click.self="$emit('close')">
+      <div class="w-full max-w-2xl px-4">
+        <div class="overflow-hidden rounded-2xl border border-rp-overlay/50 bg-rp-surface shadow-2xl shadow-rp-iris/10">
+          <form class="flex items-center gap-3 border-b border-rp-overlay/50 px-5 py-4" @submit.prevent="handleSearch">
+            <UIcon name="i-heroicons-magnifying-glass" class="size-6 text-rp-iris" />
+            <input ref="inputRef" v-model="query" type="text" :placeholder="$t('home.searchPlaceholder')"
+              class="flex-1 bg-transparent text-lg text-rp-text placeholder-rp-muted outline-none"
+              @keydown.escape="$emit('close')">
+            <kbd class="rounded-lg bg-rp-overlay px-2.5 py-1 text-xs font-medium text-rp-text">ESC</kbd>
+          </form>
+
+          <div class="p-4">
+            <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-rp-subtle">
+              {{ $t('search.quickActions') }}
+            </p>
+            <div class="grid grid-cols-2 gap-2">
+              <button
+                class="flex items-center gap-3 rounded-xl bg-rp-overlay/30 px-4 py-3 text-left transition-all hover:bg-rp-overlay/60"
+                @click="navigateAndClose('/')">
+                <UIcon name="i-heroicons-fire" class="size-5 text-rp-gold" />
+                <span class="text-sm font-medium text-rp-text">{{
+                  $t('nav.explore')
+                  }}</span>
+              </button>
+              <button
+                class="flex items-center gap-3 rounded-xl bg-rp-overlay/30 px-4 py-3 text-left transition-all hover:bg-rp-overlay/60"
+                @click="navigateAndClose('/favorites')">
+                <UIcon name="i-heroicons-heart" class="size-5 text-rp-love" />
+                <span class="text-sm font-medium text-rp-text">{{
+                  $t('nav.favorites')
+                  }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Transition>
+</template>
+
+<script setup lang="ts">
+const props = defineProps<{
+  isOpen: boolean
+}>()
+
+const emit = defineEmits<{
+  close: []
+}>()
+
+const router = useRouter()
+const { searchQuery } = useSearch()
+
+const inputRef = ref<HTMLInputElement | null>(null)
+const query = ref('')
+
+watch(
+  () => props.isOpen,
+  (open) => {
+    if (open) {
+      query.value = searchQuery.value
+      nextTick(() => {
+        inputRef.value?.focus()
+      })
+    }
+  }
+)
+
+const handleSearch = () => {
+  if (query.value.trim()) {
+    searchQuery.value = query.value.trim()
+    emit('close')
+    router.push({ path: '/search', query: { q: query.value.trim() } })
+  }
+}
+
+const navigateAndClose = (path: string) => {
+  router.push(path)
+  emit('close')
+}
+</script>
+
+<style scoped>
+.search-modal-enter-active,
+.search-modal-leave-active {
+  transition: all 0.3s ease;
+}
+
+.search-modal-enter-from,
+.search-modal-leave-to {
+  opacity: 0;
+}
+
+.search-modal-enter-active>div>div,
+.search-modal-leave-active>div>div {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.search-modal-enter-from>div>div,
+.search-modal-leave-to>div>div {
+  transform: scale(0.95) translateY(-20px);
+}
+</style>
