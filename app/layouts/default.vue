@@ -61,11 +61,12 @@
       </nav>
     </header>
 
-    <!-- Floating Search Pill - Desktop only, aparece al scroll -->
+    <!-- Floating Search Pill - Desktop only, aparece al scroll, sube sobre footer -->
     <Transition name="search-slide">
       <div
         v-if="isScrolled && !isSearchOpen"
-        class="fixed bottom-6 left-1/2 z-40 hidden -translate-x-1/2 md:block"
+        class="fixed left-1/2 z-40 hidden -translate-x-1/2 transition-all duration-300 md:block"
+        :style="{ bottom: `calc(${footerHeight + 24}px)` }"
       >
         <button
           @click="toggleSearch"
@@ -126,13 +127,13 @@
       </div>
     </Transition>
 
-    <!-- Floating Dock Navigation - Mobile only, aparece al scroll -->
+    <!-- Floating Dock Navigation - Mobile only, aparece al scroll, sube sobre footer -->
     <!-- Usa safe-area-inset-bottom + padding para evitar la barra de navegación y notch -->
     <Transition name="dock-slide">
       <nav
         v-if="isScrolled"
-        class="fixed left-1/2 z-50 -translate-x-1/2 md:hidden"
-        style="bottom: max(1rem, env(safe-area-inset-bottom, 0px))"
+        class="fixed left-1/2 z-50 -translate-x-1/2 transition-all duration-300 md:hidden"
+        :style="{ bottom: `calc(${footerHeight}px + max(1rem, env(safe-area-inset-bottom, 0px)))` }"
       >
         <div class="flex items-center gap-1.5 rounded-2xl border border-rp-overlay/50 bg-rp-surface/95 p-2 shadow-2xl shadow-rp-base/50 backdrop-blur-xl">
           <NuxtLink
@@ -167,7 +168,7 @@
     </main>
 
     <!-- Footer minimalista -->
-    <footer class="border-t border-rp-overlay/30 py-6 pb-24 md:py-8 md:pb-8">
+    <footer ref="footerRef" class="border-t border-rp-overlay/30 py-6 pb-8">
       <UContainer>
         <div class="flex flex-col items-center gap-3 px-4 md:gap-4 md:px-0">
           <div class="flex flex-wrap items-center justify-center gap-1 text-xs text-rp-subtle md:gap-2 md:text-sm">
@@ -201,10 +202,20 @@ const router = useRouter()
 const { isSearchOpen, searchQuery, toggleSearch } = useSearch()
 
 const isScrolled = ref(false)
+const footerHeight = ref(0)
 const searchInputRef = ref<HTMLInputElement | null>(null)
+const footerRef = ref<HTMLElement | null>(null)
 
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 100
+
+  // Calcular cuánto del footer es visible para mover el dock hacia arriba
+  if (footerRef.value) {
+    const footerRect = footerRef.value.getBoundingClientRect()
+    const windowHeight = window.innerHeight
+    const visibleHeight = Math.max(0, windowHeight - footerRect.top)
+    footerHeight.value = Math.min(visibleHeight, footerRect.height)
+  }
 }
 
 // Focus input when search opens
