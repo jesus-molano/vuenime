@@ -1,19 +1,19 @@
-import { RATE_LIMIT, CACHE_TTL } from '~~/shared/constants/api'
+import { RATE_LIMIT } from '~~/shared/constants/api'
 
 const requestQueue: number[] = []
+const ONE_MINUTE_MS = 60 * 1000
 
-const waitForRateLimit = async (): Promise<void> => { 
-
+const waitForRateLimit = async (): Promise<void> => {
   const now = Date.now()
-  
+
   // Remove requests older than 1 minute
-  while (requestQueue.length && now - requestQueue[0]! < CACHE_TTL.ANIME_LIST * 1000) {
+  while (requestQueue.length && now - requestQueue[0]! > ONE_MINUTE_MS) {
     requestQueue.shift()
   }
 
-  // If we've reached the maximum requests per minute, wait 
+  // If we've reached the maximum requests per minute, wait
   if (requestQueue.length >= RATE_LIMIT.MAX_PER_MINUTE) {
-    const waitTime = CACHE_TTL.ANIME_LIST * 1000 - (now - requestQueue[0]!)
+    const waitTime = ONE_MINUTE_MS - (now - requestQueue[0]!)
     await new Promise(resolve => setTimeout(resolve, waitTime))
     return waitForRateLimit()
   }
