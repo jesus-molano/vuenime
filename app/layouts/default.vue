@@ -21,6 +21,8 @@
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 48 32"
             fill="none"
+            width="20"
+            height="14"
             class="w-5 -rotate-12 drop-shadow-md transition-transform group-hover:rotate-0 group-hover:scale-110 md:w-6"
             aria-hidden="true"
           >
