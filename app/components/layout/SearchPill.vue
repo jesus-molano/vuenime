@@ -16,9 +16,9 @@
         <span class="text-sm text-rp-subtle">{{
           $t('home.searchPlaceholder')
         }}</span>
-        <kbd class="rounded-lg bg-rp-overlay px-2 py-0.5 text-xs font-medium text-rp-text"
-          >&#8984;K</kbd
-        >
+        <kbd class="rounded-lg bg-rp-overlay px-2 py-0.5 text-xs font-medium text-rp-text">
+          &#8984;K
+        </kbd>
       </button>
     </Transition>
   </div>
