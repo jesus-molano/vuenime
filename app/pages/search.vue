@@ -74,7 +74,7 @@ const { data: searchResults, status } = useFetch<AnimeListResponse>(
   '/api/jikan/anime',
   {
     key: () => `search-${query.value}`,
-    query: { q: query, limit: PAGINATION.DEFAULT_LIMIT },
+    query: computed(() => ({ q: query.value, limit: PAGINATION.DEFAULT_LIMIT })),
     watch: [query],
     immediate: !!query.value,
   }
