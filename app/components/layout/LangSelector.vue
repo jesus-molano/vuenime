@@ -12,7 +12,7 @@
       />
     </button>
 
-<Transition name="dropdown">
+    <Transition name="dropdown">
       <div
         v-if="isOpen"
         class="absolute right-0 top-full z-50 mt-2 min-w-40 overflow-hidden rounded-xl border border-rp-overlay bg-rp-surface p-1.5 shadow-2xl"

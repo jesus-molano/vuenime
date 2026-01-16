@@ -1,7 +1,7 @@
 <template>
   <Transition name="search-modal">
     <div
-v-if="isOpen"
+      v-if="isOpen"
       class="fixed inset-0 z-60 flex items-start justify-center bg-rp-base/90 pt-[12vh] backdrop-blur-md"
       @click.self="$emit('close')">
       <div class="w-full max-w-2xl px-4">
@@ -9,7 +9,7 @@ v-if="isOpen"
           <form class="flex items-center gap-3 border-b border-rp-overlay/50 px-5 py-4" @submit.prevent="handleSearch">
             <UIcon name="i-heroicons-magnifying-glass" class="size-6 text-rp-iris" />
             <input
-ref="inputRef" v-model="query" type="text" :placeholder="$t('home.searchPlaceholder')"
+              ref="inputRef" v-model="query" type="text" :placeholder="$t('home.searchPlaceholder')"
               class="flex-1 bg-transparent text-lg text-rp-text placeholder-rp-muted outline-none"
               @keydown.escape="$emit('close')">
             <kbd class="rounded-lg bg-rp-overlay px-2.5 py-1 text-xs font-medium text-rp-text">ESC</kbd>
@@ -26,7 +26,7 @@ ref="inputRef" v-model="query" type="text" :placeholder="$t('home.searchPlacehol
                 <UIcon name="i-heroicons-fire" class="size-5 text-rp-gold" />
                 <span class="text-sm font-medium text-rp-text">{{
                   $t('nav.explore')
-                  }}</span>
+                }}</span>
               </button>
               <button
                 class="flex items-center gap-3 rounded-xl bg-rp-overlay/30 px-4 py-3 text-left transition-all hover:bg-rp-overlay/60"
@@ -34,7 +34,7 @@ ref="inputRef" v-model="query" type="text" :placeholder="$t('home.searchPlacehol
                 <UIcon name="i-heroicons-heart" class="size-5 text-rp-love" />
                 <span class="text-sm font-medium text-rp-text">{{
                   $t('nav.favorites')
-                  }}</span>
+                }}</span>
               </button>
             </div>
           </div>
