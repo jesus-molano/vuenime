@@ -3,7 +3,7 @@
     <LayoutHeader :is-scrolled="isScrolled" />
 
     <LayoutSearchPill
-      :is-visible="isScrolled && !isSearchOpen"
+      :is-visible="isScrolled"
       :footer-height="footerHeight"
       @click="toggleSearch"
     />
