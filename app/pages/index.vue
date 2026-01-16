@@ -95,7 +95,7 @@
           <p class="mb-4 text-sm text-rp-subtle md:text-base">{{ error }}</p>
           <button
             class="rounded-lg bg-rp-surface px-4 py-2 text-sm font-medium text-rp-text transition-all hover:bg-rp-overlay md:rounded-xl md:px-6 md:py-3"
-            @click="fetchTopAnime()"
+            @click="refresh()"
           >
             {{ $t('common.retry') }}
           </button>
@@ -119,7 +119,7 @@ import { PAGINATION } from '~~/shared/constants/api'
 
 const { t } = useI18n()
 const router = useRouter()
-const { animeList, isLoading, error, fetchTopAnime } = useAnimeList()
+const { animeList, isLoading, error, refresh } = useAnimeList()
 
 const searchQuery = ref('')
 
@@ -128,10 +128,6 @@ const handleSearch = () => {
     router.push({ path: '/search', query: { q: searchQuery.value.trim() } })
   }
 }
-
-onMounted(async () => {
-  await fetchTopAnime()
-})
 
 useSeoMeta({
   title: `VueNime - ${t('home.title')} ${t('home.titleHighlight')}`,

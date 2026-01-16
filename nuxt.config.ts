@@ -27,6 +27,13 @@ export default defineNuxtConfig({
   // CSS
   css: ['~/assets/css/main.css'],
 
+  // Icon configuration - bundle icons instead of fetching
+  icon: {
+    clientBundle: {
+      scan: true, // Scan components for icons and bundle them
+    },
+  },
+
   // Nuxt UI configuration
   colorMode: {
     preference: 'system',
