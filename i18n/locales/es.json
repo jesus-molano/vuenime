@@ -1,0 +1,51 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ha ocurrido un error",
+    "retry": "Reintentar",
+    "search": "Buscar",
+    "noResults": "No se encontraron resultados"
+  },
+  "nav": {
+    "explore": "Explorar",
+    "favorites": "Favoritos"
+  },
+  "search": {
+    "quickActions": "Acciones Rápidas",
+    "recentSearches": "Búsquedas Recientes",
+    "popularAnime": "Anime Popular",
+    "resultsFor": "Resultados para",
+    "resultsFound": "resultados encontrados",
+    "tryDifferent": "Prueba con un término de búsqueda diferente"
+  },
+  "home": {
+    "badge": "Desarrollado con Jikan API",
+    "title": "Descubre Tu Próximo",
+    "titleHighlight": "Anime",
+    "subtitle": "Explora miles de títulos de anime, guarda tus favoritos y encuentra tu próxima obsesión.",
+    "searchPlaceholder": "Buscar anime por título, género...",
+    "trending": "Tendencias",
+    "trendingSubtitle": "Los anime más populares de esta temporada",
+    "stats": {
+      "titles": "+25,000 Títulos",
+      "updated": "Actualizado diariamente"
+    }
+  },
+  "anime": {
+    "episodes": "Episodios",
+    "eps": "eps",
+    "score": "Puntuación",
+    "status": "Estado",
+    "genres": "Géneros",
+    "synopsis": "Sinopsis",
+    "addFavorite": "Añadir a favoritos",
+    "removeFavorite": "Quitar de favoritos",
+    "airing": "En emisión",
+    "viewDetails": "Ver detalles",
+    "coverAlt": "Portada de {title}"
+  },
+  "footer": {
+    "builtWith": "Hecho con Nuxt 4, Vue 3 y Nuxt UI",
+    "dataFrom": "Datos de"
+  }
+}

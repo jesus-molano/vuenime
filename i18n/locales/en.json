@@ -1,0 +1,51 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "search": "Search",
+    "noResults": "No results found"
+  },
+  "nav": {
+    "explore": "Explore",
+    "favorites": "Favorites"
+  },
+  "search": {
+    "quickActions": "Quick Actions",
+    "recentSearches": "Recent Searches",
+    "popularAnime": "Popular Anime",
+    "resultsFor": "Results for",
+    "resultsFound": "results found",
+    "tryDifferent": "Try a different search term"
+  },
+  "home": {
+    "badge": "Powered by Jikan API",
+    "title": "Discover Your Next",
+    "titleHighlight": "Anime",
+    "subtitle": "Explore thousands of anime titles, track your favorites, and find your next obsession.",
+    "searchPlaceholder": "Search anime by title, genre...",
+    "trending": "Trending Now",
+    "trendingSubtitle": "The most popular anime this season",
+    "stats": {
+      "titles": "25,000+ Titles",
+      "updated": "Updated daily"
+    }
+  },
+  "anime": {
+    "episodes": "Episodes",
+    "eps": "eps",
+    "score": "Score",
+    "status": "Status",
+    "genres": "Genres",
+    "synopsis": "Synopsis",
+    "addFavorite": "Add to favorites",
+    "removeFavorite": "Remove from favorites",
+    "airing": "Airing",
+    "viewDetails": "View Details",
+    "coverAlt": "Cover art for {title}"
+  },
+  "footer": {
+    "builtWith": "Built with Nuxt 4, Vue 3 & Nuxt UI",
+    "dataFrom": "Data from"
+  }
+}
