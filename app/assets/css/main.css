@@ -1,0 +1,93 @@
+@import "tailwindcss" theme(static);
+@import "@nuxt/ui";
+
+/*
+ * Rosé Pine Theme
+ * https://rosepinetheme.com/
+ */
+
+:root {
+  /* Rosé Pine Base */
+  --rp-base: 25 23 36;          /* #191724 */
+  --rp-surface: 31 29 46;       /* #1f1d2e */
+  --rp-overlay: 38 35 58;       /* #26233a */
+
+  /* Rosé Pine Text */
+  --rp-muted: 110 106 134;      /* #6e6a86 */
+  --rp-subtle: 144 140 170;     /* #908caa */
+  --rp-text: 224 222 244;       /* #e0def4 */
+
+  /* Rosé Pine Accents */
+  --rp-love: 235 111 146;       /* #eb6f92 */
+  --rp-gold: 246 193 119;       /* #f6c177 */
+  --rp-rose: 235 188 186;       /* #ebbcba */
+  --rp-pine: 49 116 143;        /* #31748f */
+  --rp-foam: 156 207 216;       /* #9ccfd8 */
+  --rp-iris: 196 167 231;       /* #c4a7e7 */
+}
+
+/* Dark mode - Rosé Pine */
+.dark {
+  --color-primary-50: rgb(var(--rp-iris) / 0.1);
+  --color-primary-100: rgb(var(--rp-iris) / 0.2);
+  --color-primary-200: rgb(var(--rp-iris) / 0.3);
+  --color-primary-300: rgb(var(--rp-iris) / 0.5);
+  --color-primary-400: rgb(var(--rp-iris) / 0.7);
+  --color-primary-500: rgb(var(--rp-iris));
+  --color-primary-600: rgb(var(--rp-iris));
+  --color-primary-700: rgb(var(--rp-iris) / 0.9);
+  --color-primary-800: rgb(var(--rp-iris) / 0.8);
+  --color-primary-900: rgb(var(--rp-iris) / 0.7);
+  --color-primary-950: rgb(var(--rp-iris) / 0.5);
+}
+
+/* Utility classes for Rosé Pine */
+.bg-rp-base { background-color: rgb(var(--rp-base)); }
+.bg-rp-surface { background-color: rgb(var(--rp-surface)); }
+.bg-rp-overlay { background-color: rgb(var(--rp-overlay)); }
+
+.text-rp-text { color: rgb(var(--rp-text)); }
+.text-rp-subtle { color: rgb(var(--rp-subtle)); }
+.text-rp-muted { color: rgb(var(--rp-muted)); }
+
+.text-rp-love { color: rgb(var(--rp-love)); }
+.text-rp-gold { color: rgb(var(--rp-gold)); }
+.text-rp-rose { color: rgb(var(--rp-rose)); }
+.text-rp-pine { color: rgb(var(--rp-pine)); }
+.text-rp-foam { color: rgb(var(--rp-foam)); }
+.text-rp-iris { color: rgb(var(--rp-iris)); }
+
+.bg-rp-love { background-color: rgb(var(--rp-love)); }
+.bg-rp-gold { background-color: rgb(var(--rp-gold)); }
+.bg-rp-rose { background-color: rgb(var(--rp-rose)); }
+.bg-rp-pine { background-color: rgb(var(--rp-pine)); }
+.bg-rp-foam { background-color: rgb(var(--rp-foam)); }
+.bg-rp-iris { background-color: rgb(var(--rp-iris)); }
+
+.border-rp-overlay { border-color: rgb(var(--rp-overlay)); }
+.border-rp-iris { border-color: rgb(var(--rp-iris)); }
+
+/* Gradient utilities */
+.bg-gradient-rp-card {
+  background: linear-gradient(
+    to top,
+    rgb(var(--rp-base) / 0.95),
+    rgb(var(--rp-base) / 0.5),
+    transparent
+  );
+}
+
+.bg-gradient-rp-score {
+  background: linear-gradient(
+    to right,
+    rgb(var(--rp-gold)),
+    rgb(var(--rp-love))
+  );
+}
+
+/* Focus ring for accessibility */
+.focus-rp {
+  @apply focus-visible:ring-2 focus-visible:ring-offset-2;
+  --tw-ring-color: rgb(var(--rp-iris));
+  --tw-ring-offset-color: rgb(var(--rp-base));
+}
