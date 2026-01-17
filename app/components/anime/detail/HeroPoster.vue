@@ -1,5 +1,5 @@
 <template>
-  <div class="relative mx-auto w-44 shrink-0 md:mx-0 md:w-60 lg:w-72">
+  <div class="poster-container relative mx-auto w-44 shrink-0 md:mx-0 md:w-60 lg:w-72">
     <!-- Glow Effect Behind Poster -->
     <div class="absolute -inset-6 rounded-3xl bg-rp-iris/30 blur-3xl" />
     <div class="absolute -inset-4 rounded-3xl bg-rp-rose/20 blur-2xl" />
@@ -11,7 +11,7 @@
         :src="anime.images.webp.large_image_url"
         :alt="$t('anime.coverAlt', { title: anime.title })"
         :style="{ viewTransitionName: `poster-${anime.mal_id}` }"
-        class="aspect-3/4 w-full object-cover"
+        class="poster-image aspect-3/4 w-full object-cover"
         placeholder
       />
 
@@ -45,3 +45,14 @@ defineProps<{
   anime: Anime
 }>()
 </script>
+
+<style scoped>
+.poster-container {
+  contain: layout style;
+}
+
+.poster-image {
+  contain: layout;
+  will-change: transform;
+}
+</style>

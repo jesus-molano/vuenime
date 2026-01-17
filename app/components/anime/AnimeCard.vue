@@ -214,6 +214,7 @@ const onMouseLeave = () => {
 <style scoped>
 .card-perspective {
   perspective: 1200px;
+  contain: layout style;
 }
 
 .card-border {
@@ -226,6 +227,13 @@ const onMouseLeave = () => {
 
 .card-inner {
   isolation: isolate;
+  contain: layout style;
+}
+
+/* Ensure poster images are stable during view transitions */
+:deep([style*='view-transition-name']) {
+  contain: layout;
+  will-change: transform;
 }
 
 /* Reduce motion for accessibility */

@@ -15,11 +15,19 @@ export const useInfiniteScroll = (options: UseInfiniteScrollOptions) => {
   const { hasMore, isLoading, hasError, onLoadMore, rootMargin = '200px' } = options
 
   const triggerRef = ref<HTMLElement | null>(null)
+  let observer: IntersectionObserver | null = null
 
-  onMounted(() => {
+  const createObserver = () => {
+    // Cleanup previous observer
+    if (observer) {
+      observer.disconnect()
+      observer = null
+    }
+
+    // Don't create if no element
     if (!triggerRef.value) return
 
-    const observer = new IntersectionObserver(
+    observer = new IntersectionObserver(
       (entries) => {
         const errorValue = hasError?.value
         const hasErrorBool = typeof errorValue === 'string' ? !!errorValue : !!errorValue
@@ -32,10 +40,28 @@ export const useInfiniteScroll = (options: UseInfiniteScrollOptions) => {
     )
 
     observer.observe(triggerRef.value)
+  }
 
-    onUnmounted(() => {
+  // Watch for trigger element changes (handles v-if/v-else scenarios)
+  watch(
+    triggerRef,
+    (newEl) => {
+      if (newEl) {
+        createObserver()
+      } else if (observer) {
+        observer.disconnect()
+        observer = null
+      }
+    },
+    { immediate: true }
+  )
+
+  // Cleanup on unmount
+  onUnmounted(() => {
+    if (observer) {
       observer.disconnect()
-    })
+      observer = null
+    }
   })
 
   return {

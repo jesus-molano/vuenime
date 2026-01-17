@@ -42,7 +42,7 @@ export const useAnimeEpisodes = (id: Ref<string> | string) => {
   const hasEpisodes = computed(() => allEpisodes.value.length > 0)
   const totalEpisodes = computed(() => pagination.value?.items?.total ?? allEpisodes.value.length)
 
-  const loadMore = () => {
+  const loadMore = async () => {
     if (hasNextPage.value && !isLoadingMore.value) {
       isLoadingMore.value = true
       currentPage.value++

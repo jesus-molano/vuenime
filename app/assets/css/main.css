@@ -218,41 +218,83 @@
 
 /* View Transitions API */
 @supports (view-transition-name: none) {
-  /* Animación por defecto para las páginas */
+  /* Root page transition - subtle crossfade */
   ::view-transition-old(root),
   ::view-transition-new(root) {
-    animation-duration: 0.3s;
+    animation-duration: 0.25s;
     animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    mix-blend-mode: normal;
   }
 
-  /* Estado saliente: se desvanece */
   ::view-transition-old(root) {
-    animation-name: fade-out;
+    animation-name: vt-fade-out;
   }
 
-  /* Estado entrante: aparece */
   ::view-transition-new(root) {
-    animation-name: fade-in;
+    animation-name: vt-fade-in;
   }
 
-  @keyframes fade-out {
+  /* Poster shared element transition - smooth morph */
+  ::view-transition-group(*) {
+    animation-duration: 0.35s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Poster image transitions - prevent flashing */
+  ::view-transition-image-pair(*) {
+    isolation: isolate;
+  }
+
+  ::view-transition-old(*):not(::view-transition-old(root)),
+  ::view-transition-new(*):not(::view-transition-new(root)) {
+    animation: none;
+    mix-blend-mode: normal;
+    object-fit: cover;
+  }
+
+  /* Fade animations */
+  @keyframes vt-fade-out {
+    from {
+      opacity: 1;
+    }
     to {
       opacity: 0;
     }
   }
 
-  @keyframes fade-in {
+  @keyframes vt-fade-in {
     from {
       opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Mobile: faster, simpler transitions */
+  @media (max-width: 639px) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 0.2s;
+    }
+
+    ::view-transition-group(*) {
+      animation-duration: 0.25s;
     }
   }
 
   /* Reduce motion for accessibility */
   @media (prefers-reduced-motion: reduce) {
-    ::view-transition-group(root),
-    ::view-transition-old(root),
-    ::view-transition-new(root) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
       animation: none !important;
     }
   }
+}
+
+/* Prevent layout shift during view transitions */
+.card-inner,
+.card-perspective {
+  contain: layout style;
 }

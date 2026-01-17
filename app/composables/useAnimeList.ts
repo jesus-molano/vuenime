@@ -1,5 +1,6 @@
 import type { Anime, AnimeListResponse } from '~~/shared/types'
 import { PAGINATION } from '~~/shared/constants/api'
+import { animeApi } from '~/services/api'
 
 export const useAnimeList = () => {
   // Persisted state (survives client navigation)
@@ -45,8 +46,9 @@ export const useAnimeList = () => {
 
     try {
       const nextPage = currentPage.value + 1
-      const response = await $fetch<AnimeListResponse>('/api/jikan/anime', {
-        query: { page: nextPage, limit: PAGINATION.DEFAULT_LIMIT },
+      const response = await animeApi.list({
+        page: nextPage,
+        limit: PAGINATION.DEFAULT_LIMIT,
       })
 
       if (response?.data) {

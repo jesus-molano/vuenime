@@ -13,10 +13,13 @@
           </template>
         </h1>
         <p
-          v-if="!isLoading && searchResults && hasActiveFilters"
+          v-if="!isLoading && hasResults && hasActiveFilters"
           class="text-sm text-rp-subtle"
         >
-          {{ searchResults.pagination?.items?.total || 0 }} {{ $t('search.resultsFound') }}
+          <template v-if="results.length < totalItems">
+            {{ $t('home.showingCount', { current: results.length, total: totalItems }) }}
+          </template>
+          <template v-else>{{ totalItems }} {{ $t('search.resultsFound') }}</template>
         </p>
       </div>
 
@@ -245,7 +248,7 @@
         class="grid grid-cols-1 gap-4 pb-20 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 md:gap-5 md:pb-8 lg:grid-cols-4 xl:grid-cols-5 xl:gap-6"
       >
         <AnimeCardSkeleton
-          v-for="i in 12"
+          v-for="i in 24"
           :key="i"
         />
       </div>
@@ -267,7 +270,7 @@
 
       <!-- No Results -->
       <div
-        v-else-if="!searchResults?.data?.length"
+        v-else-if="!hasResults && !isLoading"
         class="flex flex-col items-center justify-center py-16 md:py-24"
       >
         <div class="mb-4 rounded-2xl bg-rp-overlay/50 p-6">
@@ -283,22 +286,62 @@
       <!-- Results Grid -->
       <div
         v-else
-        class="grid grid-cols-1 gap-4 pb-20 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 md:gap-5 md:pb-8 lg:grid-cols-4 xl:grid-cols-5 xl:gap-6"
+        class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 xl:grid-cols-5 xl:gap-6"
       >
         <AnimeCard
-          v-for="anime in searchResults.data"
+          v-for="anime in results"
           :key="anime.mal_id"
           :anime="anime"
         />
       </div>
+
+      <!-- Load More Trigger (always rendered when filters active) -->
+      <div
+        v-if="hasActiveFilters"
+        ref="triggerRef"
+        class="flex flex-col items-center justify-center gap-4 py-8"
+      >
+        <div
+          v-if="isLoadingMore"
+          class="flex items-center gap-3"
+        >
+          <div class="size-5 animate-spin rounded-full border-2 border-rp-iris border-t-transparent" />
+          <span class="text-sm text-rp-subtle">{{ $t('common.loading') }}</span>
+        </div>
+
+        <div
+          v-else-if="loadMoreError"
+          class="flex flex-col items-center gap-3"
+        >
+          <p class="text-sm text-rp-love">{{ $t('home.loadMoreError') }}</p>
+          <button
+            type="button"
+            class="flex items-center gap-2 rounded-lg bg-rp-surface px-4 py-2 text-sm font-medium text-rp-text transition-all hover:bg-rp-overlay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
+            @click="loadMore"
+          >
+            <UIcon
+              name="i-heroicons-arrow-path"
+              class="size-4"
+            />
+            {{ $t('common.retry') }}
+          </button>
+        </div>
+
+        <p
+          v-else-if="!hasNextPage && results.length > 0"
+          class="text-sm text-rp-muted"
+        >
+          {{ $t('home.endOfList') }}
+        </p>
+      </div>
     </UContainer>
+
+    <!-- Back to Top -->
+    <UiBackToTop />
   </div>
 </template>
 
 <script setup lang="ts">
-import type { AnimeListResponse } from '~~/shared/types'
-import { PAGINATION } from '~~/shared/constants/api'
-
 const { t } = useI18n()
 
 const {
@@ -333,35 +376,37 @@ const {
   updateUrl,
 } = useSearchFilters()
 
-// API params
-const apiParams = computed(() => {
+// Search params for infinite scroll
+const searchParams = computed(() => {
   if (!hasActiveFilters.value) return null
 
-  const params: Record<string, string | number> = {
-    limit: PAGINATION.DEFAULT_LIMIT,
+  return {
+    q: debouncedSearch.value || undefined,
+    type: selectedType.value || undefined,
+    year: selectedYear.value || undefined,
+    genres: selectedGenre.value || undefined,
   }
-
-  if (debouncedSearch.value) params.q = debouncedSearch.value
-  if (selectedType.value) params.type = selectedType.value
-  if (selectedYear.value) {
-    params.start_date = `${selectedYear.value}-01-01`
-    params.end_date = `${selectedYear.value}-12-31`
-  }
-  if (selectedGenre.value) params.genres = selectedGenre.value
-
-  return params
 })
 
-const getCacheKey = () =>
-  `search-${debouncedSearch.value}-${selectedType.value}-${selectedYear.value}-${selectedGenre.value}`
+// Infinite scroll search results
+const {
+  searchResults: results,
+  isLoading,
+  isLoadingMore,
+  hasNextPage,
+  totalItems,
+  hasResults,
+  loadMoreError,
+  loadMore,
+} = useSearchResults(searchParams)
 
-const { data: searchResults, status } = useFetch<AnimeListResponse>('/api/jikan/anime', {
-  key: getCacheKey,
-  query: apiParams,
-  watch: [apiParams],
+// Infinite scroll trigger
+const { triggerRef } = useInfiniteScroll({
+  hasMore: hasNextPage,
+  isLoading: isLoadingMore,
+  hasError: loadMoreError,
+  onLoadMore: loadMore,
 })
-
-const isLoading = computed(() => status.value === 'pending' && hasActiveFilters.value)
 
 const handleSearch = () => {
   updateUrl(true)
