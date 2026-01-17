@@ -14,14 +14,14 @@ const waitForRateLimit = async (): Promise<void> => {
   // If we've reached the maximum requests per minute, wait
   if (requestQueue.length >= RATE_LIMIT.MAX_PER_MINUTE) {
     const waitTime = ONE_MINUTE_MS - (now - requestQueue[0]!)
-    await new Promise(resolve => setTimeout(resolve, waitTime))
+    await new Promise((resolve) => setTimeout(resolve, waitTime))
     return waitForRateLimit()
   }
 
   // If 2 requests are made in the last second, wait 500ms
-  const recentRequest = requestQueue.filter(time => now - time < RATE_LIMIT.RETRY_DELAY)
+  const recentRequest = requestQueue.filter((time) => now - time < RATE_LIMIT.RETRY_DELAY)
   if (recentRequest.length >= RATE_LIMIT.MAX_PER_SECOND) {
-    await new Promise(resolve => setTimeout(resolve, RATE_LIMIT.RETRY_DELAY))
+    await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT.RETRY_DELAY))
     return waitForRateLimit()
   }
 

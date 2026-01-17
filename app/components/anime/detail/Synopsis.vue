@@ -1,5 +1,8 @@
 <template>
-  <section v-if="text" class="bg-rp-base py-12 md:py-20">
+  <section
+    v-if="text"
+    class="bg-rp-base py-12 md:py-20"
+  >
     <UContainer class="px-4 sm:px-6">
       <AnimeDetailSectionHeader
         :icon="icon || 'i-heroicons-document-text'"

@@ -1,5 +1,8 @@
 <template>
-  <div ref="selectorRef" class="relative">
+  <div
+    ref="selectorRef"
+    class="relative"
+  >
     <button
       type="button"
       :aria-expanded="isOpen"
@@ -9,7 +12,11 @@
       @click="isOpen = !isOpen"
       @keydown.escape="isOpen = false"
     >
-      <span class="text-xs font-bold uppercase" aria-hidden="true">{{ locale }}</span>
+      <span
+        class="text-xs font-bold uppercase"
+        aria-hidden="true"
+      >{{ locale }}</span
+      >
       <UIcon
         name="i-heroicons-chevron-down"
         class="size-3.5 text-rp-subtle transition-transform"
@@ -33,11 +40,7 @@
           role="menuitem"
           :aria-current="locale === loc.code ? 'true' : undefined"
           class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-inset"
-          :class="
-            locale === loc.code
-              ? 'bg-rp-iris/20 text-rp-iris'
-              : 'text-rp-text hover:bg-rp-overlay'
-          "
+          :class="locale === loc.code ? 'bg-rp-iris/20 text-rp-iris' : 'text-rp-text hover:bg-rp-overlay'"
           @click="switchLocale(loc.code)"
         >
           <span class="w-7 text-xs font-bold uppercase">{{ loc.code }}</span>

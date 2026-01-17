@@ -9,9 +9,15 @@
       />
 
       <!-- Main Video Player -->
-      <div v-if="hasTrailer" class="relative mx-auto max-w-5xl">
+      <div
+        v-if="hasTrailer"
+        class="relative mx-auto max-w-5xl"
+      >
         <!-- Glow effect -->
-        <div class="absolute -inset-4 rounded-3xl bg-rp-iris/20 blur-2xl" aria-hidden="true" />
+        <div
+          class="absolute -inset-4 rounded-3xl bg-rp-iris/20 blur-2xl"
+          aria-hidden="true"
+        />
 
         <div class="relative aspect-video overflow-hidden rounded-2xl bg-rp-surface shadow-2xl ring-1 ring-white/20">
           <iframe
@@ -25,9 +31,16 @@
       </div>
 
       <!-- No Trailer State -->
-      <div v-else class="mx-auto flex max-w-md flex-col items-center py-8 text-center">
+      <div
+        v-else
+        class="mx-auto flex max-w-md flex-col items-center py-8 text-center"
+      >
         <div class="flex size-20 items-center justify-center rounded-full bg-rp-surface">
-          <UIcon name="i-heroicons-video-camera-slash" class="size-10 text-rp-muted" aria-hidden="true" />
+          <UIcon
+            name="i-heroicons-video-camera-slash"
+            class="size-10 text-rp-muted"
+            aria-hidden="true"
+          />
         </div>
         <p class="mt-4 text-rp-subtle">{{ $t('anime.noTrailer') }}</p>
       </div>

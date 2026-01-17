@@ -11,8 +11,15 @@
     >
       <div class="w-full max-w-2xl px-4">
         <div class="overflow-hidden rounded-2xl border border-rp-overlay/50 bg-rp-surface shadow-2xl shadow-rp-iris/10">
-          <form class="flex items-center gap-3 border-b border-rp-overlay/50 px-5 py-4" @submit.prevent="handleSearch">
-            <UIcon name="i-heroicons-magnifying-glass" class="size-6 text-rp-iris" aria-hidden="true" />
+          <form
+            class="flex items-center gap-3 border-b border-rp-overlay/50 px-5 py-4"
+            @submit.prevent="handleSearch"
+          >
+            <UIcon
+              name="i-heroicons-magnifying-glass"
+              class="size-6 text-rp-iris"
+              aria-hidden="true"
+            />
             <input
               ref="inputRef"
               v-model="query"
@@ -22,21 +29,39 @@
               autocomplete="off"
               class="flex-1 bg-transparent text-lg text-rp-text placeholder-rp-muted outline-none"
             >
-            <kbd class="rounded-lg bg-rp-overlay px-2.5 py-1 text-xs font-medium text-rp-text" aria-hidden="true">ESC</kbd>
+            <kbd
+              class="rounded-lg bg-rp-overlay px-2.5 py-1 text-xs font-medium text-rp-text"
+              aria-hidden="true"
+            >ESC</kbd
+            >
           </form>
 
-          <div class="p-4" role="menu" :aria-label="$t('search.quickActions')">
-            <p id="quick-actions-label" class="mb-3 text-xs font-semibold uppercase tracking-wider text-rp-subtle">
+          <div
+            class="p-4"
+            role="menu"
+            :aria-label="$t('search.quickActions')"
+          >
+            <p
+              id="quick-actions-label"
+              class="mb-3 text-xs font-semibold uppercase tracking-wider text-rp-subtle"
+            >
               {{ $t('search.quickActions') }}
             </p>
-            <div class="grid grid-cols-2 gap-2" aria-labelledby="quick-actions-label">
+            <div
+              class="grid grid-cols-2 gap-2"
+              aria-labelledby="quick-actions-label"
+            >
               <button
                 type="button"
                 role="menuitem"
                 class="flex items-center gap-3 rounded-xl bg-rp-overlay/30 px-4 py-3 text-left transition-all hover:bg-rp-overlay/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
                 @click="navigateAndClose('/')"
               >
-                <UIcon name="i-heroicons-fire" class="size-5 text-rp-gold" aria-hidden="true" />
+                <UIcon
+                  name="i-heroicons-fire"
+                  class="size-5 text-rp-gold"
+                  aria-hidden="true"
+                />
                 <span class="text-sm font-medium text-rp-text">{{ $t('nav.explore') }}</span>
               </button>
               <button
@@ -45,7 +70,11 @@
                 class="flex items-center gap-3 rounded-xl bg-rp-overlay/30 px-4 py-3 text-left transition-all hover:bg-rp-overlay/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
                 @click="navigateAndClose('/favorites')"
               >
-                <UIcon name="i-heroicons-heart" class="size-5 text-rp-love" aria-hidden="true" />
+                <UIcon
+                  name="i-heroicons-heart"
+                  class="size-5 text-rp-love"
+                  aria-hidden="true"
+                />
                 <span class="text-sm font-medium text-rp-text">{{ $t('nav.favorites') }}</span>
               </button>
             </div>
@@ -108,13 +137,13 @@ const navigateAndClose = (path: string) => {
   opacity: 0;
 }
 
-.search-modal-enter-active>div>div,
-.search-modal-leave-active>div>div {
+.search-modal-enter-active > div > div,
+.search-modal-leave-active > div > div {
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.search-modal-enter-from>div>div,
-.search-modal-leave-to>div>div {
+.search-modal-enter-from > div > div,
+.search-modal-leave-to > div > div {
   transform: scale(0.95) translateY(-20px);
 }
 </style>

@@ -13,8 +13,7 @@
         :aria-label="$t('nav.home')"
       >
         <span class="text-base font-bold md:text-lg">
-          <span class="text-rp-text">Vue</span
-          ><span class="text-rp-iris">Nime</span>
+          <span class="text-rp-text">Vue</span><span class="text-rp-iris">Nime</span>
         </span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -25,16 +24,59 @@
           class="straw-hat w-5 -rotate-12 drop-shadow-md md:w-6"
           aria-hidden="true"
         >
-          <ellipse cx="24" cy="26" rx="23" ry="5" fill="#f6e3ce" />
-          <ellipse cx="24" cy="27" rx="22" ry="4" fill="#e8d5b7" opacity="0.5" />
-          <ellipse cx="24" cy="16" rx="14" ry="12" fill="#f6e3ce" />
-          <ellipse cx="26" cy="14" rx="10" ry="8" fill="#ffffff" opacity="0.3" />
-          <rect x="10" y="20" width="28" height="5" rx="1" fill="#eb6f92" />
-          <rect x="10" y="23" width="28" height="2" rx="1" fill="#d4627f" />
+          <ellipse
+            cx="24"
+            cy="26"
+            rx="23"
+            ry="5"
+            fill="#f6e3ce"
+          />
+          <ellipse
+            cx="24"
+            cy="27"
+            rx="22"
+            ry="4"
+            fill="#e8d5b7"
+            opacity="0.5"
+          />
+          <ellipse
+            cx="24"
+            cy="16"
+            rx="14"
+            ry="12"
+            fill="#f6e3ce"
+          />
+          <ellipse
+            cx="26"
+            cy="14"
+            rx="10"
+            ry="8"
+            fill="#ffffff"
+            opacity="0.3"
+          />
+          <rect
+            x="10"
+            y="20"
+            width="28"
+            height="5"
+            rx="1"
+            fill="#eb6f92"
+          />
+          <rect
+            x="10"
+            y="23"
+            width="28"
+            height="2"
+            rx="1"
+            fill="#d4627f"
+          />
         </svg>
       </NuxtLink>
 
-      <div class="h-5 w-px bg-rp-overlay/50" aria-hidden="true" />
+      <div
+        class="h-5 w-px bg-rp-overlay/50"
+        aria-hidden="true"
+      />
 
       <div
         ref="menuRef"
@@ -43,32 +85,38 @@
         :aria-label="$t('nav.main')"
         @keydown="handleMenuKeydown"
       >
-        <UTooltip :text="$t('nav.explore')" :delay-duration="400" :disabled="!isMobile">
+        <UTooltip
+          :text="$t('nav.explore')"
+          :delay-duration="400"
+          :disabled="!isMobile"
+        >
           <NuxtLink
             ref="exploreRef"
             :to="localePath('/')"
             class="nav-link-explore group flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-all hover:bg-rp-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-gold focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
-            :class="
-              $route.path === localePath('/')
-                ? 'bg-rp-gold/10 text-rp-gold'
-                : 'text-white hover:text-rp-gold'
-            "
+            :class="$route.path === localePath('/') ? 'bg-rp-gold/10 text-rp-gold' : 'text-white hover:text-rp-gold'"
             :aria-current="$route.path === localePath('/') ? 'page' : undefined"
           >
-            <UIcon name="i-heroicons-fire-solid" class="nav-icon-fire size-4" aria-hidden="true" />
+            <UIcon
+              name="i-heroicons-fire-solid"
+              class="nav-icon-fire size-4"
+              aria-hidden="true"
+            />
             <span class="hidden sm:inline">{{ $t('nav.explore') }}</span>
             <span class="sr-only sm:hidden">{{ $t('nav.explore') }}</span>
           </NuxtLink>
         </UTooltip>
-        <UTooltip :text="$t('nav.favorites')" :delay-duration="400" :disabled="!isMobile">
+        <UTooltip
+          :text="$t('nav.favorites')"
+          :delay-duration="400"
+          :disabled="!isMobile"
+        >
           <NuxtLink
             ref="favoritesRef"
             :to="localePath('/favorites')"
             class="group flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-all hover:bg-rp-love/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
             :class="
-              $route.path === localePath('/favorites')
-                ? 'bg-rp-love/10 text-rp-love'
-                : 'text-white hover:text-rp-love'
+              $route.path === localePath('/favorites') ? 'bg-rp-love/10 text-rp-love' : 'text-white hover:text-rp-love'
             "
             :aria-current="$route.path === localePath('/favorites') ? 'page' : undefined"
           >
@@ -123,7 +171,7 @@ onMounted(() => {
 // Arrow key navigation between menu items (optional enhancement)
 const handleMenuKeydown = (e: KeyboardEvent) => {
   const items = [exploreRef.value, favoritesRef.value].filter(Boolean) as HTMLElement[]
-  const currentIndex = items.findIndex(item => item === document.activeElement)
+  const currentIndex = items.findIndex((item) => item === document.activeElement)
 
   if (currentIndex === -1) return
 

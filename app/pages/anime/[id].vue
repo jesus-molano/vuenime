@@ -1,10 +1,18 @@
 <template>
   <div class="min-h-screen bg-rp-base">
     <!-- Error State -->
-    <div v-if="error && !anime" class="flex min-h-screen items-center justify-center" role="alert">
+    <div
+      v-if="error && !anime"
+      class="flex min-h-screen items-center justify-center"
+      role="alert"
+    >
       <div class="text-center">
         <div class="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-rp-love/10">
-          <UIcon name="i-heroicons-exclamation-triangle" class="size-8 text-rp-love" aria-hidden="true" />
+          <UIcon
+            name="i-heroicons-exclamation-triangle"
+            class="size-8 text-rp-love"
+            aria-hidden="true"
+          />
         </div>
         <p class="mb-4 text-rp-subtle">{{ $t('common.error') }}</p>
         <button
@@ -44,7 +52,7 @@ const animeId = computed(() => route.params.id as string)
 const { anime, isLoading, error, refresh } = useAnimeDetail(animeId)
 
 useSeoMeta({
-  title: () => anime.value ? `${anime.value.title} | VueNime` : 'Loading... | VueNime',
+  title: () => (anime.value ? `${anime.value.title} | VueNime` : 'Loading... | VueNime'),
   description: () => anime.value?.synopsis?.slice(0, 160) || '',
   ogTitle: () => anime.value?.title || 'VueNime',
   ogDescription: () => anime.value?.synopsis?.slice(0, 160) || '',

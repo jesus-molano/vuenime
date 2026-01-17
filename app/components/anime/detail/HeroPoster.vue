@@ -4,7 +4,9 @@
     <div class="absolute -inset-6 rounded-3xl bg-rp-iris/30 blur-3xl" />
     <div class="absolute -inset-4 rounded-3xl bg-rp-rose/20 blur-2xl" />
 
-    <div class="group relative overflow-hidden rounded-2xl shadow-2xl shadow-black/50 ring-1 ring-white/20 transition-all duration-700 hover:scale-[1.02] hover:shadow-rp-iris/30">
+    <div
+      class="group relative overflow-hidden rounded-2xl shadow-2xl shadow-black/50 ring-1 ring-white/20 transition-all duration-700 hover:scale-[1.02] hover:shadow-rp-iris/30"
+    >
       <img
         :src="anime.images.webp.large_image_url"
         :alt="$t('anime.coverAlt', { title: anime.title })"
@@ -13,14 +15,19 @@
       >
 
       <!-- Shimmer effect on hover -->
-      <div class="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/10 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
+      <div
+        class="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/10 to-transparent transition-transform duration-1000 group-hover:translate-x-full"
+      />
 
       <!-- Score Badge -->
       <div
         v-if="anime.score"
         class="absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-black/70 px-2.5 py-1.5 backdrop-blur-md"
       >
-        <UIcon name="i-heroicons-star-solid" class="size-4 text-rp-gold" />
+        <UIcon
+          name="i-heroicons-star-solid"
+          class="size-4 text-rp-gold"
+        />
         <span class="text-sm font-bold text-white">{{ anime.score.toFixed(1) }}</span>
       </div>
 

@@ -11,12 +11,23 @@
     />
 
     <div class="relative">
-      <div class="mb-2 flex items-center gap-2" :class="labelClass">
-        <UIcon :name="icon" class="size-4" />
+      <div
+        class="mb-2 flex items-center gap-2"
+        :class="labelClass"
+      >
+        <UIcon
+          :name="icon"
+          class="size-4"
+        />
         <span class="text-xs font-medium uppercase tracking-wider">{{ label }}</span>
       </div>
       <p class="text-3xl font-black text-rp-text">{{ formattedValue }}</p>
-      <p v-if="subtitle" class="mt-1 text-xs text-rp-subtle">{{ subtitle }}</p>
+      <p
+        v-if="subtitle"
+        class="mt-1 text-xs text-rp-subtle"
+      >
+        {{ subtitle }}
+      </p>
     </div>
   </div>
 </template>

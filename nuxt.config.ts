@@ -87,9 +87,7 @@ export default defineNuxtConfig({
         { name: 'description', content: 'Discover and track your favorite anime with VueNime' },
         { name: 'theme-color', content: '#191724' },
       ],
-      link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      ],
+      link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
     },
   },
 

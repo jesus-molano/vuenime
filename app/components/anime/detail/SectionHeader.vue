@@ -4,11 +4,20 @@
       class="flex size-10 items-center justify-center rounded-xl md:size-12"
       :class="bgClass"
     >
-      <UIcon :name="icon" class="size-5 md:size-6" :class="iconClass" />
+      <UIcon
+        :name="icon"
+        class="size-5 md:size-6"
+        :class="iconClass"
+      />
     </div>
     <div>
       <h2 class="text-xl font-bold text-rp-text md:text-2xl">{{ title }}</h2>
-      <p v-if="subtitle" class="text-sm text-rp-subtle">{{ subtitle }}</p>
+      <p
+        v-if="subtitle"
+        class="text-sm text-rp-subtle"
+      >
+        {{ subtitle }}
+      </p>
     </div>
   </div>
 </template>

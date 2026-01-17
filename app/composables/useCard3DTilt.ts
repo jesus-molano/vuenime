@@ -2,10 +2,12 @@
  * Composable for 3D tilt effect on cards
  * Provides rotation, glare effect, and cursor-following mask
  */
-export function useCard3DTilt(options: {
-  maxRotation?: number
-  minWidth?: number
-} = {}) {
+export function useCard3DTilt(
+  options: {
+    maxRotation?: number
+    minWidth?: number
+  } = {}
+) {
   const { maxRotation = 6, minWidth = 640 } = options
 
   const cardRef = ref<HTMLElement | null>(null)

@@ -10,11 +10,15 @@ export default withNuxt({
     'vue/singleline-html-element-content-newline': 'off',
     'vue/multiline-html-element-content-newline': 'off',
     // Mantener indentación consistente
-    'vue/html-indent': ['error', 2, {
-      attribute: 1,
-      baseIndent: 1,
-      closeBracket: 0,
-      alignAttributesVertically: true,
-    }],
+    'vue/html-indent': [
+      'error',
+      2,
+      {
+        attribute: 1,
+        baseIndent: 1,
+        closeBracket: 0,
+        alignAttributesVertically: true,
+      },
+    ],
   },
 })

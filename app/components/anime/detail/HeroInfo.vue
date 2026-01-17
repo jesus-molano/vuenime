@@ -37,20 +37,44 @@
 
     <!-- Quick Stats -->
     <div class="flex flex-wrap items-center justify-center gap-2 text-sm md:justify-start md:text-base">
-      <span v-if="anime.episodes" class="flex items-center gap-1.5 rounded-lg bg-rp-base px-2.5 py-1 shadow-md">
-        <UIcon name="i-heroicons-play-circle" class="size-4 text-rp-iris md:size-5" />
+      <span
+        v-if="anime.episodes"
+        class="flex items-center gap-1.5 rounded-lg bg-rp-base px-2.5 py-1 shadow-md"
+      >
+        <UIcon
+          name="i-heroicons-play-circle"
+          class="size-4 text-rp-iris md:size-5"
+        />
         <span class="font-medium text-white">{{ anime.episodes }} {{ $t('anime.eps') }}</span>
       </span>
-      <span v-if="anime.duration" class="flex items-center gap-1.5 rounded-lg bg-rp-base px-2.5 py-1 shadow-md">
-        <UIcon name="i-heroicons-clock" class="size-4 text-rp-foam md:size-5" />
+      <span
+        v-if="anime.duration"
+        class="flex items-center gap-1.5 rounded-lg bg-rp-base px-2.5 py-1 shadow-md"
+      >
+        <UIcon
+          name="i-heroicons-clock"
+          class="size-4 text-rp-foam md:size-5"
+        />
         <span class="font-medium text-white">{{ anime.duration }}</span>
       </span>
-      <span v-if="anime.rank" class="flex items-center gap-1.5 rounded-lg bg-rp-base px-2.5 py-1 shadow-md">
-        <UIcon name="i-heroicons-trophy" class="size-4 text-rp-gold md:size-5" />
+      <span
+        v-if="anime.rank"
+        class="flex items-center gap-1.5 rounded-lg bg-rp-base px-2.5 py-1 shadow-md"
+      >
+        <UIcon
+          name="i-heroicons-trophy"
+          class="size-4 text-rp-gold md:size-5"
+        />
         <span class="font-medium text-white">#{{ anime.rank }}</span>
       </span>
-      <span v-if="anime.popularity" class="flex items-center gap-1.5 rounded-lg bg-rp-base px-2.5 py-1 shadow-md">
-        <UIcon name="i-heroicons-fire" class="size-4 text-rp-love md:size-5" />
+      <span
+        v-if="anime.popularity"
+        class="flex items-center gap-1.5 rounded-lg bg-rp-base px-2.5 py-1 shadow-md"
+      >
+        <UIcon
+          name="i-heroicons-fire"
+          class="size-4 text-rp-love md:size-5"
+        />
         <span class="font-medium text-white">#{{ anime.popularity }}</span>
       </span>
     </div>
@@ -75,9 +99,11 @@
         type="button"
         :aria-pressed="isFavorite"
         class="group flex items-center gap-2 rounded-xl px-6 py-3 font-bold shadow-lg transition-all hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
-        :class="isFavorite
-          ? 'bg-rp-love text-white hover:bg-rp-love/90 focus-visible:ring-rp-love'
-          : 'bg-rp-iris text-white hover:bg-rp-iris/90 focus-visible:ring-rp-iris'"
+        :class="
+          isFavorite
+            ? 'bg-rp-love text-white hover:bg-rp-love/90 focus-visible:ring-rp-love'
+            : 'bg-rp-iris text-white hover:bg-rp-iris/90 focus-visible:ring-rp-iris'
+        "
         @click="toggleFavorite"
       >
         <UIcon
@@ -100,7 +126,12 @@
         :key="studio.mal_id"
         class="font-medium text-white"
       >
-        {{ studio.name }}<span v-if="index < anime.studios.length - 1" class="text-rp-muted">,</span>
+        {{ studio.name
+        }}<span
+          v-if="index < anime.studios.length - 1"
+          class="text-rp-muted"
+        >,</span
+        >
       </span>
     </div>
   </div>
@@ -121,4 +152,3 @@ const toggleFavorite = () => {
   favoritesStore.toggleFavorite(props.anime)
 }
 </script>
-

@@ -15,10 +15,7 @@
       :src="backgroundImage"
       :alt="title"
       class="size-full scale-110 object-cover"
-      :class="[
-        hasTrailerImage ? 'blur-sm' : 'blur-2xl',
-        youtubeId && isDesktop ? 'opacity-30' : 'opacity-100'
-      ]"
+      :class="[hasTrailerImage ? 'blur-sm' : 'blur-2xl', youtubeId && isDesktop ? 'opacity-30' : 'opacity-100']"
     >
 
     <!-- Dark overlay -->

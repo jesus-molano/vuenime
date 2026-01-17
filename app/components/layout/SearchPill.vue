@@ -16,10 +16,11 @@
           class="size-5 text-rp-muted transition-colors group-hover:text-rp-iris"
           aria-hidden="true"
         />
-        <span class="text-sm text-rp-subtle">{{
-          $t('home.searchPlaceholder')
-        }}</span>
-        <kbd class="rounded-lg bg-rp-overlay px-2 py-0.5 text-xs font-medium text-rp-text" aria-hidden="true">
+        <span class="text-sm text-rp-subtle">{{ $t('home.searchPlaceholder') }}</span>
+        <kbd
+          class="rounded-lg bg-rp-overlay px-2 py-0.5 text-xs font-medium text-rp-text"
+          aria-hidden="true"
+        >
           &#8984;K
         </kbd>
       </button>

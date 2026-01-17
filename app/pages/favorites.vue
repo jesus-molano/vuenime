@@ -9,7 +9,11 @@
         <div class="mx-auto max-w-4xl text-center">
           <!-- Icon -->
           <div class="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-rp-love/20 md:size-20">
-            <UIcon name="i-heroicons-heart-solid" class="size-8 text-rp-love md:size-10" aria-hidden="true" />
+            <UIcon
+              name="i-heroicons-heart-solid"
+              class="size-8 text-rp-love md:size-10"
+              aria-hidden="true"
+            />
           </div>
 
           <!-- Title -->
@@ -23,7 +27,10 @@
           </p>
 
           <!-- Stats -->
-          <div v-if="favoritesCount > 0" class="mt-6 flex justify-center gap-6">
+          <div
+            v-if="favoritesCount > 0"
+            class="mt-6 flex justify-center gap-6"
+          >
             <div class="rounded-xl bg-rp-surface px-4 py-2">
               <span class="text-lg font-bold text-rp-love md:text-xl">{{ favoritesCount }}</span>
               <span class="ml-2 text-sm text-rp-subtle">{{ $t('favorites.animeCount') }}</span>
@@ -42,7 +49,11 @@
           class="mx-auto flex max-w-md flex-col items-center py-16 text-center"
         >
           <div class="mb-6 flex size-24 items-center justify-center rounded-full bg-rp-surface">
-            <UIcon name="i-heroicons-heart" class="size-12 text-rp-muted" aria-hidden="true" />
+            <UIcon
+              name="i-heroicons-heart"
+              class="size-12 text-rp-muted"
+              aria-hidden="true"
+            />
           </div>
           <h2 class="text-xl font-semibold text-rp-text md:text-2xl">
             {{ $t('favorites.emptyTitle') }}
@@ -54,7 +65,11 @@
             :to="localePath('/')"
             class="mt-6 inline-flex items-center gap-2 rounded-xl bg-rp-iris px-6 py-3 font-medium text-rp-base transition-all hover:bg-rp-iris/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
           >
-            <UIcon name="i-heroicons-magnifying-glass" class="size-5" aria-hidden="true" />
+            <UIcon
+              name="i-heroicons-magnifying-glass"
+              class="size-5"
+              aria-hidden="true"
+            />
             {{ $t('favorites.exploreAnime') }}
           </NuxtLink>
         </div>
@@ -92,9 +107,7 @@
                   :aria-pressed="sortBy === option.value"
                   :aria-label="option.label"
                   class="sort-button relative z-10 flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
-                  :class="sortBy === option.value
-                    ? 'text-white'
-                    : 'text-rp-subtle hover:text-rp-text'"
+                  :class="sortBy === option.value ? 'text-white' : 'text-rp-subtle hover:text-rp-text'"
                   @click="preferencesStore.setFavoritesSortBy(option.value)"
                 >
                   <UIcon
@@ -110,11 +123,14 @@
           </div>
 
           <!-- Grid -->
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 xl:grid-cols-5 xl:gap-6">
+          <div
+            class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 xl:grid-cols-5 xl:gap-6"
+          >
             <AnimeCard
               v-for="anime in displayedFavorites"
               :key="anime.mal_id"
               :anime="anime"
+              animate-on-remove
             />
           </div>
 
@@ -125,7 +141,11 @@
               class="inline-flex items-center gap-2 rounded-lg bg-rp-surface px-4 py-2 text-sm text-rp-subtle transition-all hover:bg-rp-love/20 hover:text-rp-love focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
               @click="showClearConfirm = true"
             >
-              <UIcon name="i-heroicons-trash" class="size-4" aria-hidden="true" />
+              <UIcon
+                name="i-heroicons-trash"
+                class="size-4"
+                aria-hidden="true"
+              />
               {{ $t('favorites.clearAll') }}
             </button>
           </div>
@@ -136,14 +156,29 @@
     <!-- Clear Confirmation Modal -->
     <UModal v-model:open="showClearConfirm">
       <template #content>
-        <div class="p-6 text-center" role="alertdialog" aria-labelledby="clear-dialog-title" aria-describedby="clear-dialog-desc">
+        <div
+          class="p-6 text-center"
+          role="alertdialog"
+          aria-labelledby="clear-dialog-title"
+          aria-describedby="clear-dialog-desc"
+        >
           <div class="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-rp-love/20">
-            <UIcon name="i-heroicons-exclamation-triangle" class="size-8 text-rp-love" aria-hidden="true" />
+            <UIcon
+              name="i-heroicons-exclamation-triangle"
+              class="size-8 text-rp-love"
+              aria-hidden="true"
+            />
           </div>
-          <h3 id="clear-dialog-title" class="text-lg font-semibold text-rp-text">
+          <h3
+            id="clear-dialog-title"
+            class="text-lg font-semibold text-rp-text"
+          >
             {{ $t('favorites.clearConfirmTitle') }}
           </h3>
-          <p id="clear-dialog-desc" class="mt-2 text-sm text-rp-subtle">
+          <p
+            id="clear-dialog-desc"
+            class="mt-2 text-sm text-rp-subtle"
+          >
             {{ $t('favorites.clearConfirmDesc') }}
           </p>
           <div class="mt-6 flex justify-center gap-3">
@@ -218,11 +253,11 @@ const indicatorStyle = computed(() => {
 const displayedFavorites = computed(() => {
   switch (sortBy.value) {
     case 'score':
-      return favoritesStore.sortFavoritesByScore()
+      return favoritesStore.sortedByScore
     case 'title':
-      return favoritesStore.sortFavoritesByTitle()
+      return favoritesStore.sortedByTitle
     default:
-      return favoritesStore.sortedFavorites
+      return favoritesStore.sortedByRecent
   }
 })
 
@@ -255,12 +290,12 @@ useSeoMeta({
 }
 
 /* Hover effect for inactive buttons */
-.sort-button:not([aria-pressed="true"]):hover {
+.sort-button:not([aria-pressed='true']):hover {
   background: rgba(110, 106, 134, 0.15);
 }
 
 /* Active button icon animation */
-.sort-button[aria-pressed="true"] .size-4 {
+.sort-button[aria-pressed='true'] .size-4 {
   animation: pulse-icon 0.3s ease-out;
 }
 

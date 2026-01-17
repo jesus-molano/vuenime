@@ -1,6 +1,7 @@
 <template>
   <!-- Wrapper con perspective para el efecto 3D -->
   <div
+    ref="wrapperRef"
     class="group card-perspective relative"
     @mousemove="handleMouseMove"
     @mouseleave="handleMouseLeave"
@@ -27,7 +28,9 @@
       </div>
 
       <!-- Card inner content -->
-      <div class="card-inner relative overflow-hidden rounded-2xl border border-white/8 bg-rp-surface/95 backdrop-blur-sm transition-[box-shadow,border-color] duration-400 group-hover:border-white/15 group-hover:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] focus-within:ring-2 focus-within:ring-rp-iris focus-within:ring-offset-2 focus-within:ring-offset-rp-base">
+      <div
+        class="card-inner relative overflow-hidden rounded-2xl border border-white/8 bg-rp-surface/95 backdrop-blur-sm transition-[box-shadow,border-color] duration-400 group-hover:border-white/15 group-hover:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-rp-iris has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-rp-base"
+      >
         <!-- Mobile: Horizontal layout - toda la card es clickeable -->
         <NuxtLink
           :to="`/anime/${anime.mal_id}`"
@@ -50,7 +53,10 @@
               v-if="anime.score"
               class="absolute right-1.5 top-1.5 flex items-center gap-0.5 rounded-full bg-black/60 px-1.5 py-0.5 text-[9px] font-bold text-white shadow-lg backdrop-blur-sm"
             >
-              <UIcon name="i-heroicons-star-solid" class="size-2 text-rp-gold" />
+              <UIcon
+                name="i-heroicons-star-solid"
+                class="size-2 text-rp-gold"
+              />
               {{ anime.score.toFixed(1) }}
             </div>
           </div>
@@ -67,8 +73,12 @@
               <!-- Mobile favorite button -->
               <button
                 type="button"
-                class="relative z-10 flex size-7 shrink-0 items-center justify-center rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
-                :class="isFavorite ? 'bg-rp-love text-white shadow-lg shadow-rp-love/30' : 'bg-rp-overlay/80 text-rp-subtle hover:text-rp-love'"
+                class="relative z-10 flex size-7 shrink-0 items-center justify-center rounded-full outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
+                :class="
+                  isFavorite
+                    ? 'bg-rp-love text-white shadow-lg shadow-rp-love/30'
+                    : 'bg-rp-overlay/80 text-rp-subtle hover:text-rp-love'
+                "
                 :aria-label="isFavorite ? $t('anime.removeFavorite') : $t('anime.addFavorite')"
                 :aria-pressed="isFavorite"
                 @click.stop.prevent="toggleFavorite"
@@ -84,12 +94,24 @@
 
             <!-- Info -->
             <div class="flex items-center gap-2 text-[10px] text-rp-subtle">
-              <span v-if="anime.year" class="flex items-center gap-0.5">
-                <UIcon name="i-heroicons-calendar" class="size-2.5" />
+              <span
+                v-if="anime.year"
+                class="flex items-center gap-0.5"
+              >
+                <UIcon
+                  name="i-heroicons-calendar"
+                  class="size-2.5"
+                />
                 {{ anime.year }}
               </span>
-              <span v-if="anime.episodes" class="flex items-center gap-0.5">
-                <UIcon name="i-heroicons-play" class="size-2.5" />
+              <span
+                v-if="anime.episodes"
+                class="flex items-center gap-0.5"
+              >
+                <UIcon
+                  name="i-heroicons-play"
+                  class="size-2.5"
+                />
                 {{ anime.episodes }} {{ $t('anime.eps') }}
               </span>
             </div>
@@ -148,7 +170,10 @@
             v-if="anime.score"
             class="absolute right-2.5 top-2.5 flex items-center gap-1 rounded-full bg-black/40 px-2 py-1 text-xs font-bold text-white shadow-lg backdrop-blur-md md:right-3 md:top-3"
           >
-            <UIcon name="i-heroicons-star-solid" class="size-3.5 text-rp-gold" />
+            <UIcon
+              name="i-heroicons-star-solid"
+              class="size-3.5 text-rp-gold"
+            />
             {{ anime.score.toFixed(1) }}
           </div>
 
@@ -172,12 +197,24 @@
 
             <!-- Info: año y episodios -->
             <div class="flex items-center gap-3 text-[10px] text-white/70 md:text-xs">
-              <span v-if="anime.year" class="flex items-center gap-1">
-                <UIcon name="i-heroicons-calendar" class="size-3 md:size-3.5" />
+              <span
+                v-if="anime.year"
+                class="flex items-center gap-1"
+              >
+                <UIcon
+                  name="i-heroicons-calendar"
+                  class="size-3 md:size-3.5"
+                />
                 {{ anime.year }}
               </span>
-              <span v-if="anime.episodes" class="flex items-center gap-1">
-                <UIcon name="i-heroicons-play" class="size-3 md:size-3.5" />
+              <span
+                v-if="anime.episodes"
+                class="flex items-center gap-1"
+              >
+                <UIcon
+                  name="i-heroicons-play"
+                  class="size-3 md:size-3.5"
+                />
                 {{ anime.episodes }} {{ $t('anime.eps') }}
               </span>
             </div>
@@ -197,10 +234,12 @@
           <!-- Favorite button -->
           <button
             type="button"
-            class="absolute bottom-3 right-3 flex size-10 items-center justify-center rounded-full backdrop-blur-md transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-black/50 focus-visible:opacity-100 md:bottom-4 md:right-4 md:size-11"
-            :class="isFavorite
-              ? 'bg-rp-love text-white shadow-lg shadow-rp-love/40 scale-100 opacity-100'
-              : 'bg-black/40 text-white opacity-0 hover:bg-rp-love hover:shadow-lg hover:shadow-rp-love/40 group-hover:opacity-100'"
+            class="absolute bottom-3 right-3 flex size-10 items-center justify-center rounded-full outline-none backdrop-blur-md transition-all duration-300 focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-black/50 focus-visible:opacity-100 md:bottom-4 md:right-4 md:size-11"
+            :class="
+              isFavorite
+                ? 'bg-rp-love text-white shadow-lg shadow-rp-love/40 scale-100 opacity-100'
+                : 'bg-black/40 text-white opacity-0 hover:bg-rp-love hover:shadow-lg hover:shadow-rp-love/40 group-hover:opacity-100'
+            "
             :aria-label="isFavorite ? $t('anime.removeFavorite') : $t('anime.addFavorite')"
             :aria-pressed="isFavorite"
             @click.stop.prevent="toggleFavorite"
@@ -222,24 +261,28 @@
 import type { Anime } from '~~/shared/types/anime'
 import type { FavoriteAnime } from '~/stores/favorites'
 
-const props = defineProps<{
-  anime: Anime | FavoriteAnime
-}>()
+const props = withDefaults(
+  defineProps<{
+    anime: Anime | FavoriteAnime
+    /** Animate card out when removing from favorites (only use in favorites page) */
+    animateOnRemove?: boolean
+  }>(),
+  {
+    animateOnRemove: false,
+  }
+)
+
+// Wrapper ref for remove animation
+const wrapperRef = ref<HTMLElement | null>(null)
 
 // 3D Tilt Effect
-const {
-  cardRef,
-  isHovering,
-  cardTransform,
-  glareStyle,
-  borderMaskStyle,
-  handleMouseMove,
-  handleMouseLeave,
-} = useCard3DTilt({ maxRotation: 6, minWidth: 640 })
+const { cardRef, isHovering, cardTransform, glareStyle, borderMaskStyle, handleMouseMove, handleMouseLeave } =
+  useCard3DTilt({ maxRotation: 6, minWidth: 640 })
 
-// Favorites
+// Favorites - only pass wrapper ref if animateOnRemove is true
 const animeRef = toRef(props, 'anime')
-const { isFavorite, isAnimating, toggleFavorite } = useFavoriteToggle(animeRef)
+const cardRefForAnimation = computed(() => (props.animateOnRemove ? wrapperRef.value : null))
+const { isFavorite, isAnimating, toggleFavorite } = useFavoriteToggle(animeRef, cardRefForAnimation)
 </script>
 
 <style scoped>
@@ -260,8 +303,13 @@ const { isFavorite, isAnimating, toggleFavorite } = useFavoriteToggle(animeRef)
 }
 
 @keyframes heart-beat {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.3); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
 }
 
 /* Reduce motion for accessibility */

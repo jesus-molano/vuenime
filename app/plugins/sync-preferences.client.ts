@@ -13,8 +13,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     // Sincronizar idioma del store con i18n una sola vez al inicio
     if (preferencesStore.locale && preferencesStore.locale !== currentLocale) {
       i18n.setLocale(preferencesStore.locale)
-    }
-    else {
+    } else {
       // Si no hay preferencia guardada, guardar el idioma actual de i18n
       preferencesStore.setLocale(currentLocale as LocaleCode)
     }
