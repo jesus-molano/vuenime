@@ -20,24 +20,19 @@
       />
 
       <!-- Score Badge -->
-      <div
+      <UiScoreBadge
         v-if="anime.score"
-        class="absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-black/70 px-2.5 py-1.5 backdrop-blur-md"
-      >
-        <UIcon
-          name="i-heroicons-star-solid"
-          class="size-4 text-rp-gold"
-        />
-        <span class="text-sm font-bold text-white">{{ anime.score.toFixed(1) }}</span>
-      </div>
+        :score="anime.score"
+        size="md"
+        class="absolute right-3 top-3"
+      />
 
       <!-- Airing badge -->
-      <div
+      <UiAiringBadge
         v-if="anime.airing"
-        class="absolute left-3 top-3 rounded-full bg-rp-foam px-2.5 py-1 text-xs font-bold text-rp-base"
-      >
-        {{ $t('anime.airing') }}
-      </div>
+        size="md"
+        class="absolute left-3 top-3"
+      />
     </div>
   </div>
 </template>

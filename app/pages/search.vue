@@ -216,54 +216,27 @@
         v-if="activeFiltersCount > 0 && !showFilters"
         class="mb-6 flex flex-wrap items-center gap-2"
       >
-        <span
+        <UiFilterTag
           v-if="selectedType"
-          class="flex items-center gap-1 rounded-full bg-rp-iris/20 px-3 py-1 text-sm text-rp-iris"
+          variant="iris"
+          @remove="clearTypeFilter"
         >
           {{ selectedTypeLabel }}
-          <button
-            type="button"
-            class="ml-1 rounded-full p-0.5 hover:bg-rp-iris/30"
-            @click="clearTypeFilter"
-          >
-            <UIcon
-              name="i-heroicons-x-mark"
-              class="size-3"
-            />
-          </button>
-        </span>
-        <span
+        </UiFilterTag>
+        <UiFilterTag
           v-if="selectedGenre"
-          class="flex items-center gap-1 rounded-full bg-rp-foam/20 px-3 py-1 text-sm text-rp-foam"
+          variant="foam"
+          @remove="clearGenreFilter"
         >
           {{ selectedGenreLabel }}
-          <button
-            type="button"
-            class="ml-1 rounded-full p-0.5 hover:bg-rp-foam/30"
-            @click="clearGenreFilter"
-          >
-            <UIcon
-              name="i-heroicons-x-mark"
-              class="size-3"
-            />
-          </button>
-        </span>
-        <span
+        </UiFilterTag>
+        <UiFilterTag
           v-if="selectedYear"
-          class="flex items-center gap-1 rounded-full bg-rp-gold/20 px-3 py-1 text-sm text-rp-gold"
+          variant="gold"
+          @remove="clearYearFilter"
         >
           {{ selectedYear }}
-          <button
-            type="button"
-            class="ml-1 rounded-full p-0.5 hover:bg-rp-gold/30"
-            @click="clearYearFilter"
-          >
-            <UIcon
-              name="i-heroicons-x-mark"
-              class="size-3"
-            />
-          </button>
-        </span>
+        </UiFilterTag>
       </div>
 
       <!-- Loading State -->

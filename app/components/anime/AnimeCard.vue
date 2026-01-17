@@ -50,16 +50,12 @@
               draggable="false"
             />
             <!-- Badge de puntuación -->
-            <div
+            <UiScoreBadge
               v-if="anime.score"
-              class="absolute right-1.5 top-1.5 flex items-center gap-0.5 rounded-full bg-black/60 px-1.5 py-0.5 text-[9px] font-bold text-white shadow-lg backdrop-blur-sm"
-            >
-              <UIcon
-                name="i-heroicons-star-solid"
-                class="size-2 text-rp-gold"
-              />
-              {{ anime.score.toFixed(1) }}
-            </div>
+              :score="anime.score"
+              size="xs"
+              class="absolute right-1.5 top-1.5"
+            />
           </div>
 
           <!-- Contenido (lado derecho) -->
@@ -129,12 +125,11 @@
             </div>
 
             <!-- Badge "En emisión" -->
-            <div
+            <UiAiringBadge
               v-if="anime.airing"
-              class="mt-0.5 inline-flex w-fit items-center rounded-full bg-rp-foam/90 px-1.5 py-0.5 text-[9px] font-semibold text-rp-base"
-            >
-              {{ $t('anime.airing') }}
-            </div>
+              size="xs"
+              class="mt-0.5 w-fit"
+            />
           </div>
         </NuxtLink>
 
@@ -167,24 +162,19 @@
           />
 
           <!-- Badge de puntuación -->
-          <div
+          <UiScoreBadge
             v-if="anime.score"
-            class="absolute right-2.5 top-2.5 flex items-center gap-1 rounded-full bg-black/40 px-2 py-1 text-xs font-bold text-white shadow-lg backdrop-blur-md md:right-3 md:top-3"
-          >
-            <UIcon
-              name="i-heroicons-star-solid"
-              class="size-3.5 text-rp-gold"
-            />
-            {{ anime.score.toFixed(1) }}
-          </div>
+            :score="anime.score"
+            size="sm"
+            position="top-right"
+          />
 
           <!-- Badge "En emisión" -->
-          <div
+          <UiAiringBadge
             v-if="anime.airing"
-            class="absolute left-2.5 top-2.5 rounded-full bg-rp-foam px-2 py-1 text-[10px] font-bold text-rp-base shadow-lg md:left-3 md:top-3 md:text-xs"
-          >
-            {{ $t('anime.airing') }}
-          </div>
+            size="sm"
+            position="top-left"
+          />
 
           <!-- Contenido sobre la imagen (abajo) -->
           <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1.5 p-3 md:gap-2 md:p-4">
