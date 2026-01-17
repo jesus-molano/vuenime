@@ -1,17 +1,13 @@
 <template>
   <div class="min-h-screen bg-rp-base">
-    <LayoutHeader :is-scrolled="isScrolled" />
-
-    <LayoutSearchPill
+    <LayoutHeader
       :is-scrolled="isScrolled"
-      :footer-height="footerHeight"
-      @click="toggleSearch"
+      @search="toggleSearch"
     />
 
     <LayoutSearchModal v-model="isSearchOpen" />
 
     <LayoutMobileDock
-      :is-visible="isScrolled"
       :footer-height="footerHeight"
       @toggle-search="toggleSearch"
     />

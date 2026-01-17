@@ -22,10 +22,32 @@ export const useFavoritesStore = defineStore(
     const isLoading = ref(false)
     const hasSynced = ref(false)
 
+    // Cached user ID - updated on auth state changes
+    const cachedUserId = ref<string | null>(null)
+
     const favoritesCount = computed(() => favorites.value.length)
 
     const isFavorite = (malId: number) => {
       return favorites.value.some((fav) => fav.mal_id === malId)
+    }
+
+    // Helper to get current user ID (cached)
+    async function getCurrentUserId(): Promise<string | null> {
+      // Return cached value if available
+      if (cachedUserId.value) return cachedUserId.value
+
+      // Try the composable first
+      if (user.value?.id) {
+        cachedUserId.value = user.value.id
+        return cachedUserId.value
+      }
+
+      // Fallback: get user directly from Supabase session (only once)
+      const {
+        data: { user: sessionUser },
+      } = await supabase.auth.getUser()
+      cachedUserId.value = sessionUser?.id ?? null
+      return cachedUserId.value
     }
 
     // ============================================
@@ -33,11 +55,12 @@ export const useFavoritesStore = defineStore(
     // ============================================
 
     async function fetchFromSupabase() {
-      if (!user.value) return
+      const userId = await getCurrentUserId()
+      if (!userId) return
 
       isLoading.value = true
       try {
-        favorites.value = await fetchUserFavorites(supabase, user.value.id)
+        favorites.value = await fetchUserFavorites(supabase, userId)
         hasSynced.value = true
       } finally {
         isLoading.value = false
@@ -45,13 +68,14 @@ export const useFavoritesStore = defineStore(
     }
 
     async function syncLocalToSupabase() {
-      if (!user.value || favorites.value.length === 0) return
+      const userId = await getCurrentUserId()
+      if (!userId || favorites.value.length === 0) return
 
-      const existingIds = await fetchExistingIds(supabase, user.value.id)
+      const existingIds = await fetchExistingIds(supabase, userId)
       const newFavorites = favorites.value.filter((f) => !existingIds.has(f.mal_id))
 
       if (newFavorites.length > 0) {
-        await insertManyFavorites(supabase, user.value.id, newFavorites)
+        await insertManyFavorites(supabase, userId, newFavorites)
       }
 
       await fetchFromSupabase()
@@ -80,8 +104,9 @@ export const useFavoritesStore = defineStore(
       // Optimistic update
       favorites.value.push(favorite)
 
-      if (user.value) {
-        const { success } = await insertFavorite(supabase, user.value.id, favorite)
+      const userId = await getCurrentUserId()
+      if (userId) {
+        const { success } = await insertFavorite(supabase, userId, favorite)
         if (!success) {
           // Rollback on error
           const index = favorites.value.findIndex((f) => f.mal_id === anime.mal_id)
@@ -97,8 +122,9 @@ export const useFavoritesStore = defineStore(
       const removed = favorites.value[index]!
       favorites.value.splice(index, 1)
 
-      if (user.value) {
-        const { success } = await deleteFavorite(supabase, user.value.id, malId)
+      const userId = await getCurrentUserId()
+      if (userId) {
+        const { success } = await deleteFavorite(supabase, userId, malId)
         if (!success) {
           // Rollback on error
           favorites.value.splice(index, 0, removed)
@@ -118,8 +144,9 @@ export const useFavoritesStore = defineStore(
       const backup = [...favorites.value]
       favorites.value = []
 
-      if (user.value) {
-        const { success } = await deleteAllFavorites(supabase, user.value.id)
+      const userId = await getCurrentUserId()
+      if (userId) {
+        const { success } = await deleteAllFavorites(supabase, userId)
         if (!success) {
           favorites.value = backup
         }
@@ -145,7 +172,10 @@ export const useFavoritesStore = defineStore(
     watch(
       user,
       async (newUser, oldUser) => {
-        if (newUser && !oldUser) {
+        // Update cached user ID on auth state change
+        cachedUserId.value = newUser?.id ?? null
+
+        if (newUser?.id && !oldUser?.id) {
           await syncLocalToSupabase()
         } else if (!newUser && oldUser) {
           favorites.value = []
@@ -156,7 +186,8 @@ export const useFavoritesStore = defineStore(
     )
 
     async function initialize() {
-      if (user.value && !hasSynced.value) {
+      const userId = await getCurrentUserId()
+      if (userId && !hasSynced.value) {
         await fetchFromSupabase()
       }
     }
