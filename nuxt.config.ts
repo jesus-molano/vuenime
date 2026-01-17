@@ -22,6 +22,8 @@ export default defineNuxtConfig({
     '@nuxt/fonts',
     '@nuxt/icon',
     '@nuxtjs/i18n',
+    '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
   ],
 
   // CSS
@@ -56,7 +58,7 @@ export default defineNuxtConfig({
     },
   },
 
-  // View Transitions API for cinematic page transitions
+  // View Transitions API - native browser support
   experimental: {
     viewTransition: true,
   },
@@ -71,6 +73,9 @@ export default defineNuxtConfig({
 
   // App configuration
   app: {
+    // Desactivar transiciones Vue clásicas para evitar conflictos con View Transitions API
+    pageTransition: false,
+    layoutTransition: false,
     head: {
       title: 'VueNime - Discover Your Next Anime',
       htmlAttrs: {
