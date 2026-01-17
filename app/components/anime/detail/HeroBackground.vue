@@ -55,7 +55,7 @@ onMounted(() => {
 // Extract youtube ID from embed_url if youtube_id is not available
 const extractYoutubeId = (embedUrl: string): string | null => {
   const match = embedUrl.match(/\/embed\/([^?]+)/)
-  return match ? match[1] : null
+  return match?.[1] ?? null
 }
 
 // Get the youtube ID

@@ -3,15 +3,18 @@ import type { Anime } from '~~/shared/types/anime'
 export interface FavoriteAnime {
   mal_id: number
   title: string
-  title_english: string | null
+  title_english?: string | null
   images: Anime['images']
-  score: number | null
-  year: number | null
-  episodes: number | null
-  genres: Anime['genres']
-  airing: boolean
+  score?: number | null
+  year?: number | null
+  episodes?: number | null
+  genres?: Anime['genres']
+  airing?: boolean
   addedAt: number
 }
+
+// Tipo para añadir favoritos (campos mínimos requeridos)
+export type AddFavoriteInput = Pick<Anime, 'mal_id' | 'title' | 'images'> & Partial<Pick<Anime, 'score' | 'year' | 'episodes' | 'genres' | 'airing' | 'title_english'>>
 
 export const useFavoritesStore = defineStore('favorites', () => {
   const favorites = ref<FavoriteAnime[]>([])
@@ -22,7 +25,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
     return favorites.value.some(fav => fav.mal_id === malId)
   }
 
-  const addFavorite = (anime: Anime) => {
+  const addFavorite = (anime: AddFavoriteInput) => {
     if (isFavorite(anime.mal_id)) return
 
     const favorite: FavoriteAnime = {
@@ -48,7 +51,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
     }
   }
 
-  const toggleFavorite = (anime: Anime) => {
+  const toggleFavorite = (anime: AddFavoriteInput) => {
     if (isFavorite(anime.mal_id)) {
       removeFavorite(anime.mal_id)
     }

@@ -190,9 +190,10 @@
 
 <script setup lang="ts">
 import type { Anime } from '~~/shared/types/anime'
+import type { FavoriteAnime } from '~/stores/favorites'
 
 const props = defineProps<{
-  anime: Anime
+  anime: Anime | FavoriteAnime
 }>()
 
 const favoritesStore = useFavoritesStore()
