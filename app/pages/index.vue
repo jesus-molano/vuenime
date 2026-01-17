@@ -17,7 +17,7 @@
           <!-- Título con efecto de gradiente -->
           <h1 class="mb-3 text-2xl font-black tracking-tight xs:text-3xl sm:text-4xl md:mb-6 md:text-5xl lg:text-7xl">
             <span class="text-rp-text">{{ $t('home.title') }}</span>
-            <br >
+            <br />
             <span class="bg-linear-to-r from-[#c4a7e7] via-[#ebbcba] to-[#eb6f92] bg-clip-text text-transparent">
               {{ $t('home.titleHighlight') }}
             </span>
@@ -45,8 +45,8 @@
               :placeholder="$t('home.searchPlaceholder')"
               :aria-label="$t('common.search')"
               autocomplete="off"
-              class="min-w-0 flex-1 bg-transparent text-sm text-rp-text placeholder-rp-muted outline-none sm:text-base"
-            >
+              class="min-w-0 flex-1 bg-transparent text-sm text-rp-text placeholder-rp-subtle outline-none sm:text-base"
+            />
             <button
               type="submit"
               :disabled="!searchQuery.trim()"

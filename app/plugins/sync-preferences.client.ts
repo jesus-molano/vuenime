@@ -1,10 +1,16 @@
 import type { LocaleCode } from '~/stores/preferences'
+import type { Ref } from 'vue'
+
+interface I18nInstance {
+  locale: Ref<string>
+  setLocale: (locale: string) => Promise<void>
+}
 
 export default defineNuxtPlugin((nuxtApp) => {
   // Esperar a que la app esté lista para acceder a i18n
   nuxtApp.hook('app:mounted', () => {
     const preferencesStore = usePreferencesStore()
-    const i18n = nuxtApp.$i18n
+    const i18n = nuxtApp.$i18n as I18nInstance | undefined
 
     if (!i18n) return
 

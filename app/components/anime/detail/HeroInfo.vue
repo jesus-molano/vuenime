@@ -145,8 +145,9 @@
         <span
           v-if="index < anime.studios.length - 1"
           class="text-rp-muted"
-        >,</span
         >
+          ,
+        </span>
       </template>
     </div>
   </div>

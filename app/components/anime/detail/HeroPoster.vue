@@ -12,7 +12,7 @@
         :alt="$t('anime.coverAlt', { title: anime.title })"
         :style="{ viewTransitionName: `poster-${anime.mal_id}` }"
         class="aspect-3/4 w-full object-cover"
-      >
+      />
 
       <!-- Shimmer effect on hover -->
       <div

@@ -12,7 +12,18 @@ export function useFavoriteToggle(
 ) {
   const favoritesStore = useFavoritesStore()
 
-  const isFavorite = computed(() => favoritesStore.isFavorite(anime.value.mal_id))
+  // Track if component is mounted to avoid hydration mismatch
+  // Server always returns false, client updates after mount
+  const isMounted = ref(false)
+  onMounted(() => {
+    isMounted.value = true
+  })
+
+  const isFavorite = computed(() => {
+    // Return false on server/before mount to match server-rendered HTML
+    if (!isMounted.value) return false
+    return favoritesStore.isFavorite(anime.value.mal_id)
+  })
   const isAnimating = ref(false)
   const isRemoving = ref(false)
 

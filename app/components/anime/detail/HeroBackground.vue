@@ -16,7 +16,7 @@
       :alt="title"
       class="size-full scale-110 object-cover"
       :class="[hasTrailerImage ? 'blur-sm' : 'blur-2xl', youtubeId && isDesktop ? 'opacity-30' : 'opacity-100']"
-    >
+    />
 
     <!-- Dark overlay -->
     <div class="absolute inset-0 bg-rp-base/60" />

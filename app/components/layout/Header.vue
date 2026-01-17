@@ -14,7 +14,8 @@
         :aria-label="$t('nav.home')"
       >
         <span class="text-base font-bold md:text-lg">
-          <span class="text-rp-text">Vue</span><span class="text-rp-iris">Nime</span>
+          <span class="text-rp-text">Vue</span>
+          <span class="text-rp-iris">Nime</span>
         </span>
         <svg
           xmlns="http://www.w3.org/2000/svg"

@@ -24,7 +24,7 @@
           :style="borderMaskStyle"
           aria-hidden="true"
           draggable="false"
-        >
+        />
       </div>
 
       <!-- Card inner content -->
@@ -47,7 +47,7 @@
               class="size-full object-cover select-none"
               loading="lazy"
               draggable="false"
-            >
+            />
             <!-- Badge de puntuación -->
             <div
               v-if="anime.score"
@@ -153,7 +153,7 @@
               class="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 select-none"
               draggable="false"
               loading="lazy"
-            >
+            />
           </NuxtLink>
 
           <!-- Gradient overlay -->

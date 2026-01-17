@@ -36,8 +36,8 @@
             v-model="searchInput"
             type="search"
             :placeholder="$t('home.searchPlaceholder')"
-            class="min-w-0 flex-1 bg-transparent text-sm text-rp-text placeholder-rp-muted outline-none"
-          >
+            class="min-w-0 flex-1 bg-transparent text-sm text-rp-text placeholder-rp-subtle outline-none"
+          />
         </form>
 
         <!-- Filters Button -->
@@ -117,7 +117,7 @@
                   @keyup.enter="applyYearFilter"
                   @blur="applyYearFilter"
                   @input="validateYear"
-                >
+                />
                 <p
                   v-if="yearError"
                   class="mt-1 text-xs text-rp-love"
@@ -142,7 +142,7 @@
                   class="w-full rounded-lg border border-rp-overlay/50 bg-rp-base px-3 py-2 text-sm text-rp-text outline-none transition-colors focus:border-rp-iris"
                   @focus="showGenreDropdown = true"
                   @blur="closeGenreDropdown"
-                >
+                />
 
                 <!-- Dropdown -->
                 <Transition
@@ -224,10 +224,7 @@
           <button
             type="button"
             class="ml-1 rounded-full p-0.5 hover:bg-rp-iris/30"
-            @click="
-              selectedType = null
-              updateUrl()
-            "
+            @click="clearTypeFilter"
           >
             <UIcon
               name="i-heroicons-x-mark"
@@ -243,10 +240,7 @@
           <button
             type="button"
             class="ml-1 rounded-full p-0.5 hover:bg-rp-foam/30"
-            @click="
-              selectedGenre = ''
-              updateUrl()
-            "
+            @click="clearGenreFilter"
           >
             <UIcon
               name="i-heroicons-x-mark"
@@ -262,10 +256,7 @@
           <button
             type="button"
             class="ml-1 rounded-full p-0.5 hover:bg-rp-gold/30"
-            @click="
-              selectedYear = null
-              updateUrl()
-            "
+            @click="clearYearFilter"
           >
             <UIcon
               name="i-heroicons-x-mark"
@@ -449,6 +440,22 @@ const applyYearFilter = () => {
 // Toggle type
 const toggleType = (value: string) => {
   selectedType.value = selectedType.value === value ? null : value
+  updateUrl()
+}
+
+// Clear filter functions
+const clearTypeFilter = () => {
+  selectedType.value = null
+  updateUrl()
+}
+
+const clearGenreFilter = () => {
+  selectedGenre.value = ''
+  updateUrl()
+}
+
+const clearYearFilter = () => {
+  selectedYear.value = null
   updateUrl()
 }
 

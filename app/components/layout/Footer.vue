@@ -11,8 +11,9 @@
           <span
             class="text-rp-muted"
             aria-hidden="true"
-          >&#8226;</span
           >
+            &#8226;
+          </span>
           <span>{{ $t('footer.dataFrom') }}</span>
           <a
             href="https://jikan.moe"

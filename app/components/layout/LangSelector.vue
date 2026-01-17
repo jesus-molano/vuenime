@@ -15,8 +15,9 @@
       <span
         class="text-xs font-bold uppercase"
         aria-hidden="true"
-      >{{ locale }}</span
       >
+        {{ locale }}
+      </span>
       <UIcon
         name="i-heroicons-chevron-down"
         class="size-3.5 text-rp-subtle transition-transform"

@@ -9,6 +9,19 @@ export default withNuxt({
     'vue/html-closing-bracket-newline': 'off',
     'vue/singleline-html-element-content-newline': 'off',
     'vue/multiline-html-element-content-newline': 'off',
+    // Permitir self-closing en elementos void (compatible con Prettier)
+    'vue/html-self-closing': [
+      'error',
+      {
+        html: {
+          void: 'any',
+          normal: 'always',
+          component: 'always',
+        },
+        svg: 'always',
+        math: 'always',
+      },
+    ],
     // Mantener indentación consistente
     'vue/html-indent': [
       'error',

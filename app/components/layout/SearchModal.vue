@@ -27,13 +27,14 @@
               :placeholder="$t('home.searchPlaceholder')"
               :aria-label="$t('common.search')"
               autocomplete="off"
-              class="flex-1 bg-transparent text-lg text-rp-text placeholder-rp-muted outline-none"
-            >
+              class="flex-1 bg-transparent text-lg text-rp-text placeholder-rp-subtle outline-none"
+            />
             <kbd
               class="rounded-lg bg-rp-overlay px-2.5 py-1 text-xs font-medium text-rp-text"
               aria-hidden="true"
-            >ESC</kbd
             >
+              ESC
+            </kbd>
           </form>
 
           <div

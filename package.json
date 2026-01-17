@@ -17,8 +17,10 @@
     "test:e2e:ui": "playwright test --ui",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "typecheck": "vue-tsc --noEmit",
     "format": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "prepush": "npm run lint && npm run typecheck && npm run build"
   },
   "dependencies": {
     "@nuxt/eslint": "1.12.1",
