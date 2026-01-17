@@ -35,6 +35,7 @@ export default defineNuxtConfig({
       login: '/login',
       callback: '/confirm',
     },
+    types: '~~/shared/types/database.ts',
   },
 
   // Image optimization - use 'none' provider for external CDN images
