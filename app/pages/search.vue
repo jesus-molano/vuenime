@@ -74,10 +74,10 @@
           class="relative z-20 mb-6 rounded-xl border border-rp-overlay/50 bg-rp-surface/50 p-4 backdrop-blur-sm"
         >
           <div class="space-y-4">
-            <!-- Row 1: Type + Year -->
-            <div class="grid gap-4 sm:grid-cols-2">
+            <!-- Row 1: Type + Year (inline) -->
+            <div class="flex flex-wrap items-end gap-4">
               <!-- Type -->
-              <div>
+              <div class="flex-1">
                 <h4 class="mb-2 text-xs font-semibold uppercase tracking-wider text-rp-subtle">
                   {{ $t('anime.type') }}
                 </h4>
@@ -99,18 +99,18 @@
                 </div>
               </div>
 
-              <!-- Year Input -->
-              <div>
+              <!-- Year Input (compact) -->
+              <div class="w-24 shrink-0">
                 <h4 class="mb-2 text-xs font-semibold uppercase tracking-wider text-rp-subtle">
                   {{ $t('search.year') }}
                 </h4>
                 <input
                   v-model="yearInput"
                   type="number"
-                  :placeholder="$t('search.enterYear')"
+                  :placeholder="currentYear.toString()"
                   :min="1960"
                   :max="currentYear + 1"
-                  class="w-full rounded-lg border bg-rp-base px-3 py-2 text-sm text-rp-text outline-none transition-colors"
+                  class="w-full rounded-lg border bg-rp-base px-2.5 py-1.5 text-center text-sm text-rp-text outline-none transition-colors"
                   :class="
                     yearError ? 'border-rp-love focus:border-rp-love' : 'border-rp-overlay/50 focus:border-rp-iris'
                   "
