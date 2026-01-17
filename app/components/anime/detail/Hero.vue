@@ -10,7 +10,7 @@
     <button
       type="button"
       :aria-pressed="isFavorite"
-      class="absolute right-4 top-20 z-30 flex size-12 items-center justify-center rounded-full shadow-lg transition-all hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base md:right-6 md:top-24 md:size-14"
+      class="hero-fav-button absolute right-4 top-20 z-30 flex size-12 items-center justify-center rounded-full shadow-lg transition-all hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base md:top-24 md:size-14"
       :class="
         isFavorite
           ? 'bg-rp-love text-white focus-visible:ring-rp-love'
@@ -53,3 +53,10 @@ const toggleFavorite = () => {
   favoritesStore.toggleFavorite(props.anime)
 }
 </script>
+
+<style scoped>
+/* Keep within container bounds on large screens */
+.hero-fav-button {
+  right: max(1rem, calc((100vw - 1280px) / 2 + 1.5rem));
+}
+</style>

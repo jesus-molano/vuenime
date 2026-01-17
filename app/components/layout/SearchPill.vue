@@ -23,7 +23,7 @@
   <button
     type="button"
     :aria-label="$t('common.search')"
-    class="group fixed right-6 top-7 z-40 hidden items-center gap-1.5 rounded-xl border border-rp-overlay/50 bg-rp-surface/90 px-2.5 py-2 shadow-lg shadow-rp-base/30 backdrop-blur-xl transition-all duration-300 hover:border-rp-iris/50 hover:bg-rp-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base lg:flex"
+    class="search-pill-desktop group fixed top-7 z-40 hidden items-center gap-1.5 rounded-xl border border-rp-overlay/50 bg-rp-surface/90 px-2.5 py-2 shadow-lg shadow-rp-base/30 backdrop-blur-xl transition-all duration-300 hover:border-rp-iris/50 hover:bg-rp-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base lg:flex"
     @click="$emit('click')"
   >
     <UIcon
@@ -67,5 +67,10 @@ defineEmits<{
 
 .search-text-container > span {
   min-width: 0;
+}
+
+/* Keep within container bounds on large screens */
+.search-pill-desktop {
+  right: max(1.5rem, calc((100vw - 1280px) / 2 + 1.5rem));
 }
 </style>
