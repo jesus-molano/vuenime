@@ -93,20 +93,22 @@
                 :items="watchedMenuItems"
                 :content="{ align: 'end' }"
               >
-                <button
-                  type="button"
-                  class="flex items-center gap-1 rounded-md bg-rp-surface p-1.5 text-rp-subtle transition-colors hover:bg-rp-overlay hover:text-rp-text sm:rounded-lg sm:p-2"
-                  :title="$t('watched.markAsWatched')"
-                >
-                  <UIcon
-                    name="i-heroicons-eye"
-                    class="size-3.5 sm:size-4"
-                  />
-                  <UIcon
-                    name="i-heroicons-chevron-down"
-                    class="size-3 sm:size-3.5"
-                  />
-                </button>
+                <div class="flex items-center rounded-md bg-rp-surface p-0.5 sm:rounded-lg sm:p-1">
+                  <button
+                    type="button"
+                    class="flex items-center gap-0.5 rounded p-1 text-rp-subtle transition-colors hover:bg-rp-overlay hover:text-rp-text sm:rounded-md sm:gap-1 sm:p-1.5"
+                    :title="$t('watched.markAsWatched')"
+                  >
+                    <UIcon
+                      name="i-heroicons-eye"
+                      class="size-3.5 sm:size-4"
+                    />
+                    <UIcon
+                      name="i-heroicons-chevron-down"
+                      class="size-2.5 sm:size-3"
+                    />
+                  </button>
+                </div>
               </UDropdownMenu>
 
               <!-- View toggle -->
