@@ -16,7 +16,7 @@
 
     <!-- Desktop label -->
     <div class="flex flex-wrap items-center justify-center gap-2 md:justify-start md:gap-3">
-      <span class="hidden text-sm font-semibold text-white/70 md:inline">{{ $t('anime.watchOn') }}:</span>
+      <span class="hidden text-sm font-semibold text-white md:inline">{{ $t('anime.watchOn') }}:</span>
 
       <!-- Streaming buttons -->
       <a

@@ -26,13 +26,15 @@
       </NuxtLink>
 
       <div
-        class="h-4 w-px bg-white/10"
+        class="h-4 w-px bg-white/10 transition-opacity duration-300 md:opacity-100"
+        :class="isScrolled ? 'opacity-0 md:opacity-100' : 'opacity-100'"
         aria-hidden="true"
       />
 
       <div
         ref="menuRef"
-        class="flex items-center gap-1 md:gap-2"
+        class="flex items-center gap-1 transition-opacity duration-300 md:gap-2 md:opacity-100"
+        :class="isScrolled ? 'pointer-events-none opacity-0 md:pointer-events-auto md:opacity-100' : 'opacity-100'"
         role="group"
         :aria-label="$t('nav.main')"
       >
