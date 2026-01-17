@@ -253,5 +253,14 @@
     "pagination": "ページネーション",
     "prevPage": "前のページ",
     "nextPage": "次のページ"
+  },
+  "watched": {
+    "markAsWatched": "視聴済みにする",
+    "markAsUnwatched": "未視聴にする",
+    "watched": "視聴済み",
+    "watchedCount": "{count}話視聴済み",
+    "markAllWatched": "すべて視聴済みにする",
+    "clearAllWatched": "視聴履歴をクリア",
+    "progress": "{watched}/{total}話"
   }
 }
