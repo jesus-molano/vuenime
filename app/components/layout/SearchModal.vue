@@ -26,7 +26,7 @@
           </form>
 
           <div class="p-4" role="menu" :aria-label="$t('search.quickActions')">
-            <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-rp-subtle" id="quick-actions-label">
+            <p id="quick-actions-label" class="mb-3 text-xs font-semibold uppercase tracking-wider text-rp-subtle">
               {{ $t('search.quickActions') }}
             </p>
             <div class="grid grid-cols-2 gap-2" aria-labelledby="quick-actions-label">

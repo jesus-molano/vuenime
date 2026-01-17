@@ -135,7 +135,7 @@
           </NuxtLink>
 
           <!-- Gradient overlay -->
-          <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+          <div class="pointer-events-none absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent" />
 
           <!-- Glare effect -->
           <div
@@ -226,79 +226,20 @@ const props = defineProps<{
   anime: Anime | FavoriteAnime
 }>()
 
-const favoritesStore = useFavoritesStore()
-
 // 3D Tilt Effect
-const cardRef = ref<HTMLElement | null>(null)
-const rotateX = ref(0)
-const rotateY = ref(0)
-const glareX = ref(50)
-const glareY = ref(50)
-const isHovering = ref(false)
-
-const cardTransform = computed(() => ({
-  transform: isHovering.value
-    ? `rotateX(${rotateX.value}deg) rotateY(${rotateY.value}deg) scale3d(1.02, 1.02, 1.02)`
-    : 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
-}))
-
-const glareStyle = computed(() => ({
-  background: `radial-gradient(circle at ${glareX.value}% ${glareY.value}%, rgba(255,255,255,0.15) 0%, transparent 50%)`,
-}))
-
-// Máscara que sigue el cursor para mostrar los colores de la imagen solo cerca del ratón
-const borderMaskStyle = computed(() => ({
-  maskImage: `radial-gradient(circle at ${glareX.value}% ${glareY.value}%, black 0%, transparent 40%)`,
-  WebkitMaskImage: `radial-gradient(circle at ${glareX.value}% ${glareY.value}%, black 0%, transparent 40%)`,
-}))
-
-const handleMouseMove = (e: MouseEvent) => {
-  if (!cardRef.value || window.innerWidth < 640) return
-
-  const rect = cardRef.value.getBoundingClientRect()
-  const x = e.clientX - rect.left
-  const y = e.clientY - rect.top
-  const centerX = rect.width / 2
-  const centerY = rect.height / 2
-
-  // Rotación máxima de 6 grados
-  rotateY.value = ((x - centerX) / centerX) * 6
-  rotateX.value = -((y - centerY) / centerY) * 6
-
-  // Posición del glare
-  glareX.value = (x / rect.width) * 100
-  glareY.value = (y / rect.height) * 100
-
-  isHovering.value = true
-}
-
-const handleMouseLeave = () => {
-  isHovering.value = false
-  rotateX.value = 0
-  rotateY.value = 0
-}
+const {
+  cardRef,
+  isHovering,
+  cardTransform,
+  glareStyle,
+  borderMaskStyle,
+  handleMouseMove,
+  handleMouseLeave,
+} = useCard3DTilt({ maxRotation: 6, minWidth: 640 })
 
 // Favorites
-const isFavorite = computed(() => favoritesStore.isFavorite(props.anime.mal_id))
-const isAnimating = ref(false)
-
-const toggleFavorite = () => {
-  isAnimating.value = true
-  favoritesStore.toggleFavorite({
-    mal_id: props.anime.mal_id,
-    title: props.anime.title,
-    images: props.anime.images,
-    score: props.anime.score,
-    year: props.anime.year,
-    episodes: props.anime.episodes,
-    genres: props.anime.genres,
-    airing: props.anime.airing,
-  })
-
-  setTimeout(() => {
-    isAnimating.value = false
-  }, 600)
-}
+const animeRef = toRef(props, 'anime')
+const { isFavorite, isAnimating, toggleFavorite } = useFavoriteToggle(animeRef)
 </script>
 
 <style scoped>
