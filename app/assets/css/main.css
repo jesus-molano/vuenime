@@ -91,3 +91,44 @@
   --tw-ring-color: rgb(var(--rp-iris));
   --tw-ring-offset-color: rgb(var(--rp-base));
 }
+
+/* View Transitions API */
+@supports (view-transition-name: none) {
+  /* Animación por defecto para las páginas */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.3s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Estado saliente: se desvanece */
+  ::view-transition-old(root) {
+    animation-name: fade-out;
+  }
+
+  /* Estado entrante: aparece */
+  ::view-transition-new(root) {
+    animation-name: fade-in;
+  }
+
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+      animation: none !important;
+    }
+  }
+}
