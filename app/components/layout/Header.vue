@@ -93,6 +93,8 @@
       </div>
 
       <LayoutLangSelector />
+
+      <AuthButton />
     </nav>
   </header>
 </template>

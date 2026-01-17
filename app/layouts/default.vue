@@ -8,10 +8,7 @@
       @click="toggleSearch"
     />
 
-    <LayoutSearchModal
-      :is-open="isSearchOpen"
-      @close="toggleSearch"
-    />
+    <LayoutSearchModal v-model="isSearchOpen" />
 
     <LayoutMobileDock
       :is-visible="isScrolled"

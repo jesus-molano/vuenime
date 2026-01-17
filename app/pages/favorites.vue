@@ -76,49 +76,65 @@
 
         <!-- Favorites Grid -->
         <template v-else>
-          <!-- Sort Controls -->
+          <!-- Controls -->
           <div class="mb-6 flex flex-wrap items-center justify-between gap-4 md:mb-8">
             <p class="text-sm text-rp-subtle">
               {{ $t('favorites.showing', { count: favoritesCount }) }}
             </p>
 
-            <!-- Sort Buttons with Animated Indicator -->
-            <div
-              ref="sortContainerRef"
-              class="relative flex rounded-xl bg-rp-surface/80 p-1 ring-1 ring-rp-overlay/50 backdrop-blur-sm"
-              role="group"
-              :aria-label="$t('favorites.sortLabel')"
-            >
-              <!-- Animated background indicator -->
-              <div
-                class="sort-indicator absolute inset-y-1 rounded-lg bg-linear-to-r from-rp-iris to-rp-love shadow-lg shadow-rp-iris/25 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
-                :style="indicatorStyle"
-              />
-
-              <UTooltip
-                v-for="option in sortOptions"
-                :key="option.value"
-                :text="option.label"
-                :delay-duration="200"
+            <div class="flex items-center gap-3">
+              <!-- Clear All Button -->
+              <button
+                type="button"
+                class="inline-flex items-center gap-2 rounded-lg bg-rp-love/10 px-3 py-2 text-sm text-rp-love transition-all hover:bg-rp-love/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
+                @click="showClearConfirm = true"
               >
-                <button
-                  :data-sort="option.value"
-                  type="button"
-                  :aria-pressed="sortBy === option.value"
-                  :aria-label="option.label"
-                  class="sort-button relative z-10 flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
-                  :class="sortBy === option.value ? 'text-white' : 'text-rp-subtle hover:text-rp-text'"
-                  @click="preferencesStore.setFavoritesSortBy(option.value)"
+                <UIcon
+                  name="i-heroicons-trash"
+                  class="size-4"
+                  aria-hidden="true"
+                />
+                <span class="hidden sm:inline">{{ $t('favorites.clearAll') }}</span>
+              </button>
+
+              <!-- Sort Buttons with Animated Indicator -->
+              <div
+                ref="sortContainerRef"
+                class="relative flex rounded-xl bg-rp-surface/80 p-1 ring-1 ring-rp-overlay/50 backdrop-blur-sm"
+                role="group"
+                :aria-label="$t('favorites.sortLabel')"
+              >
+                <!-- Animated background indicator -->
+                <div
+                  class="sort-indicator absolute inset-y-1 rounded-lg bg-linear-to-r from-rp-iris to-rp-love shadow-lg shadow-rp-iris/25 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+                  :style="indicatorStyle"
+                />
+
+                <UTooltip
+                  v-for="option in sortOptions"
+                  :key="option.value"
+                  :text="option.label"
+                  :delay-duration="200"
                 >
-                  <UIcon
-                    :name="option.icon"
-                    class="size-4 transition-transform duration-200"
-                    :class="sortBy === option.value ? 'scale-110' : 'scale-100'"
-                    aria-hidden="true"
-                  />
-                  <span class="hidden xs:inline">{{ option.label }}</span>
-                </button>
-              </UTooltip>
+                  <button
+                    :data-sort="option.value"
+                    type="button"
+                    :aria-pressed="sortBy === option.value"
+                    :aria-label="option.label"
+                    class="sort-button relative z-10 flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
+                    :class="sortBy === option.value ? 'text-white' : 'text-rp-subtle hover:text-rp-text'"
+                    @click="preferencesStore.setFavoritesSortBy(option.value)"
+                  >
+                    <UIcon
+                      :name="option.icon"
+                      class="size-4 transition-transform duration-200"
+                      :class="sortBy === option.value ? 'scale-110' : 'scale-100'"
+                      aria-hidden="true"
+                    />
+                    <span class="hidden xs:inline">{{ option.label }}</span>
+                  </button>
+                </UTooltip>
+              </div>
             </div>
           </div>
 
@@ -141,73 +157,58 @@
             class="mt-8"
             @update:current-page="scrollToTop"
           />
-
-          <!-- Clear All Button -->
-          <div class="mt-12 text-center">
-            <button
-              type="button"
-              class="inline-flex items-center gap-2 rounded-lg bg-rp-surface px-4 py-2 text-sm text-rp-subtle transition-all hover:bg-rp-love/20 hover:text-rp-love focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
-              @click="showClearConfirm = true"
-            >
-              <UIcon
-                name="i-heroicons-trash"
-                class="size-4"
-                aria-hidden="true"
-              />
-              {{ $t('favorites.clearAll') }}
-            </button>
-          </div>
         </template>
       </UContainer>
     </section>
 
     <!-- Clear Confirmation Modal -->
-    <UModal v-model:open="showClearConfirm">
-      <template #content>
-        <div
-          class="p-6 text-center"
-          role="alertdialog"
-          aria-labelledby="clear-dialog-title"
-          aria-describedby="clear-dialog-desc"
-        >
-          <div class="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-rp-love/20">
-            <UIcon
-              name="i-heroicons-exclamation-triangle"
-              class="size-8 text-rp-love"
-              aria-hidden="true"
-            />
-          </div>
-          <h3
-            id="clear-dialog-title"
-            class="text-lg font-semibold text-rp-text"
-          >
-            {{ $t('favorites.clearConfirmTitle') }}
-          </h3>
-          <p
-            id="clear-dialog-desc"
-            class="mt-2 text-sm text-rp-subtle"
-          >
-            {{ $t('favorites.clearConfirmDesc') }}
-          </p>
-          <div class="mt-6 flex justify-center gap-3">
-            <button
-              type="button"
-              class="rounded-lg bg-rp-surface px-4 py-2 text-sm font-medium text-rp-text transition-all hover:bg-rp-overlay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
-              @click="showClearConfirm = false"
-            >
-              {{ $t('common.cancel') }}
-            </button>
-            <button
-              type="button"
-              class="rounded-lg bg-rp-love px-4 py-2 text-sm font-medium text-white transition-all hover:bg-rp-love/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
-              @click="handleClearAll"
-            >
-              {{ $t('favorites.clearAll') }}
-            </button>
-          </div>
+    <UiModal
+      v-model:open="showClearConfirm"
+      aria-labelled-by="clear-dialog-title"
+      content-class="max-w-sm"
+    >
+      <div
+        class="p-6 text-center"
+        role="alertdialog"
+        aria-describedby="clear-dialog-desc"
+      >
+        <div class="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-rp-love/20">
+          <UIcon
+            name="i-heroicons-exclamation-triangle"
+            class="size-8 text-rp-love"
+            aria-hidden="true"
+          />
         </div>
-      </template>
-    </UModal>
+        <h3
+          id="clear-dialog-title"
+          class="text-lg font-semibold text-rp-text"
+        >
+          {{ $t('favorites.clearConfirmTitle') }}
+        </h3>
+        <p
+          id="clear-dialog-desc"
+          class="mt-2 text-sm text-rp-subtle"
+        >
+          {{ $t('favorites.clearConfirmDesc') }}
+        </p>
+        <div class="mt-6 flex justify-center gap-3">
+          <button
+            type="button"
+            class="rounded-lg bg-rp-surface px-4 py-2 text-sm font-medium text-rp-text transition-all hover:bg-rp-overlay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
+            @click="showClearConfirm = false"
+          >
+            {{ $t('common.cancel') }}
+          </button>
+          <button
+            type="button"
+            class="rounded-lg bg-rp-love px-4 py-2 text-sm font-medium text-white transition-all hover:bg-rp-love/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
+            @click="handleClearAll"
+          >
+            {{ $t('favorites.clearAll') }}
+          </button>
+        </div>
+      </div>
+    </UiModal>
   </div>
 </template>
 

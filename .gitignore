@@ -29,3 +29,4 @@ coverage/
 # Playwright
 playwright-report/
 test-results/
+.mcp.json

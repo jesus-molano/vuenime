@@ -1,0 +1,68 @@
+export function useAuth() {
+  const supabase = useSupabaseClient()
+  const user = useSupabaseUser()
+  const localePath = useLocalePath()
+
+  const isAuthenticated = computed(() => !!user.value)
+
+  const redirectUrl = computed(() => {
+    if (import.meta.client) {
+      return `${window.location.origin}${localePath('/confirm')}`
+    }
+    return localePath('/confirm')
+  })
+
+  async function signInWithGoogle() {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: redirectUrl.value,
+      },
+    })
+    if (error) throw error
+  }
+
+  async function signInWithApple() {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'apple',
+      options: {
+        redirectTo: redirectUrl.value,
+      },
+    })
+    if (error) throw error
+  }
+
+  async function signInWithEmail(email: string, password: string) {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+    if (error) throw error
+  }
+
+  async function signUpWithEmail(email: string, password: string) {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: redirectUrl.value,
+      },
+    })
+    if (error) throw error
+  }
+
+  async function signOut() {
+    const { error } = await supabase.auth.signOut()
+    if (error) throw error
+  }
+
+  return {
+    user,
+    isAuthenticated,
+    signInWithGoogle,
+    signInWithApple,
+    signInWithEmail,
+    signUpWithEmail,
+    signOut,
+  }
+}

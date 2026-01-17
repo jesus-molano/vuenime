@@ -193,6 +193,27 @@
     "visualArts": "ビジュアルアーツ",
     "workplace": "お仕事"
   },
+  "auth": {
+    "signIn": "ログイン",
+    "signUp": "新規登録",
+    "signOut": "ログアウト",
+    "welcomeBack": "おかえりなさい",
+    "createAccount": "アカウント作成",
+    "signInToSync": "ログインしてデバイス間でお気に入りを同期",
+    "continueWithGoogle": "Googleで続ける",
+    "continueWithApple": "Appleで続ける",
+    "orContinueWith": "またはメールで続ける",
+    "email": "メールアドレス",
+    "emailPlaceholder": "your{'@'}email.com",
+    "password": "パスワード",
+    "passwordPlaceholder": "パスワードを入力",
+    "haveAccount": "アカウントをお持ちですか？ログイン",
+    "noAccount": "アカウントをお持ちでないですか？新規登録",
+    "haveAccountQuestion": "アカウントをお持ちですか？",
+    "noAccountQuestion": "アカウントをお持ちでないですか？",
+    "termsNotice": "ログインすると、利用規約とプライバシーポリシーに同意したことになります",
+    "confirming": "アカウントを確認中..."
+  },
   "favorites": {
     "title": "お気に入り",
     "subtitle": "あなたのお気に入りアニメコレクション",

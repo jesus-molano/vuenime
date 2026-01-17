@@ -23,9 +23,19 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxt/image',
     '@nuxtjs/i18n',
+    '@nuxtjs/supabase',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
   ],
+
+  // Supabase configuration - auth is optional, no forced redirects
+  supabase: {
+    redirect: false,
+    redirectOptions: {
+      login: '/login',
+      callback: '/confirm',
+    },
+  },
 
   // Image optimization - use 'none' provider for external CDN images
   image: {

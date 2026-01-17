@@ -199,6 +199,27 @@
     "visualArts": "Artes Visuales",
     "workplace": "Trabajo"
   },
+  "auth": {
+    "signIn": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "signOut": "Cerrar Sesión",
+    "welcomeBack": "Bienvenido de nuevo",
+    "createAccount": "Crear cuenta",
+    "signInToSync": "Inicia sesión para sincronizar tus favoritos en todos tus dispositivos",
+    "continueWithGoogle": "Continuar con Google",
+    "continueWithApple": "Continuar con Apple",
+    "orContinueWith": "o continuar con email",
+    "email": "Email",
+    "emailPlaceholder": "tu{'@'}email.com",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Tu contraseña",
+    "haveAccount": "¿Ya tienes cuenta? Inicia sesión",
+    "noAccount": "¿No tienes cuenta? Regístrate",
+    "haveAccountQuestion": "¿Ya tienes cuenta?",
+    "noAccountQuestion": "¿No tienes cuenta?",
+    "termsNotice": "Al iniciar sesión, aceptas nuestros Términos de Servicio y Política de Privacidad",
+    "confirming": "Confirmando tu cuenta..."
+  },
   "favorites": {
     "title": "Mis Favoritos",
     "subtitle": "Tu colección personal de anime que te encanta",

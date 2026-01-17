@@ -264,3 +264,32 @@
     }
   }
 }
+
+/* ===========================================
+   Modal Transitions
+   =========================================== */
+
+/* Backdrop fade */
+.modal-backdrop-enter-active,
+.modal-backdrop-leave-active {
+  transition: opacity 0.2s ease-out;
+}
+
+.modal-backdrop-enter-from,
+.modal-backdrop-leave-to {
+  opacity: 0;
+}
+
+/* Panel scale + fade */
+.modal-panel-enter-active,
+.modal-panel-leave-active {
+  transition:
+    opacity 0.2s ease-out,
+    transform 0.2s ease-out;
+}
+
+.modal-panel-enter-from,
+.modal-panel-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
