@@ -87,5 +87,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
     sortFavoritesByTitle,
   }
 }, {
-  persist: true,
+  persist: {
+    storage: persistedState.localStorage,
+  },
 })

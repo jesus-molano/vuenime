@@ -82,12 +82,11 @@
           </div>
 
           <!-- Grid -->
-          <div class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:grid-cols-5">
-            <FavoriteCard
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 xl:grid-cols-5 xl:gap-6">
+            <AnimeCard
               v-for="anime in displayedFavorites"
               :key="anime.mal_id"
               :anime="anime"
-              @remove="handleRemove"
             />
           </div>
 
@@ -139,11 +138,9 @@
 </template>
 
 <script setup lang="ts">
-import type { FavoriteAnime } from '~/stores/favorites'
-
 const { t } = useI18n()
 const favoritesStore = useFavoritesStore()
-const { favorites, favoritesCount } = storeToRefs(favoritesStore)
+const { favoritesCount } = storeToRefs(favoritesStore)
 
 const showClearConfirm = ref(false)
 const sortBy = ref<'recent' | 'score' | 'title'>('recent')
@@ -164,10 +161,6 @@ const displayedFavorites = computed(() => {
       return favoritesStore.sortedFavorites
   }
 })
-
-const handleRemove = (malId: number) => {
-  favoritesStore.removeFavorite(malId)
-}
 
 const handleClearAll = () => {
   favoritesStore.clearFavorites()
