@@ -8,11 +8,11 @@
   >
     <UIcon
       name="i-heroicons-magnifying-glass"
-      class="size-4 text-rp-muted transition-colors group-hover:text-rp-iris"
+      class="size-4 text-white/80 transition-colors group-hover:text-rp-iris"
       aria-hidden="true"
     />
     <kbd
-      class="rounded bg-rp-overlay/80 px-1.5 py-0.5 text-[10px] font-medium text-rp-muted"
+      class="rounded bg-white/20 px-1.5 py-0.5 text-[10px] font-medium text-white/90"
       aria-hidden="true"
     >
       ⌘K
@@ -28,7 +28,7 @@
   >
     <UIcon
       name="i-heroicons-magnifying-glass"
-      class="size-3.5 text-rp-muted transition-colors group-hover:text-rp-iris"
+      class="size-3.5 text-white/80 transition-colors group-hover:text-rp-iris"
       aria-hidden="true"
     />
     <!-- Text container with grid animation -->
@@ -36,12 +36,12 @@
       class="search-text-container grid transition-all duration-300 ease-out"
       :class="isScrolled ? 'grid-cols-[1fr]' : 'grid-cols-[0fr]'"
     >
-      <span class="overflow-hidden whitespace-nowrap text-xs text-rp-subtle">
+      <span class="overflow-hidden whitespace-nowrap text-xs text-white/90">
         {{ $t('home.searchPlaceholder') }}
       </span>
     </div>
     <kbd
-      class="rounded bg-rp-overlay/80 px-1 py-0.5 text-[10px] font-medium text-rp-muted"
+      class="rounded bg-white/20 px-1 py-0.5 text-[10px] font-medium text-white/90"
       aria-hidden="true"
     >
       ⌘K

@@ -49,8 +49,7 @@
             />
             <button
               type="submit"
-              :disabled="!searchQuery.trim()"
-              class="shrink-0 rounded-lg bg-rp-iris px-3 py-1.5 text-xs font-semibold text-white transition-all hover:bg-rp-iris/90 disabled:opacity-50 disabled:cursor-not-allowed sm:px-4 sm:py-2 sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
+              class="shrink-0 rounded-lg bg-rp-iris px-3 py-1.5 text-xs font-semibold text-white transition-all hover:bg-rp-iris/90 sm:px-4 sm:py-2 sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
             >
               {{ $t('common.search') }}
             </button>
@@ -154,6 +153,8 @@ const searchQuery = ref('')
 const handleSearch = () => {
   if (searchQuery.value.trim()) {
     router.push({ path: localePath('/search'), query: { q: searchQuery.value.trim() } })
+  } else {
+    router.push(localePath('/search'))
   }
 }
 

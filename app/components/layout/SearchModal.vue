@@ -115,10 +115,12 @@ watch(
 )
 
 const handleSearch = () => {
+  emit('close')
   if (query.value.trim()) {
     searchQuery.value = query.value.trim()
-    emit('close')
     router.push({ path: localePath('/search'), query: { q: query.value.trim() } })
+  } else {
+    router.push(localePath('/search'))
   }
 }
 
