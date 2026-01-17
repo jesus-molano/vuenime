@@ -213,6 +213,9 @@
     "sortTitle": "Título",
     "clearAll": "Eliminar Todo",
     "clearConfirmTitle": "¿Eliminar todos los favoritos?",
-    "clearConfirmDesc": "Esta acción no se puede deshacer. Todos tus anime guardados serán eliminados."
+    "clearConfirmDesc": "Esta acción no se puede deshacer. Todos tus anime guardados serán eliminados.",
+    "pagination": "Paginación",
+    "prevPage": "Página anterior",
+    "nextPage": "Página siguiente"
   }
 }

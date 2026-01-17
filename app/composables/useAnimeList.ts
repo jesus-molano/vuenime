@@ -3,7 +3,7 @@ import { PAGINATION } from '~~/shared/constants/api'
 
 export const useAnimeList = () => {
   const allAnime = ref<Anime[]>([])
-  const currentPage = ref(PAGINATION.DEFAULT_PAGE)
+  const currentPage = ref<number>(PAGINATION.DEFAULT_PAGE)
   const hasNextPage = ref(true)
   const isLoadingMore = ref(false)
   const totalItems = ref(0)

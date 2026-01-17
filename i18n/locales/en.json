@@ -213,6 +213,9 @@
     "sortTitle": "Title",
     "clearAll": "Clear All",
     "clearConfirmTitle": "Clear all favorites?",
-    "clearConfirmDesc": "This action cannot be undone. All your saved anime will be removed."
+    "clearConfirmDesc": "This action cannot be undone. All your saved anime will be removed.",
+    "pagination": "Pagination",
+    "prevPage": "Previous page",
+    "nextPage": "Next page"
   }
 }

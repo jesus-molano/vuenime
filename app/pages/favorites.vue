@@ -134,6 +134,14 @@
             />
           </div>
 
+          <!-- Pagination -->
+          <UiPagination
+            v-model:current-page="currentPage"
+            :total-pages="totalPages"
+            class="mt-8"
+            @update:current-page="scrollToTop"
+          />
+
           <!-- Clear All Button -->
           <div class="mt-12 text-center">
             <button
@@ -204,6 +212,8 @@
 </template>
 
 <script setup lang="ts">
+import { PAGINATION } from '~~/shared/constants/api'
+
 const { t } = useI18n()
 const localePath = useLocalePath()
 const favoritesStore = useFavoritesStore()
@@ -212,6 +222,8 @@ const { favoritesCount } = storeToRefs(favoritesStore)
 const { favoritesSortBy: sortBy } = storeToRefs(preferencesStore)
 
 const showClearConfirm = ref(false)
+const currentPage = ref(1)
+const itemsPerPage = PAGINATION.DEFAULT_LIMIT
 
 // Ref for sort container
 const sortContainerRef = ref<HTMLElement | null>(null)
@@ -250,7 +262,8 @@ const indicatorStyle = computed(() => {
   }
 })
 
-const displayedFavorites = computed(() => {
+// Get sorted favorites based on current sort option
+const sortedFavorites = computed(() => {
   switch (sortBy.value) {
     case 'score':
       return favoritesStore.sortedByScore
@@ -260,6 +273,31 @@ const displayedFavorites = computed(() => {
       return favoritesStore.sortedByRecent
   }
 })
+
+// Pagination
+const totalPages = computed(() => Math.ceil(favoritesCount.value / itemsPerPage))
+
+const displayedFavorites = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  const end = start + itemsPerPage
+  return sortedFavorites.value.slice(start, end)
+})
+
+// Reset to page 1 when sort changes
+watch(sortBy, () => {
+  currentPage.value = 1
+})
+
+// Ensure current page is valid when favorites are removed
+watch(favoritesCount, () => {
+  if (currentPage.value > totalPages.value && totalPages.value > 0) {
+    currentPage.value = totalPages.value
+  }
+})
+
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
 const handleClearAll = () => {
   favoritesStore.clearFavorites()
