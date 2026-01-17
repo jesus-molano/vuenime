@@ -2,52 +2,46 @@ import type { Anime, AnimeListResponse } from '~~/shared/types'
 import { PAGINATION } from '~~/shared/constants/api'
 
 export const useAnimeList = () => {
-  const allAnime = ref<Anime[]>([])
-  const currentPage = ref<number>(PAGINATION.DEFAULT_PAGE)
-  const hasNextPage = ref(true)
-  const isLoadingMore = ref(false)
-  const totalItems = ref(0)
+  // Persisted state (survives client navigation)
+  const animeList = useState<Anime[]>('home-anime-list', () => [])
+  const currentPage = useState('home-current-page', () => 1)
+  const hasNextPage = useState('home-has-next', () => true)
+  const totalItems = useState('home-total', () => 0)
 
-  // Initial fetch with SSR support
+  // Local state
+  const isLoadingMore = ref(false)
+  const loadMoreError = ref<string | null>(null)
+
+  // SSR: Fetch only if no data
+  const shouldFetch = animeList.value.length === 0
+
   const {
-    data: initialData,
+    data,
     status,
     error,
-    refresh: refreshInitial,
+    refresh: refetch,
   } = useFetch<AnimeListResponse>('/api/jikan/anime', {
-    key: 'anime-list',
+    key: 'anime-list-home',
     query: { page: PAGINATION.DEFAULT_PAGE, limit: PAGINATION.DEFAULT_LIMIT },
-    default: () => ({
-      data: [],
-      pagination: {
-        has_next_page: false,
-        current_page: 1,
-        last_visible_page: 1,
-        items: { count: 0, total: 0, per_page: PAGINATION.DEFAULT_LIMIT },
-      },
-    }),
+    immediate: shouldFetch,
+    watch: false,
   })
 
-  // Watch initial data and populate allAnime
-  watch(
-    initialData,
-    (newData) => {
-      if (newData?.data && currentPage.value === PAGINATION.DEFAULT_PAGE) {
-        allAnime.value = newData.data
-        hasNextPage.value = newData.pagination?.has_next_page ?? false
-        totalItems.value = newData.pagination?.items?.total ?? 0
-      }
-    },
-    { immediate: true }
-  )
+  // Initialize with SSR data
+  if (data.value?.data && animeList.value.length === 0) {
+    animeList.value = data.value.data
+    hasNextPage.value = data.value.pagination?.has_next_page ?? false
+    totalItems.value = data.value.pagination?.items?.total ?? 0
+  }
 
-  const isLoading = computed(() => status.value === 'pending')
+  const isLoading = computed(() => status.value === 'pending' && animeList.value.length === 0)
 
-  // Load more function - client side only
+  // Load more (client-side)
   const loadMore = async () => {
-    if (!hasNextPage.value || isLoadingMore.value || isLoading.value) return
+    if (!hasNextPage.value || isLoadingMore.value) return
 
     isLoadingMore.value = true
+    loadMoreError.value = null
 
     try {
       const nextPage = currentPage.value + 1
@@ -56,36 +50,41 @@ export const useAnimeList = () => {
       })
 
       if (response?.data) {
-        // Filter duplicates by mal_id
-        const existingIds = new Set(allAnime.value.map((a) => a.mal_id))
+        const existingIds = new Set(animeList.value.map((a) => a.mal_id))
         const newAnime = response.data.filter((a) => !existingIds.has(a.mal_id))
-        allAnime.value = [...allAnime.value, ...newAnime]
+        animeList.value = [...animeList.value, ...newAnime]
         currentPage.value = nextPage
         hasNextPage.value = response.pagination?.has_next_page ?? false
       }
     } catch (e) {
-      console.error('Failed to load more anime:', e)
+      loadMoreError.value = e instanceof Error ? e.message : 'Failed to load more'
     } finally {
       isLoadingMore.value = false
     }
   }
 
-  // Refresh - reset to page 1
+  // Refresh - reset everything
   const refresh = async () => {
-    currentPage.value = PAGINATION.DEFAULT_PAGE
-    allAnime.value = []
+    currentPage.value = 1
+    animeList.value = []
     hasNextPage.value = true
-    await refreshInitial()
+    loadMoreError.value = null
+    await refetch()
+    if (data.value?.data) {
+      animeList.value = data.value.data
+      hasNextPage.value = data.value.pagination?.has_next_page ?? false
+      totalItems.value = data.value.pagination?.items?.total ?? 0
+    }
   }
 
   return {
-    animeList: allAnime,
+    animeList,
     isLoading,
     isLoadingMore,
     hasNextPage,
     totalItems,
-    currentPage,
     error,
+    loadMoreError,
     loadMore,
     refresh,
   }

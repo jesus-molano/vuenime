@@ -13,6 +13,5 @@ export interface FavoriteAnime {
   addedAt: number
 }
 
-// Tipo para añadir favoritos (campos mínimos requeridos)
 export type AddFavoriteInput = Pick<Anime, 'mal_id' | 'title' | 'images'> &
   Partial<Pick<Anime, 'score' | 'year' | 'episodes' | 'genres' | 'airing' | 'title_english'>>

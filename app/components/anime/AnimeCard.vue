@@ -1,10 +1,6 @@
 <template>
-  <!-- Skeleton while image loads -->
-  <AnimeCardSkeleton v-if="!isImageLoaded" />
-
   <!-- Wrapper con perspective para el efecto 3D -->
   <div
-    v-show="isImageLoaded"
     ref="wrapperRef"
     class="group card-perspective relative"
     @mouseenter="onCardHover"
@@ -54,7 +50,6 @@
               loading="lazy"
               draggable="false"
               placeholder
-              @load="onImageLoad"
             />
             <UiScoreBadge
               v-if="anime.score"
@@ -114,7 +109,6 @@
               draggable="false"
               loading="lazy"
               placeholder
-              @load="onImageLoad"
             />
           </NuxtLink>
 
@@ -191,12 +185,6 @@ const props = withDefaults(
 
 // Wrapper ref for remove animation
 const wrapperRef = ref<HTMLElement | null>(null)
-
-// Image loading state
-const isImageLoaded = ref(false)
-const onImageLoad = () => {
-  isImageLoaded.value = true
-}
 
 // 3D Tilt Effect
 const { cardRef, isHovering, cardTransform, glareStyle, borderMaskStyle, handleMouseMove, handleMouseLeave } =
