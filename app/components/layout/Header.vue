@@ -17,62 +17,12 @@
           <span class="text-rp-text">Vue</span>
           <span class="text-rp-iris">Nime</span>
         </span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 48 32"
-          fill="none"
-          width="20"
-          height="14"
-          class="straw-hat w-5 -rotate-12 drop-shadow-md md:w-6"
+        <img
+          src="~/assets/icons/straw-hat.svg"
+          alt=""
           aria-hidden="true"
-        >
-          <ellipse
-            cx="24"
-            cy="26"
-            rx="23"
-            ry="5"
-            fill="#f6e3ce"
-          />
-          <ellipse
-            cx="24"
-            cy="27"
-            rx="22"
-            ry="4"
-            fill="#e8d5b7"
-            opacity="0.5"
-          />
-          <ellipse
-            cx="24"
-            cy="16"
-            rx="14"
-            ry="12"
-            fill="#f6e3ce"
-          />
-          <ellipse
-            cx="26"
-            cy="14"
-            rx="10"
-            ry="8"
-            fill="#ffffff"
-            opacity="0.3"
-          />
-          <rect
-            x="10"
-            y="20"
-            width="28"
-            height="5"
-            rx="1"
-            fill="#eb6f92"
-          />
-          <rect
-            x="10"
-            y="23"
-            width="28"
-            height="2"
-            rx="1"
-            fill="#d4627f"
-          />
-        </svg>
+          class="straw-hat w-5 -rotate-12 drop-shadow-md md:w-6"
+        />
       </NuxtLink>
 
       <div
@@ -85,7 +35,6 @@
         class="flex items-center gap-1 md:gap-2"
         role="group"
         :aria-label="$t('nav.main')"
-        @keydown="handleMenuKeydown"
       >
         <UTooltip
           :text="$t('nav.explore')"
@@ -152,13 +101,6 @@ defineProps<{
 }>()
 
 const localePath = useLocalePath()
-
-// Refs for keyboard navigation
-const menuRef = ref<HTMLElement | null>(null)
-const exploreRef = ref<HTMLElement | null>(null)
-const favoritesRef = ref<HTMLElement | null>(null)
-
-// Check if mobile (text is hidden below sm breakpoint - 640px)
 const isMobile = ref(false)
 
 onMounted(() => {
@@ -169,27 +111,6 @@ onMounted(() => {
   window.addEventListener('resize', checkMobile)
   onUnmounted(() => window.removeEventListener('resize', checkMobile))
 })
-
-// Arrow key navigation between menu items (optional enhancement)
-const handleMenuKeydown = (e: KeyboardEvent) => {
-  const items = [exploreRef.value, favoritesRef.value].filter(Boolean) as HTMLElement[]
-  const currentIndex = items.findIndex((item) => item === document.activeElement)
-
-  if (currentIndex === -1) return
-
-  switch (e.key) {
-    case 'ArrowRight':
-    case 'ArrowDown':
-      e.preventDefault()
-      items[(currentIndex + 1) % items.length]?.focus()
-      break
-    case 'ArrowLeft':
-    case 'ArrowUp':
-      e.preventDefault()
-      items[(currentIndex - 1 + items.length) % items.length]?.focus()
-      break
-  }
-}
 </script>
 
 <style scoped>
@@ -220,49 +141,14 @@ const handleMenuKeydown = (e: KeyboardEvent) => {
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
 }
 
-@keyframes fire {
-  0%,
-  100% {
-    transform: scale(1) rotate(0deg);
-    filter: drop-shadow(0 0 2px #f6c177);
-  }
-  25% {
-    transform: scale(1.15) rotate(-5deg);
-    filter: drop-shadow(0 0 6px #f6c177);
-  }
-  50% {
-    transform: scale(1.2) rotate(3deg);
-    filter: drop-shadow(0 0 8px #eb6f92);
-  }
-  75% {
-    transform: scale(1.15) rotate(-3deg);
-    filter: drop-shadow(0 0 6px #f6c177);
-  }
-}
-
+/* Uses global animations from main.css */
 .nav-link-explore:hover .nav-icon-fire {
-  animation: fire 0.4s ease-in-out infinite;
-}
-
-@keyframes heartbeat {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  25% {
-    transform: scale(1.2);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  75% {
-    transform: scale(1.25);
-  }
+  animation: nav-fire 0.4s ease-in-out infinite;
 }
 
 .group:hover .nav-icon-heart {
-  animation: heartbeat 0.6s ease-in-out infinite;
-  filter: drop-shadow(0 0 4px #eb6f92);
+  animation: nav-heartbeat 0.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgb(var(--rp-love)));
 }
 
 .nav-icon-favorites::before,
@@ -272,7 +158,7 @@ const handleMenuKeydown = (e: KeyboardEvent) => {
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: #eb6f92;
+  background: rgb(var(--rp-love));
   opacity: 0;
   pointer-events: none;
 }
@@ -280,34 +166,12 @@ const handleMenuKeydown = (e: KeyboardEvent) => {
 .group:hover .nav-icon-favorites::before {
   top: 0;
   right: 0;
-  animation: particle1 0.8s ease-out infinite;
+  animation: nav-particle-right 0.8s ease-out infinite;
 }
 
 .group:hover .nav-icon-favorites::after {
   top: 0;
   left: 0;
-  animation: particle2 0.8s ease-out 0.2s infinite;
-}
-
-@keyframes particle1 {
-  0% {
-    opacity: 1;
-    transform: translate(0, 0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(6px, -8px) scale(0);
-  }
-}
-
-@keyframes particle2 {
-  0% {
-    opacity: 1;
-    transform: translate(0, 0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-6px, -8px) scale(0);
-  }
+  animation: nav-particle-left 0.8s ease-out 0.2s infinite;
 }
 </style>

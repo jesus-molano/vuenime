@@ -1,3 +1,4 @@
+import { defineStore } from 'pinia'
 import type { FavoriteAnime, AddFavoriteInput } from '~/types/favorites'
 
 // Re-export types for backwards compatibility

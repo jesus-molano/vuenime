@@ -220,7 +220,7 @@
           v-if="selectedType"
           class="flex items-center gap-1 rounded-full bg-rp-iris/20 px-3 py-1 text-sm text-rp-iris"
         >
-          {{ typeOptions.find((type) => type.value === selectedType)?.label }}
+          {{ selectedTypeLabel }}
           <button
             type="button"
             class="ml-1 rounded-full p-0.5 hover:bg-rp-iris/30"
@@ -236,7 +236,7 @@
           v-if="selectedGenre"
           class="flex items-center gap-1 rounded-full bg-rp-foam/20 px-3 py-1 text-sm text-rp-foam"
         >
-          {{ genres.find((g) => g.value === selectedGenre)?.label }}
+          {{ selectedGenreLabel }}
           <button
             type="button"
             class="ml-1 rounded-full p-0.5 hover:bg-rp-foam/30"
@@ -327,170 +327,38 @@ import type { AnimeListResponse } from '~~/shared/types'
 import { PAGINATION } from '~~/shared/constants/api'
 
 const { t } = useI18n()
-const route = useRoute()
-const router = useRouter()
-const localePath = useLocalePath()
-const { translateType, getTranslatedGenre } = useAnimeTranslations()
 
-// UI state
-const showFilters = ref(false)
-
-// Query params from URL
-const queryParam = computed(() => (route.query.q as string) || '')
-const typeFilter = computed(() => (route.query.type as string) || '')
-const yearFilter = computed(() => (route.query.year as string) || '')
-const genresFilter = computed(() => (route.query.genres as string) || '')
-const nameParam = computed(() => (route.query.name as string) || '')
-
-// Local filter state
-const searchInput = ref(queryParam.value)
-const debouncedSearch = ref(queryParam.value)
-const selectedType = ref<string | null>(typeFilter.value || null)
-const selectedYear = ref<string | null>(yearFilter.value || null)
-const selectedGenre = ref(genresFilter.value || '')
-
-// Debounce search input
-let searchTimeout: ReturnType<typeof setTimeout> | null = null
-watch(searchInput, (newValue) => {
-  if (searchTimeout) clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(() => {
-    debouncedSearch.value = newValue
-  }, 500)
-})
-
-// Type options (all from Jikan API) - translated
-const typeKeys = ['tv', 'movie', 'ova', 'ona', 'special', 'music', 'cm', 'pv', 'tv_special']
-const typeOptions = computed(() => typeKeys.map((key) => ({ value: key, label: translateType(key) })))
-
-// Fetch genres from API
-const { data: genresData } = useFetch<{ data: { mal_id: number; name: string }[] }>('/api/jikan/genres/anime', {
-  key: 'anime-genres',
-  default: () => ({ data: [] }),
-})
-
-const genres = computed(() => genresData.value?.data?.map((g) => getTranslatedGenre(g)) || [])
-
-// Popular genres (top 10)
-const popularGenres = computed(() => genres.value.slice(0, 10))
-
-// Genre search
-const genreSearch = ref('')
-const showGenreDropdown = ref(false)
-
-const filteredGenres = computed(() => {
-  if (!genreSearch.value) return genres.value
-  const search = genreSearch.value.toLowerCase()
-  return genres.value.filter((g) => g.label.toLowerCase().includes(search))
-})
-
-const selectGenre = (value: string) => {
-  selectedGenre.value = value
-  genreSearch.value = ''
-  showGenreDropdown.value = false
-  updateUrl()
-}
-
-// Close dropdown when clicking outside
-const closeGenreDropdown = () => {
-  setTimeout(() => {
-    showGenreDropdown.value = false
-  }, 150)
-}
-
-// Year input
-const currentYear = new Date().getFullYear()
-const yearInput = ref(selectedYear.value || '')
-const yearError = ref('')
-
-const validateYear = () => {
-  if (!yearInput.value) {
-    yearError.value = ''
-    return true
-  }
-  const year = parseInt(yearInput.value)
-  if (isNaN(year)) {
-    yearError.value = t('search.yearInvalid')
-    return false
-  }
-  if (year < 1960) {
-    yearError.value = t('search.yearTooOld')
-    return false
-  }
-  if (year > currentYear + 1) {
-    yearError.value = t('search.yearTooNew')
-    return false
-  }
-  yearError.value = ''
-  return true
-}
-
-const applyYearFilter = () => {
-  if (!validateYear()) return
-
-  const year = parseInt(yearInput.value)
-  if (year >= 1960 && year <= currentYear + 1) {
-    selectedYear.value = String(year)
-    updateUrl()
-  } else if (!yearInput.value) {
-    selectedYear.value = null
-    updateUrl()
-  }
-}
-
-// Toggle type
-const toggleType = (value: string) => {
-  selectedType.value = selectedType.value === value ? null : value
-  updateUrl()
-}
-
-// Clear filter functions
-const clearTypeFilter = () => {
-  selectedType.value = null
-  updateUrl()
-}
-
-const clearGenreFilter = () => {
-  selectedGenre.value = ''
-  updateUrl()
-}
-
-const clearYearFilter = () => {
-  selectedYear.value = null
-  updateUrl()
-}
-
-// Computed
-const activeFiltersCount = computed(() => {
-  let count = 0
-  if (selectedType.value) count++
-  if (selectedYear.value) count++
-  if (selectedGenre.value) count++
-  return count
-})
-
-const hasActiveFilters = computed(
-  () => !!(debouncedSearch.value || selectedType.value || selectedYear.value || selectedGenre.value)
-)
-
-const searchTitle = computed(() => {
-  if (debouncedSearch.value) return `"${debouncedSearch.value}"`
-  if (nameParam.value) return nameParam.value
-
-  const parts: string[] = []
-  if (selectedGenre.value) {
-    const genre = genres.value.find((g) => g.value === selectedGenre.value)
-    if (genre) parts.push(genre.label)
-  }
-  if (selectedType.value) {
-    const type = typeOptions.value.find((tp) => tp.value === selectedType.value)
-    if (type) parts.push(type.label)
-  }
-  if (selectedYear.value) {
-    parts.push(selectedYear.value)
-  }
-
-  return parts.join(' · ')
-})
+const {
+  showFilters,
+  showGenreDropdown,
+  genreSearch,
+  searchInput,
+  debouncedSearch,
+  selectedType,
+  selectedYear,
+  selectedGenre,
+  yearInput,
+  yearError,
+  currentYear,
+  typeOptions,
+  popularGenres,
+  filteredGenres,
+  activeFiltersCount,
+  hasActiveFilters,
+  searchTitle,
+  selectedTypeLabel,
+  selectedGenreLabel,
+  toggleType,
+  applyYearFilter,
+  validateYear,
+  selectGenre,
+  closeGenreDropdown,
+  clearTypeFilter,
+  clearGenreFilter,
+  clearYearFilter,
+  clearAllFilters,
+  updateUrl,
+} = useSearchFilters()
 
 // API params
 const apiParams = computed(() => {
@@ -522,44 +390,9 @@ const { data: searchResults, status } = useFetch<AnimeListResponse>('/api/jikan/
 
 const isLoading = computed(() => status.value === 'pending' && hasActiveFilters.value)
 
-// URL management
-const updateUrl = (includeSearch = false) => {
-  const queryParams: Record<string, string> = {}
-  if (includeSearch && searchInput.value) queryParams.q = searchInput.value
-  else if (debouncedSearch.value) queryParams.q = debouncedSearch.value
-  if (selectedType.value) queryParams.type = selectedType.value
-  if (selectedYear.value) queryParams.year = selectedYear.value
-  if (selectedGenre.value) queryParams.genres = selectedGenre.value
-
-  router.push({ path: localePath('/search'), query: queryParams })
-}
-
 const handleSearch = () => {
-  // Immediate search on Enter
   updateUrl(true)
 }
-
-const clearAllFilters = () => {
-  selectedType.value = null
-  selectedYear.value = null
-  yearInput.value = ''
-  selectedGenre.value = ''
-  searchInput.value = ''
-  router.push(localePath('/search'))
-}
-
-// Sync with URL
-watch(
-  () => route.query,
-  (newQuery) => {
-    searchInput.value = (newQuery.q as string) || ''
-    selectedType.value = (newQuery.type as string) || null
-    selectedYear.value = (newQuery.year as string) || null
-    yearInput.value = (newQuery.year as string) || ''
-    selectedGenre.value = (newQuery.genres as string) || ''
-  },
-  { immediate: true }
-)
 
 useSeoMeta({
   title: () => `${searchTitle.value || t('nav.explore')} | VueNime`,

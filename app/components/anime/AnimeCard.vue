@@ -318,16 +318,6 @@ const onCardHover = () => {
   isolation: isolate;
 }
 
-@keyframes heart-beat {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.3);
-  }
-}
-
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
   .card-3d,

@@ -114,55 +114,13 @@ const localePath = useLocalePath()
   transform: translateY(20px);
 }
 
-@keyframes fire {
-  0%,
-  100% {
-    transform: scale(1) rotate(0deg);
-    filter: drop-shadow(0 0 2px #f6c177);
-  }
-
-  25% {
-    transform: scale(1.15) rotate(-5deg);
-    filter: drop-shadow(0 0 6px #f6c177);
-  }
-
-  50% {
-    transform: scale(1.2) rotate(3deg);
-    filter: drop-shadow(0 0 8px #eb6f92);
-  }
-
-  75% {
-    transform: scale(1.15) rotate(-3deg);
-    filter: drop-shadow(0 0 6px #f6c177);
-  }
-}
-
 .nav-link-explore:hover .nav-icon-fire {
-  animation: fire 0.4s ease-in-out infinite;
-}
-
-@keyframes heartbeat {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-
-  25% {
-    transform: scale(1.2);
-  }
-
-  50% {
-    transform: scale(1.1);
-  }
-
-  75% {
-    transform: scale(1.25);
-  }
+  animation: nav-fire 0.4s ease-in-out infinite;
 }
 
 .group:hover .nav-icon-heart {
-  animation: heartbeat 0.6s ease-in-out infinite;
-  filter: drop-shadow(0 0 4px #eb6f92);
+  animation: nav-heartbeat 0.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgb(var(--rp-love)));
 }
 
 .nav-icon-favorites::before,
@@ -172,7 +130,7 @@ const localePath = useLocalePath()
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: #eb6f92;
+  background: rgb(var(--rp-love));
   opacity: 0;
   pointer-events: none;
 }
@@ -180,36 +138,12 @@ const localePath = useLocalePath()
 .group:hover .nav-icon-favorites::before {
   top: 0;
   right: 0;
-  animation: particle1 0.8s ease-out infinite;
+  animation: nav-particle-right 0.8s ease-out infinite;
 }
 
 .group:hover .nav-icon-favorites::after {
   top: 0;
   left: 0;
-  animation: particle2 0.8s ease-out 0.2s infinite;
-}
-
-@keyframes particle1 {
-  0% {
-    opacity: 1;
-    transform: translate(0, 0) scale(1);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(6px, -8px) scale(0);
-  }
-}
-
-@keyframes particle2 {
-  0% {
-    opacity: 1;
-    transform: translate(0, 0) scale(1);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(-6px, -8px) scale(0);
-  }
+  animation: nav-particle-left 0.8s ease-out 0.2s infinite;
 }
 </style>

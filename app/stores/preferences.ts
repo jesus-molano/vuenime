@@ -1,3 +1,5 @@
+import { defineStore } from 'pinia'
+
 export type SortOption = 'recent' | 'score' | 'title'
 export type LocaleCode = 'en' | 'es' | 'ja'
 
