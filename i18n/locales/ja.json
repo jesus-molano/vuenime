@@ -54,7 +54,10 @@
     "searchPlaceholder": "タイトル、ジャンルでアニメを検索...",
     "trending": "トレンド",
     "trendingSubtitle": "今季最も人気のアニメ",
+    "showingCount": "{total}件中{current}件を表示",
     "endOfList": "リストの最後に到達しました",
+    "loadMoreError": "読み込みに失敗しました",
+    "backToTop": "トップに戻る",
     "stats": {
       "titles": "25,000作品以上",
       "updated": "毎日更新"

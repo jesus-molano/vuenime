@@ -82,11 +82,18 @@
     <!-- Grid de Animes -->
     <section class="py-6 sm:py-8 md:py-12">
       <UContainer class="px-4 sm:px-6">
-        <!-- Section header -->
+        <!-- Section header with counter -->
         <div class="mb-4 flex items-center justify-between sm:mb-6 md:mb-8">
           <div>
             <h2 class="text-lg font-bold text-rp-text sm:text-xl md:text-2xl">{{ $t('home.trending') }}</h2>
-            <p class="text-[10px] text-rp-muted sm:text-xs md:text-sm">{{ $t('home.trendingSubtitle') }}</p>
+            <p class="text-[10px] text-rp-muted sm:text-xs md:text-sm">
+              <template v-if="itemsCount > 0 && totalItems > 0">
+                {{ $t('home.showingCount', { current: itemsCount, total: totalItems }) }}
+              </template>
+              <template v-else>
+                {{ $t('home.trendingSubtitle') }}
+              </template>
+            </p>
           </div>
         </div>
 
@@ -101,9 +108,9 @@
           />
         </div>
 
-        <!-- Error State -->
+        <!-- Initial Error State -->
         <div
-          v-else-if="error"
+          v-else-if="error && itemsCount === 0"
           class="flex flex-col items-center justify-center py-12 md:py-20"
           role="alert"
         >
@@ -118,7 +125,7 @@
           <button
             type="button"
             class="rounded-lg bg-rp-surface px-4 py-2 text-sm font-medium text-rp-text transition-all hover:bg-rp-overlay md:rounded-xl md:px-6 md:py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
-            @click="refresh()"
+            @click="store.refresh()"
           >
             {{ $t('common.retry') }}
           </button>
@@ -130,17 +137,18 @@
           class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 xl:grid-cols-5 xl:gap-6"
         >
           <AnimeCard
-            v-for="anime in animeList"
+            v-for="anime in items"
             :key="anime.mal_id"
             :anime="anime"
           />
         </div>
 
-        <!-- Load More Trigger & Loading -->
+        <!-- Load More Trigger & Status -->
         <div
           ref="loadMoreTrigger"
-          class="flex justify-center py-8"
+          class="flex flex-col items-center justify-center gap-4 py-8"
         >
+          <!-- Loading More -->
           <div
             v-if="isLoadingMore"
             class="flex items-center gap-3"
@@ -148,8 +156,29 @@
             <div class="size-5 animate-spin rounded-full border-2 border-rp-iris border-t-transparent" />
             <span class="text-sm text-rp-subtle">{{ $t('common.loading') }}</span>
           </div>
+
+          <!-- Load More Error with Retry -->
+          <div
+            v-else-if="error && itemsCount > 0"
+            class="flex flex-col items-center gap-3"
+          >
+            <p class="text-sm text-rp-love">{{ $t('home.loadMoreError') }}</p>
+            <button
+              type="button"
+              class="flex items-center gap-2 rounded-lg bg-rp-surface px-4 py-2 text-sm font-medium text-rp-text transition-all hover:bg-rp-overlay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
+              @click="retryLoadMore"
+            >
+              <UIcon
+                name="i-heroicons-arrow-path"
+                class="size-4"
+              />
+              {{ $t('common.retry') }}
+            </button>
+          </div>
+
+          <!-- End of List -->
           <p
-            v-else-if="!hasNextPage && animeList.length > 0"
+            v-else-if="!hasNextPage && itemsCount > 0"
             class="text-sm text-rp-muted"
           >
             {{ $t('home.endOfList') }}
@@ -157,6 +186,22 @@
         </div>
       </UContainer>
     </section>
+
+    <!-- Back to Top Button -->
+    <Transition name="fade-slide">
+      <button
+        v-show="showBackToTop"
+        type="button"
+        class="fixed bottom-24 right-4 z-40 flex size-12 items-center justify-center rounded-full bg-rp-surface shadow-lg ring-1 ring-white/10 transition-all hover:bg-rp-overlay hover:ring-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base md:bottom-8 md:right-8"
+        :aria-label="$t('home.backToTop')"
+        @click="scrollToTop"
+      >
+        <UIcon
+          name="i-heroicons-chevron-up"
+          class="size-6 text-rp-text"
+        />
+      </button>
+    </Transition>
   </div>
 </template>
 
@@ -165,12 +210,18 @@ import { PAGINATION } from '~~/shared/constants/api'
 
 const { t } = useI18n()
 const router = useRouter()
+const route = useRoute()
 const localePath = useLocalePath()
-const { animeList, isLoading, isLoadingMore, hasNextPage, error, loadMore, refresh } = useAnimeList()
+const store = useAnimeListStore()
+
+const { items, isLoading, isLoadingMore, hasNextPage, error, totalItems, itemsCount, lastScrollPosition } =
+  storeToRefs(store)
 
 const searchQuery = ref('')
 const loadMoreTrigger = ref<HTMLElement | null>(null)
+const showBackToTop = ref(false)
 
+// Handle search
 const handleSearch = () => {
   if (searchQuery.value.trim()) {
     router.push({ path: localePath('/search'), query: { q: searchQuery.value.trim() } })
@@ -179,24 +230,73 @@ const handleSearch = () => {
   }
 }
 
-// Infinite scroll with IntersectionObserver
-onMounted(() => {
-  if (!loadMoreTrigger.value) return
+// Retry load more after error
+const retryLoadMore = () => {
+  store.clearError()
+  store.loadMore()
+}
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      if (entries[0]?.isIntersecting && hasNextPage.value && !isLoadingMore.value) {
-        loadMore()
-      }
-    },
-    { rootMargin: '200px' }
-  )
+// Scroll to top
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
-  observer.observe(loadMoreTrigger.value)
+// Track scroll for back to top button and save position
+const handleScroll = () => {
+  showBackToTop.value = window.scrollY > 500
+  store.saveScrollPosition(window.scrollY)
+}
 
-  onUnmounted(() => {
-    observer.disconnect()
-  })
+// Sync page with URL
+const syncPageToUrl = () => {
+  const page = store.currentPage
+  if (page > 1) {
+    router.replace({ query: { ...route.query, page: String(page) } })
+  } else {
+    const { page: _, ...rest } = route.query
+    router.replace({ query: rest })
+  }
+}
+
+// Watch for page changes to sync URL
+watch(() => store.currentPage, syncPageToUrl)
+
+// Initialize
+onMounted(async () => {
+  // Fetch data if needed
+  await store.fetchInitialData()
+
+  // Restore scroll position
+  if (lastScrollPosition.value > 0) {
+    nextTick(() => {
+      window.scrollTo(0, lastScrollPosition.value)
+    })
+  }
+
+  // Setup scroll listener
+  window.addEventListener('scroll', handleScroll, { passive: true })
+
+  // Setup IntersectionObserver for infinite scroll
+  if (loadMoreTrigger.value) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && hasNextPage.value && !isLoadingMore.value && !error.value) {
+          store.loadMore()
+        }
+      },
+      { rootMargin: '200px' }
+    )
+
+    observer.observe(loadMoreTrigger.value)
+
+    onUnmounted(() => {
+      observer.disconnect()
+    })
+  }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
 })
 
 useSeoMeta({
@@ -206,3 +306,16 @@ useSeoMeta({
   ogDescription: t('home.subtitle'),
 })
 </script>
+
+<style scoped>
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.3s ease;
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+</style>

@@ -54,7 +54,10 @@
     "searchPlaceholder": "Search anime by title, genre...",
     "trending": "Trending Now",
     "trendingSubtitle": "The most popular anime this season",
+    "showingCount": "Showing {current} of {total} anime",
     "endOfList": "You've reached the end of the list",
+    "loadMoreError": "Failed to load more anime",
+    "backToTop": "Back to top",
     "stats": {
       "titles": "25,000+ Titles",
       "updated": "Updated daily"
