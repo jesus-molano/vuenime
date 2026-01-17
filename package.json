@@ -60,5 +60,8 @@
     "*.{json,css,md}": [
       "prettier --write"
     ]
+  },
+  "overrides": {
+    "@tiptap/extension-drag-handle": "3.13.0"
   }
 }

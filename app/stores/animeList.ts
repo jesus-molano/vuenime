@@ -24,8 +24,8 @@ export const useAnimeListStore = defineStore('animeList', () => {
     error.value = null
 
     try {
-      // If target page > 1, we need to load all pages up to that point
-      const pagesToLoad = Math.max(1, targetPage)
+      // Limit pages to restore to avoid long loading times
+      const pagesToLoad = Math.min(Math.max(1, targetPage), PAGINATION.MAX_PAGES_TO_RESTORE)
       const allItems: Anime[] = []
 
       for (let page = 1; page <= pagesToLoad; page++) {
