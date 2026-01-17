@@ -259,5 +259,14 @@
     "pagination": "Paginación",
     "prevPage": "Página anterior",
     "nextPage": "Página siguiente"
+  },
+  "watched": {
+    "markAsWatched": "Marcar como visto",
+    "markAsUnwatched": "Marcar como no visto",
+    "watched": "Visto",
+    "watchedCount": "{count} vistos",
+    "markAllWatched": "Marcar todos como vistos",
+    "clearAllWatched": "Limpiar vistos",
+    "progress": "{watched}/{total} episodios"
   }
 }

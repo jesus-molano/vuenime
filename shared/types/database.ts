@@ -93,4 +93,4 @@ export type Tables<T extends keyof Database['public']['Tables']> = Database['pub
 export type TablesInsert<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Insert']
 
 export type Favorite = Tables<'favorites'>
-export type WatchedEpisode = Tables<'watched_episodes'>
+export type DbWatchedEpisode = Tables<'watched_episodes'>

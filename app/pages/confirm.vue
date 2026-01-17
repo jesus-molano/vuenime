@@ -11,14 +11,25 @@
 </template>
 
 <script setup lang="ts">
+const AUTH_REDIRECT_KEY = 'auth_redirect_path'
+
 const user = useSupabaseUser()
 const localePath = useLocalePath()
+
+function getRedirectPath(): string {
+  if (import.meta.client) {
+    const path = localStorage.getItem(AUTH_REDIRECT_KEY)
+    localStorage.removeItem(AUTH_REDIRECT_KEY)
+    return path || localePath('/')
+  }
+  return localePath('/')
+}
 
 watch(
   user,
   (newUser) => {
     if (newUser) {
-      navigateTo(localePath('/'))
+      navigateTo(getRedirectPath())
     }
   },
   { immediate: true }

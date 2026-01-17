@@ -3,8 +3,8 @@ import { PAGINATION } from '~~/shared/constants/api'
 import { animeApi } from '~/services/api'
 
 export const useAnimeList = () => {
-  // Persisted state (survives client navigation)
-  const animeList = useState<Anime[]>('home-anime-list', () => [])
+  // Additional anime loaded via "load more" (client-side only)
+  const additionalAnime = useState<Anime[]>('home-additional-anime', () => [])
   const currentPage = useState('home-current-page', () => 1)
   const hasNextPage = useState('home-has-next', () => true)
   const totalItems = useState('home-total', () => 0)
@@ -13,9 +13,7 @@ export const useAnimeList = () => {
   const isLoadingMore = ref(false)
   const loadMoreError = ref<string | null>(null)
 
-  // SSR: Fetch only if no data
-  const shouldFetch = animeList.value.length === 0
-
+  // SSR fetch - this blocks rendering until data is available
   const {
     data,
     status,
@@ -24,16 +22,26 @@ export const useAnimeList = () => {
   } = useFetch<AnimeListResponse>('/api/jikan/anime', {
     key: 'anime-list-home',
     query: { page: PAGINATION.DEFAULT_PAGE, limit: PAGINATION.DEFAULT_LIMIT },
-    immediate: shouldFetch,
     watch: false,
   })
 
-  // Initialize with SSR data
-  if (data.value?.data && animeList.value.length === 0) {
-    animeList.value = data.value.data
-    hasNextPage.value = data.value.pagination?.has_next_page ?? false
-    totalItems.value = data.value.pagination?.items?.total ?? 0
-  }
+  // Computed anime list - combines SSR data with additional loaded data
+  const animeList = computed(() => {
+    const initialData = data.value?.data ?? []
+    return [...initialData, ...additionalAnime.value]
+  })
+
+  // Update pagination info when data changes
+  watch(
+    data,
+    (newData) => {
+      if (newData?.pagination) {
+        hasNextPage.value = newData.pagination.has_next_page ?? false
+        totalItems.value = newData.pagination.items?.total ?? 0
+      }
+    },
+    { immediate: true }
+  )
 
   const isLoading = computed(() => status.value === 'pending' && animeList.value.length === 0)
 
@@ -54,7 +62,7 @@ export const useAnimeList = () => {
       if (response?.data) {
         const existingIds = new Set(animeList.value.map((a) => a.mal_id))
         const newAnime = response.data.filter((a) => !existingIds.has(a.mal_id))
-        animeList.value = [...animeList.value, ...newAnime]
+        additionalAnime.value = [...additionalAnime.value, ...newAnime]
         currentPage.value = nextPage
         hasNextPage.value = response.pagination?.has_next_page ?? false
       }
@@ -68,15 +76,10 @@ export const useAnimeList = () => {
   // Refresh - reset everything
   const refresh = async () => {
     currentPage.value = 1
-    animeList.value = []
+    additionalAnime.value = []
     hasNextPage.value = true
     loadMoreError.value = null
     await refetch()
-    if (data.value?.data) {
-      animeList.value = data.value.data
-      hasNextPage.value = data.value.pagination?.has_next_page ?? false
-      totalItems.value = data.value.pagination?.items?.total ?? 0
-    }
   }
 
   return {

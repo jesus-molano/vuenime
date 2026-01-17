@@ -1,7 +1,10 @@
+const AUTH_REDIRECT_KEY = 'auth_redirect_path'
+
 export function useAuth() {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()
   const localePath = useLocalePath()
+  const route = useRoute()
 
   const isAuthenticated = computed(() => !!user.value)
 
@@ -12,7 +15,19 @@ export function useAuth() {
     return localePath('/confirm')
   })
 
+  // Save current path before OAuth redirect
+  function saveRedirectPath() {
+    if (import.meta.client) {
+      const currentPath = route.fullPath
+      // Don't save auth-related pages
+      if (!currentPath.includes('/confirm') && !currentPath.includes('/reset-password')) {
+        localStorage.setItem(AUTH_REDIRECT_KEY, currentPath)
+      }
+    }
+  }
+
   async function signInWithGoogle() {
+    saveRedirectPath()
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -23,6 +38,7 @@ export function useAuth() {
   }
 
   async function signInWithGitHub() {
+    saveRedirectPath()
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
@@ -33,6 +49,7 @@ export function useAuth() {
   }
 
   async function signInWithEmail(email: string, password: string) {
+    saveRedirectPath()
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,

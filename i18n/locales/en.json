@@ -259,5 +259,14 @@
     "pagination": "Pagination",
     "prevPage": "Previous page",
     "nextPage": "Next page"
+  },
+  "watched": {
+    "markAsWatched": "Mark as watched",
+    "markAsUnwatched": "Mark as unwatched",
+    "watched": "Watched",
+    "watchedCount": "{count} watched",
+    "markAllWatched": "Mark all as watched",
+    "clearAllWatched": "Clear watched",
+    "progress": "{watched}/{total} episodes"
   }
 }
