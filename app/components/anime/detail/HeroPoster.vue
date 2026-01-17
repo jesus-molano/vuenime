@@ -1,6 +1,5 @@
 <template>
   <div class="poster-container relative mx-auto w-44 shrink-0 md:mx-0 md:w-60 lg:w-72">
-    <!-- Glow Effect Behind Poster -->
     <div class="absolute -inset-6 rounded-3xl bg-rp-iris/30 blur-3xl" />
     <div class="absolute -inset-4 rounded-3xl bg-rp-rose/20 blur-2xl" />
 
@@ -10,17 +9,15 @@
       <NuxtImg
         :src="anime.images.webp.large_image_url"
         :alt="$t('anime.coverAlt', { title: anime.title })"
-        :style="{ viewTransitionName: `poster-${anime.mal_id}` }"
-        class="poster-image aspect-3/4 w-full object-cover"
+        :style="posterStyle"
+        class="aspect-3/4 w-full object-cover"
         placeholder
       />
 
-      <!-- Shimmer effect on hover -->
       <div
         class="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/10 to-transparent transition-transform duration-1000 group-hover:translate-x-full"
       />
 
-      <!-- Score Badge -->
       <UiScoreBadge
         v-if="anime.score"
         :score="anime.score"
@@ -28,7 +25,6 @@
         class="absolute right-3 top-3"
       />
 
-      <!-- Airing badge -->
       <UiAiringBadge
         v-if="anime.airing"
         size="md"
@@ -41,18 +37,9 @@
 <script setup lang="ts">
 import type { Anime } from '~~/shared/types/anime'
 
-defineProps<{
+const props = defineProps<{
   anime: Anime
 }>()
+
+const { posterStyle } = usePosterTransition(() => props.anime.mal_id)
 </script>
-
-<style scoped>
-.poster-container {
-  contain: layout style;
-}
-
-.poster-image {
-  contain: layout;
-  will-change: transform;
-}
-</style>
