@@ -2,39 +2,51 @@
   <Transition name="search-modal">
     <div
       v-if="isOpen"
+      role="dialog"
+      aria-modal="true"
+      :aria-label="$t('common.search')"
       class="fixed inset-0 z-60 flex items-start justify-center bg-rp-base/90 pt-[12vh] backdrop-blur-md"
-      @click.self="$emit('close')">
+      @click.self="$emit('close')"
+      @keydown.escape="$emit('close')"
+    >
       <div class="w-full max-w-2xl px-4">
         <div class="overflow-hidden rounded-2xl border border-rp-overlay/50 bg-rp-surface shadow-2xl shadow-rp-iris/10">
           <form class="flex items-center gap-3 border-b border-rp-overlay/50 px-5 py-4" @submit.prevent="handleSearch">
-            <UIcon name="i-heroicons-magnifying-glass" class="size-6 text-rp-iris" />
+            <UIcon name="i-heroicons-magnifying-glass" class="size-6 text-rp-iris" aria-hidden="true" />
             <input
-              ref="inputRef" v-model="query" type="text" :placeholder="$t('home.searchPlaceholder')"
+              ref="inputRef"
+              v-model="query"
+              type="search"
+              :placeholder="$t('home.searchPlaceholder')"
+              :aria-label="$t('common.search')"
+              autocomplete="off"
               class="flex-1 bg-transparent text-lg text-rp-text placeholder-rp-muted outline-none"
-              @keydown.escape="$emit('close')">
-            <kbd class="rounded-lg bg-rp-overlay px-2.5 py-1 text-xs font-medium text-rp-text">ESC</kbd>
+            >
+            <kbd class="rounded-lg bg-rp-overlay px-2.5 py-1 text-xs font-medium text-rp-text" aria-hidden="true">ESC</kbd>
           </form>
 
-          <div class="p-4">
-            <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-rp-subtle">
+          <div class="p-4" role="menu" :aria-label="$t('search.quickActions')">
+            <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-rp-subtle" id="quick-actions-label">
               {{ $t('search.quickActions') }}
             </p>
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-2 gap-2" aria-labelledby="quick-actions-label">
               <button
-                class="flex items-center gap-3 rounded-xl bg-rp-overlay/30 px-4 py-3 text-left transition-all hover:bg-rp-overlay/60"
-                @click="navigateAndClose('/')">
-                <UIcon name="i-heroicons-fire" class="size-5 text-rp-gold" />
-                <span class="text-sm font-medium text-rp-text">{{
-                  $t('nav.explore')
-                }}</span>
+                type="button"
+                role="menuitem"
+                class="flex items-center gap-3 rounded-xl bg-rp-overlay/30 px-4 py-3 text-left transition-all hover:bg-rp-overlay/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
+                @click="navigateAndClose('/')"
+              >
+                <UIcon name="i-heroicons-fire" class="size-5 text-rp-gold" aria-hidden="true" />
+                <span class="text-sm font-medium text-rp-text">{{ $t('nav.explore') }}</span>
               </button>
               <button
-                class="flex items-center gap-3 rounded-xl bg-rp-overlay/30 px-4 py-3 text-left transition-all hover:bg-rp-overlay/60"
-                @click="navigateAndClose('/favorites')">
-                <UIcon name="i-heroicons-heart" class="size-5 text-rp-love" />
-                <span class="text-sm font-medium text-rp-text">{{
-                  $t('nav.favorites')
-                }}</span>
+                type="button"
+                role="menuitem"
+                class="flex items-center gap-3 rounded-xl bg-rp-overlay/30 px-4 py-3 text-left transition-all hover:bg-rp-overlay/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
+                @click="navigateAndClose('/favorites')"
+              >
+                <UIcon name="i-heroicons-heart" class="size-5 text-rp-love" aria-hidden="true" />
+                <span class="text-sm font-medium text-rp-text">{{ $t('nav.favorites') }}</span>
               </button>
             </div>
           </div>

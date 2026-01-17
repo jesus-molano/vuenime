@@ -7,9 +7,15 @@
     "noResults": "No results found",
     "cancel": "Cancel"
   },
+  "lang": {
+    "selector": "Select language"
+  },
   "nav": {
+    "main": "Main navigation",
+    "home": "Go to home",
     "explore": "Explore",
-    "favorites": "Favorites"
+    "favorites": "Favorites",
+    "skipToContent": "Skip to content"
   },
   "search": {
     "quickActions": "Quick Actions",
@@ -17,7 +23,8 @@
     "popularAnime": "Popular Anime",
     "resultsFor": "Results for",
     "resultsFound": "results found",
-    "tryDifferent": "Try a different search term"
+    "tryDifferent": "Try a different search term",
+    "clear": "Clear search"
   },
   "home": {
     "badge": "Powered by Jikan API",
@@ -75,6 +82,7 @@
     "emptyDesc": "Start exploring and add anime to your favorites!",
     "exploreAnime": "Explore Anime",
     "showing": "Showing {count} anime",
+    "sortLabel": "Sort by",
     "sortRecent": "Recent",
     "sortScore": "Score",
     "sortTitle": "Title",

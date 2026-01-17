@@ -9,7 +9,7 @@
         <div class="mx-auto max-w-4xl text-center">
           <!-- Icon -->
           <div class="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-rp-love/20 md:size-20">
-            <UIcon name="i-heroicons-heart-solid" class="size-8 text-rp-love md:size-10" />
+            <UIcon name="i-heroicons-heart-solid" class="size-8 text-rp-love md:size-10" aria-hidden="true" />
           </div>
 
           <!-- Title -->
@@ -42,7 +42,7 @@
           class="mx-auto flex max-w-md flex-col items-center py-16 text-center"
         >
           <div class="mb-6 flex size-24 items-center justify-center rounded-full bg-rp-surface">
-            <UIcon name="i-heroicons-heart" class="size-12 text-rp-muted" />
+            <UIcon name="i-heroicons-heart" class="size-12 text-rp-muted" aria-hidden="true" />
           </div>
           <h2 class="text-xl font-semibold text-rp-text md:text-2xl">
             {{ $t('favorites.emptyTitle') }}
@@ -52,9 +52,9 @@
           </p>
           <NuxtLink
             to="/"
-            class="mt-6 inline-flex items-center gap-2 rounded-xl bg-rp-iris px-6 py-3 font-medium text-rp-base transition-all hover:bg-rp-iris/80"
+            class="mt-6 inline-flex items-center gap-2 rounded-xl bg-rp-iris px-6 py-3 font-medium text-rp-base transition-all hover:bg-rp-iris/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
           >
-            <UIcon name="i-heroicons-magnifying-glass" class="size-5" />
+            <UIcon name="i-heroicons-magnifying-glass" class="size-5" aria-hidden="true" />
             {{ $t('favorites.exploreAnime') }}
           </NuxtLink>
         </div>
@@ -66,18 +66,46 @@
             <p class="text-sm text-rp-subtle">
               {{ $t('favorites.showing', { count: favoritesCount }) }}
             </p>
-            <div class="flex gap-2">
-              <button
+
+            <!-- Sort Buttons with Animated Indicator -->
+            <div
+              ref="sortContainerRef"
+              class="relative flex rounded-xl bg-rp-surface/80 p-1 ring-1 ring-rp-overlay/50 backdrop-blur-sm"
+              role="group"
+              :aria-label="$t('favorites.sortLabel')"
+            >
+              <!-- Animated background indicator -->
+              <div
+                class="sort-indicator absolute inset-y-1 rounded-lg bg-linear-to-r from-rp-iris to-rp-love shadow-lg shadow-rp-iris/25 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+                :style="indicatorStyle"
+              />
+
+              <UTooltip
                 v-for="option in sortOptions"
                 :key="option.value"
-                class="rounded-lg px-3 py-1.5 text-sm transition-all"
-                :class="sortBy === option.value
-                  ? 'bg-rp-iris text-rp-base'
-                  : 'bg-rp-surface text-rp-subtle hover:bg-rp-overlay hover:text-rp-text'"
-                @click="sortBy = option.value"
+                :text="option.label"
+                :delay-duration="200"
               >
-                {{ option.label }}
-              </button>
+                <button
+                  :data-sort="option.value"
+                  type="button"
+                  :aria-pressed="sortBy === option.value"
+                  :aria-label="option.label"
+                  class="sort-button relative z-10 flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
+                  :class="sortBy === option.value
+                    ? 'text-white'
+                    : 'text-rp-subtle hover:text-rp-text'"
+                  @click="sortBy = option.value"
+                >
+                  <UIcon
+                    :name="option.icon"
+                    class="size-4 transition-transform duration-200"
+                    :class="sortBy === option.value ? 'scale-110' : 'scale-100'"
+                    aria-hidden="true"
+                  />
+                  <span class="hidden xs:inline">{{ option.label }}</span>
+                </button>
+              </UTooltip>
             </div>
           </div>
 
@@ -93,10 +121,11 @@
           <!-- Clear All Button -->
           <div class="mt-12 text-center">
             <button
-              class="inline-flex items-center gap-2 rounded-lg bg-rp-surface px-4 py-2 text-sm text-rp-subtle transition-all hover:bg-rp-love/20 hover:text-rp-love"
+              type="button"
+              class="inline-flex items-center gap-2 rounded-lg bg-rp-surface px-4 py-2 text-sm text-rp-subtle transition-all hover:bg-rp-love/20 hover:text-rp-love focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
               @click="showClearConfirm = true"
             >
-              <UIcon name="i-heroicons-trash" class="size-4" />
+              <UIcon name="i-heroicons-trash" class="size-4" aria-hidden="true" />
               {{ $t('favorites.clearAll') }}
             </button>
           </div>
@@ -107,25 +136,27 @@
     <!-- Clear Confirmation Modal -->
     <UModal v-model:open="showClearConfirm">
       <template #content>
-        <div class="p-6 text-center">
+        <div class="p-6 text-center" role="alertdialog" aria-labelledby="clear-dialog-title" aria-describedby="clear-dialog-desc">
           <div class="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-rp-love/20">
-            <UIcon name="i-heroicons-exclamation-triangle" class="size-8 text-rp-love" />
+            <UIcon name="i-heroicons-exclamation-triangle" class="size-8 text-rp-love" aria-hidden="true" />
           </div>
-          <h3 class="text-lg font-semibold text-rp-text">
+          <h3 id="clear-dialog-title" class="text-lg font-semibold text-rp-text">
             {{ $t('favorites.clearConfirmTitle') }}
           </h3>
-          <p class="mt-2 text-sm text-rp-subtle">
+          <p id="clear-dialog-desc" class="mt-2 text-sm text-rp-subtle">
             {{ $t('favorites.clearConfirmDesc') }}
           </p>
           <div class="mt-6 flex justify-center gap-3">
             <button
-              class="rounded-lg bg-rp-surface px-4 py-2 text-sm font-medium text-rp-text transition-all hover:bg-rp-overlay"
+              type="button"
+              class="rounded-lg bg-rp-surface px-4 py-2 text-sm font-medium text-rp-text transition-all hover:bg-rp-overlay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
               @click="showClearConfirm = false"
             >
               {{ $t('common.cancel') }}
             </button>
             <button
-              class="rounded-lg bg-rp-love px-4 py-2 text-sm font-medium text-white transition-all hover:bg-rp-love/80"
+              type="button"
+              class="rounded-lg bg-rp-love px-4 py-2 text-sm font-medium text-white transition-all hover:bg-rp-love/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
               @click="handleClearAll"
             >
               {{ $t('favorites.clearAll') }}
@@ -145,11 +176,42 @@ const { favoritesCount } = storeToRefs(favoritesStore)
 const showClearConfirm = ref(false)
 const sortBy = ref<'recent' | 'score' | 'title'>('recent')
 
+// Ref for sort container
+const sortContainerRef = ref<HTMLElement | null>(null)
+const indicatorReady = ref(false)
+
+// Ensure indicator renders after buttons are mounted
+onMounted(() => {
+  nextTick(() => {
+    indicatorReady.value = true
+  })
+})
+
 const sortOptions = computed(() => [
-  { value: 'recent' as const, label: t('favorites.sortRecent') },
-  { value: 'score' as const, label: t('favorites.sortScore') },
-  { value: 'title' as const, label: t('favorites.sortTitle') },
+  { value: 'recent' as const, label: t('favorites.sortRecent'), icon: 'i-heroicons-clock' },
+  { value: 'score' as const, label: t('favorites.sortScore'), icon: 'i-heroicons-star' },
+  { value: 'title' as const, label: t('favorites.sortTitle'), icon: 'i-heroicons-bars-arrow-down' },
 ])
+
+// Calculate indicator position based on active button
+const indicatorStyle = computed(() => {
+  // Force reactivity on indicatorReady and sortBy
+  if (!indicatorReady.value || !sortContainerRef.value) {
+    return { left: '4px', width: '0px', opacity: '0' }
+  }
+
+  const activeButton = sortContainerRef.value.querySelector(`[data-sort="${sortBy.value}"]`) as HTMLElement | null
+
+  if (!activeButton) {
+    return { left: '4px', width: '0px', opacity: '0' }
+  }
+
+  return {
+    left: `${activeButton.offsetLeft}px`,
+    width: `${activeButton.offsetWidth}px`,
+    opacity: '1',
+  }
+})
 
 const displayedFavorites = computed(() => {
   switch (sortBy.value) {
@@ -172,3 +234,43 @@ useSeoMeta({
   description: () => t('favorites.subtitle'),
 })
 </script>
+
+<style scoped>
+/* Glow effect for the indicator */
+.sort-indicator {
+  will-change: left, width;
+}
+
+.sort-indicator::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(to right, var(--rp-iris), var(--rp-love));
+  opacity: 0.4;
+  filter: blur(8px);
+  z-index: -1;
+}
+
+/* Hover effect for inactive buttons */
+.sort-button:not([aria-pressed="true"]):hover {
+  background: rgba(110, 106, 134, 0.15);
+}
+
+/* Active button icon animation */
+.sort-button[aria-pressed="true"] .size-4 {
+  animation: pulse-icon 0.3s ease-out;
+}
+
+@keyframes pulse-icon {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}
+</style>

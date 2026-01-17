@@ -1,14 +1,15 @@
 <template>
   <div class="min-h-screen bg-rp-base">
     <!-- Error State -->
-    <div v-if="error && !anime" class="flex min-h-screen items-center justify-center">
+    <div v-if="error && !anime" class="flex min-h-screen items-center justify-center" role="alert">
       <div class="text-center">
         <div class="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-rp-love/10">
-          <UIcon name="i-heroicons-exclamation-triangle" class="size-8 text-rp-love" />
+          <UIcon name="i-heroicons-exclamation-triangle" class="size-8 text-rp-love" aria-hidden="true" />
         </div>
         <p class="mb-4 text-rp-subtle">{{ $t('common.error') }}</p>
         <button
-          class="rounded-xl bg-rp-surface px-6 py-3 font-medium text-rp-text transition-all hover:bg-rp-overlay"
+          type="button"
+          class="rounded-xl bg-rp-surface px-6 py-3 font-medium text-rp-text transition-all hover:bg-rp-overlay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
           @click="refresh()"
         >
           {{ $t('common.retry') }}

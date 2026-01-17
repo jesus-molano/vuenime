@@ -1,26 +1,38 @@
 <template>
   <div ref="selectorRef" class="relative">
     <button
-      class="flex items-center gap-1.5 rounded-xl border border-rp-overlay/50 bg-rp-overlay/30 px-2.5 py-1.5 text-sm font-medium text-rp-text transition-all hover:border-rp-iris/50 hover:bg-rp-overlay/50"
+      type="button"
+      :aria-expanded="isOpen"
+      aria-haspopup="menu"
+      :aria-label="$t('lang.selector')"
+      class="flex items-center gap-1.5 rounded-xl border border-rp-overlay/50 bg-rp-overlay/30 px-2.5 py-1.5 text-sm font-medium text-rp-text transition-all hover:border-rp-iris/50 hover:bg-rp-overlay/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
       @click="isOpen = !isOpen"
+      @keydown.escape="isOpen = false"
     >
-      <span class="text-xs font-bold uppercase">{{ locale }}</span>
+      <span class="text-xs font-bold uppercase" aria-hidden="true">{{ locale }}</span>
       <UIcon
         name="i-heroicons-chevron-down"
         class="size-3.5 text-rp-subtle transition-transform"
         :class="isOpen ? 'rotate-180' : ''"
+        aria-hidden="true"
       />
     </button>
 
     <Transition name="dropdown">
       <div
         v-if="isOpen"
+        role="menu"
+        :aria-label="$t('lang.selector')"
         class="absolute right-0 top-full z-50 mt-2 min-w-40 overflow-hidden rounded-xl border border-rp-overlay bg-rp-surface p-1.5 shadow-2xl"
+        @keydown.escape="isOpen = false"
       >
         <button
           v-for="loc in availableLocales"
           :key="loc.code"
-          class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-all"
+          type="button"
+          role="menuitem"
+          :aria-current="locale === loc.code ? 'true' : undefined"
+          class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-inset"
           :class="
             locale === loc.code
               ? 'bg-rp-iris/20 text-rp-iris'
@@ -34,6 +46,7 @@
             v-if="locale === loc.code"
             name="i-heroicons-check"
             class="ml-auto size-4"
+            aria-hidden="true"
           />
         </button>
       </div>

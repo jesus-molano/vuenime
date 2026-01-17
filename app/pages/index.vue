@@ -32,34 +32,40 @@
 
           <!-- Search Bar funcional -->
           <form
+            role="search"
             class="group relative mx-auto flex w-full max-w-md items-center gap-2 rounded-xl border border-rp-overlay/50 bg-rp-surface/50 px-4 py-2 backdrop-blur-sm transition-all focus-within:border-rp-iris/50 focus-within:bg-rp-surface/80 hover:border-rp-iris/30 sm:rounded-2xl sm:px-5 sm:py-3"
             @submit.prevent="handleSearch"
           >
             <UIcon
               name="i-heroicons-magnifying-glass"
               class="size-5 shrink-0 text-rp-muted transition-colors group-focus-within:text-rp-iris"
+              aria-hidden="true"
             />
             <input
               v-model="searchQuery"
-              type="text"
+              type="search"
               :placeholder="$t('home.searchPlaceholder')"
+              :aria-label="$t('common.search')"
+              autocomplete="off"
               class="min-w-0 flex-1 bg-transparent text-sm text-rp-text placeholder-rp-muted outline-none sm:text-base"
             >
             <button
               v-if="searchQuery"
               type="button"
-              class="shrink-0 rounded-lg p-1 text-rp-muted transition-colors hover:bg-rp-overlay/50 hover:text-rp-text"
+              :aria-label="$t('search.clear')"
+              class="shrink-0 rounded-lg p-1 text-rp-muted transition-colors hover:bg-rp-overlay/50 hover:text-rp-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris"
               @click="searchQuery = ''"
             >
               <UIcon
                 name="i-heroicons-x-mark"
                 class="size-4"
+                aria-hidden="true"
               />
             </button>
             <button
               type="submit"
               :disabled="!searchQuery.trim()"
-              class="shrink-0 rounded-lg bg-rp-iris px-3 py-1.5 text-xs font-semibold text-white transition-all hover:bg-rp-iris/90 disabled:opacity-50 disabled:cursor-not-allowed sm:px-4 sm:py-2 sm:text-sm"
+              class="shrink-0 rounded-lg bg-rp-iris px-3 py-1.5 text-xs font-semibold text-white transition-all hover:bg-rp-iris/90 disabled:opacity-50 disabled:cursor-not-allowed sm:px-4 sm:py-2 sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
             >
               {{ $t('common.search') }}
             </button>
@@ -115,16 +121,19 @@
         <div
           v-else-if="error"
           class="flex flex-col items-center justify-center py-12 md:py-20"
+          role="alert"
         >
           <div class="mb-4 rounded-full bg-rp-love/10 p-3 md:p-4">
             <UIcon
               name="i-heroicons-exclamation-triangle"
               class="size-6 text-rp-love md:size-8"
+              aria-hidden="true"
             />
           </div>
           <p class="mb-4 text-sm text-rp-subtle md:text-base">{{ error }}</p>
           <button
-            class="rounded-lg bg-rp-surface px-4 py-2 text-sm font-medium text-rp-text transition-all hover:bg-rp-overlay md:rounded-xl md:px-6 md:py-3"
+            type="button"
+            class="rounded-lg bg-rp-surface px-4 py-2 text-sm font-medium text-rp-text transition-all hover:bg-rp-overlay md:rounded-xl md:px-6 md:py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
             @click="refresh()"
           >
             {{ $t('common.retry') }}

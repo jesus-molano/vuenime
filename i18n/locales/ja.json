@@ -7,9 +7,15 @@
     "noResults": "結果が見つかりませんでした",
     "cancel": "キャンセル"
   },
+  "lang": {
+    "selector": "言語を選択"
+  },
   "nav": {
+    "main": "メインナビゲーション",
+    "home": "ホームへ",
     "explore": "探索",
-    "favorites": "お気に入り"
+    "favorites": "お気に入り",
+    "skipToContent": "コンテンツへスキップ"
   },
   "search": {
     "quickActions": "クイックアクション",
@@ -17,7 +23,8 @@
     "popularAnime": "人気アニメ",
     "resultsFor": "検索結果",
     "resultsFound": "件見つかりました",
-    "tryDifferent": "別のキーワードで検索してみてください"
+    "tryDifferent": "別のキーワードで検索してみてください",
+    "clear": "検索をクリア"
   },
   "home": {
     "badge": "Jikan APIで開発",
@@ -69,6 +76,7 @@
     "emptyDesc": "アニメを探索して、お気に入りに追加しましょう！",
     "exploreAnime": "アニメを探す",
     "showing": "{count}作品を表示中",
+    "sortLabel": "並び替え",
     "sortRecent": "最近",
     "sortScore": "スコア",
     "sortTitle": "タイトル",
