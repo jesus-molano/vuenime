@@ -4,7 +4,8 @@
     "error": "Ha ocurrido un error",
     "retry": "Reintentar",
     "search": "Buscar",
-    "noResults": "No se encontraron resultados"
+    "noResults": "No se encontraron resultados",
+    "cancel": "Cancelar"
   },
   "nav": {
     "explore": "Explorar",
@@ -38,14 +39,47 @@
     "status": "Estado",
     "genres": "Géneros",
     "synopsis": "Sinopsis",
-    "addFavorite": "Añadir a favoritos",
+    "background": "Contexto",
+    "addFavorite": "Agregar a favoritos",
     "removeFavorite": "Quitar de favoritos",
     "airing": "En emisión",
     "viewDetails": "Ver detalles",
-    "coverAlt": "Portada de {title}"
+    "coverAlt": "Portada de {title}",
+    "watchTrailer": "Ver Trailer",
+    "watchTrailerDesc": "Mira el trailer oficial",
+    "trailer": "Trailer",
+    "type": "Tipo",
+    "aired": "Emisión",
+    "duration": "Duración",
+    "rating": "Clasificación",
+    "source": "Fuente",
+    "season": "Temporada",
+    "studios": "Estudios",
+    "details": "Información",
+    "rank": "Ranking",
+    "popularity": "Popularidad",
+    "members": "Miembros",
+    "votes": "votos",
+    "noTrailer": "Trailer No Disponible",
+    "noTrailerDesc": "Este anime aún no tiene trailer"
   },
   "footer": {
     "builtWith": "Hecho con Nuxt 4, Vue 3 y Nuxt UI",
     "dataFrom": "Datos de"
+  },
+  "favorites": {
+    "title": "Mis Favoritos",
+    "subtitle": "Tu colección personal de anime que te encanta",
+    "animeCount": "anime guardados",
+    "emptyTitle": "Sin favoritos aún",
+    "emptyDesc": "¡Empieza a explorar y agrega anime a tus favoritos!",
+    "exploreAnime": "Explorar Anime",
+    "showing": "Mostrando {count} anime",
+    "sortRecent": "Recientes",
+    "sortScore": "Puntuación",
+    "sortTitle": "Título",
+    "clearAll": "Eliminar Todo",
+    "clearConfirmTitle": "¿Eliminar todos los favoritos?",
+    "clearConfirmDesc": "Esta acción no se puede deshacer. Todos tus anime guardados serán eliminados."
   }
 }

@@ -4,7 +4,8 @@
     "error": "An error occurred",
     "retry": "Retry",
     "search": "Search",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "cancel": "Cancel"
   },
   "nav": {
     "explore": "Explore",
@@ -38,14 +39,47 @@
     "status": "Status",
     "genres": "Genres",
     "synopsis": "Synopsis",
+    "background": "Background",
     "addFavorite": "Add to favorites",
     "removeFavorite": "Remove from favorites",
     "airing": "Airing",
     "viewDetails": "View Details",
-    "coverAlt": "Cover art for {title}"
+    "coverAlt": "Cover art for {title}",
+    "watchTrailer": "Watch Trailer",
+    "watchTrailerDesc": "Watch the official trailer",
+    "trailer": "Trailer",
+    "type": "Type",
+    "aired": "Aired",
+    "duration": "Duration",
+    "rating": "Rating",
+    "source": "Source",
+    "season": "Season",
+    "studios": "Studios",
+    "details": "Details",
+    "rank": "Rank",
+    "popularity": "Popularity",
+    "members": "Members",
+    "votes": "votes",
+    "noTrailer": "No Trailer Available",
+    "noTrailerDesc": "This anime doesn't have a trailer yet"
   },
   "footer": {
     "builtWith": "Built with Nuxt 4, Vue 3 & Nuxt UI",
     "dataFrom": "Data from"
+  },
+  "favorites": {
+    "title": "My Favorites",
+    "subtitle": "Your personal collection of anime you love",
+    "animeCount": "anime saved",
+    "emptyTitle": "No favorites yet",
+    "emptyDesc": "Start exploring and add anime to your favorites!",
+    "exploreAnime": "Explore Anime",
+    "showing": "Showing {count} anime",
+    "sortRecent": "Recent",
+    "sortScore": "Score",
+    "sortTitle": "Title",
+    "clearAll": "Clear All",
+    "clearConfirmTitle": "Clear all favorites?",
+    "clearConfirmDesc": "This action cannot be undone. All your saved anime will be removed."
   }
 }

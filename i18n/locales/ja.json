@@ -4,7 +4,8 @@
     "error": "エラーが発生しました",
     "retry": "再試行",
     "search": "検索",
-    "noResults": "結果が見つかりませんでした"
+    "noResults": "結果が見つかりませんでした",
+    "cancel": "キャンセル"
   },
   "nav": {
     "explore": "探索",
@@ -38,14 +39,41 @@
     "status": "ステータス",
     "genres": "ジャンル",
     "synopsis": "あらすじ",
+    "background": "背景",
     "addFavorite": "お気に入りに追加",
     "removeFavorite": "お気に入りから削除",
     "airing": "放送中",
     "viewDetails": "詳細を見る",
-    "coverAlt": "{title}のカバー"
+    "coverAlt": "{title}のカバー",
+    "watchTrailer": "予告編を見る",
+    "trailer": "予告編",
+    "type": "タイプ",
+    "aired": "放送期間",
+    "duration": "時間",
+    "rating": "年齢制限",
+    "source": "原作",
+    "season": "シーズン",
+    "studios": "スタジオ",
+    "noTrailer": "予告編がありません",
+    "noTrailerDesc": "このアニメにはまだ予告編がありません"
   },
   "footer": {
     "builtWith": "Nuxt 4、Vue 3、Nuxt UIで制作",
     "dataFrom": "データ提供"
+  },
+  "favorites": {
+    "title": "お気に入り",
+    "subtitle": "あなたのお気に入りアニメコレクション",
+    "animeCount": "作品を保存",
+    "emptyTitle": "お気に入りがありません",
+    "emptyDesc": "アニメを探索して、お気に入りに追加しましょう！",
+    "exploreAnime": "アニメを探す",
+    "showing": "{count}作品を表示中",
+    "sortRecent": "最近",
+    "sortScore": "スコア",
+    "sortTitle": "タイトル",
+    "clearAll": "すべて削除",
+    "clearConfirmTitle": "すべてのお気に入りを削除しますか？",
+    "clearConfirmDesc": "この操作は取り消せません。保存したすべてのアニメが削除されます。"
   }
 }

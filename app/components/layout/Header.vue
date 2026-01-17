@@ -3,12 +3,7 @@
     class="fixed left-1/2 top-4 z-50 -translate-x-1/2 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] md:top-6"
   >
     <nav
-      class="flex items-center gap-3 rounded-2xl bg-rp-surface/80 px-4 py-2.5 shadow-2xl shadow-rp-base/50 backdrop-blur-xl transition-all duration-500 md:gap-4 md:px-5"
-      :class="[
-        isScrolled
-          ? 'border border-rp-overlay/50'
-          : 'border border-transparent',
-      ]"
+      class="flex items-center gap-3 rounded-2xl bg-rp-base/90 px-4 py-2.5 shadow-2xl shadow-black/30 ring-1 ring-white/10 backdrop-blur-xl transition-all duration-500 md:gap-4 md:px-5"
     >
       <NuxtLink to="/" class="group flex items-center gap-1.5 md:gap-2">
         <span class="text-base font-bold md:text-lg">
@@ -35,17 +30,14 @@
 
       <div class="h-5 w-px bg-rp-overlay/50" />
 
-      <div
-        class="flex items-center gap-1 md:gap-2"
-        :class="isScrolled ? 'hidden md:flex' : 'flex'"
-      >
+      <div class="flex items-center gap-1 md:gap-2">
         <NuxtLink
           to="/"
           class="nav-link-explore group flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-all hover:bg-rp-gold/10"
           :class="
             $route.path === '/'
               ? 'bg-rp-gold/10 text-rp-gold'
-              : 'text-rp-subtle hover:text-rp-gold'
+              : 'text-white hover:text-rp-gold'
           "
         >
           <UIcon name="i-heroicons-fire-solid" class="nav-icon-fire size-4" />
@@ -57,7 +49,7 @@
           :class="
             $route.path === '/favorites'
               ? 'bg-rp-love/10 text-rp-love'
-              : 'text-rp-subtle hover:text-rp-love'
+              : 'text-white hover:text-rp-love'
           "
         >
           <span
