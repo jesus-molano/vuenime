@@ -107,6 +107,16 @@ export interface AnimeDetailResponse {
   data: Anime
 }
 
+// Streaming response from /anime/{id}/streaming
+export interface StreamingLink {
+  name: string
+  url: string
+}
+
+export interface AnimeStreamingResponse {
+  data: StreamingLink[]
+}
+
 // Filter types
 export interface AnimeFilters {
   q?: string

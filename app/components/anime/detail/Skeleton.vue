@@ -4,6 +4,11 @@
     <div class="absolute inset-0 bg-rp-surface/20" />
     <div class="absolute inset-0 bg-gradient-to-t from-rp-base via-rp-base/80 to-rp-base/40" />
 
+    <!-- Favorite Button Skeleton - Top Right -->
+    <div
+      class="absolute right-4 top-20 z-30 size-12 animate-pulse rounded-full bg-rp-overlay md:right-6 md:top-24 md:size-14"
+    />
+
     <!-- Content Container - matches Hero.vue padding -->
     <div class="relative z-20 pb-12 pt-24 md:pb-16 md:pt-28">
       <UContainer class="w-full px-4 sm:px-6">
@@ -53,9 +58,12 @@
               <div class="h-7 w-22 animate-pulse rounded-full bg-rp-overlay" />
             </div>
 
-            <!-- Action Button -->
+            <!-- Streaming Links -->
             <div class="flex flex-wrap items-center justify-center gap-3 pt-2 md:justify-start">
-              <div class="h-12 w-40 animate-pulse rounded-xl bg-rp-iris/30" />
+              <div class="h-5 w-16 animate-pulse rounded bg-rp-overlay/50" />
+              <div class="h-12 w-32 animate-pulse rounded-xl bg-rp-overlay" />
+              <div class="h-12 w-28 animate-pulse rounded-xl bg-rp-overlay" />
+              <div class="h-12 w-24 animate-pulse rounded-xl bg-rp-overlay" />
             </div>
 
             <!-- Studios -->

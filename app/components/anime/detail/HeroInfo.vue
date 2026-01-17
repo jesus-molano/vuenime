@@ -104,27 +104,8 @@
       </NuxtLink>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="flex flex-wrap items-center justify-center gap-3 pt-2 md:justify-start">
-      <button
-        type="button"
-        :aria-pressed="isFavorite"
-        class="group flex items-center gap-2 rounded-xl px-6 py-3 font-bold shadow-lg transition-all hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
-        :class="
-          isFavorite
-            ? 'bg-rp-love text-white hover:bg-rp-love/90 focus-visible:ring-rp-love'
-            : 'bg-rp-iris text-white hover:bg-rp-iris/90 focus-visible:ring-rp-iris'
-        "
-        @click="toggleFavorite"
-      >
-        <UIcon
-          :name="isFavorite ? 'i-heroicons-heart-solid' : 'i-heroicons-heart'"
-          class="size-5 transition-transform group-hover:scale-110"
-          aria-hidden="true"
-        />
-        {{ isFavorite ? $t('anime.removeFavorite') : $t('anime.addFavorite') }}
-      </button>
-    </div>
+    <!-- Streaming Links -->
+    <AnimeDetailStreamingLinks :anime-id="anime.mal_id" />
 
     <!-- Studios -->
     <div
@@ -160,15 +141,8 @@ const props = defineProps<{
   anime: Anime
 }>()
 
-const favoritesStore = useFavoritesStore()
 const localePath = useLocalePath()
 const { translateType, translateGenreById } = useAnimeTranslations()
-
-const isFavorite = computed(() => favoritesStore.isFavorite(props.anime.mal_id))
-
-const toggleFavorite = () => {
-  favoritesStore.toggleFavorite(props.anime)
-}
 
 // Translated type
 const translatedType = computed(() => (props.anime.type ? translateType(props.anime.type) : ''))
