@@ -2,18 +2,20 @@
   <div class="flex-1 space-y-4 text-center md:text-left">
     <!-- Badges Row -->
     <div class="flex flex-wrap items-center justify-center gap-2 md:justify-start">
-      <span
+      <NuxtLink
         v-if="anime.type"
-        class="rounded-lg bg-rp-iris px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-md"
+        :to="typeSearchLink"
+        class="rounded-lg bg-rp-iris px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-md transition-all hover:bg-rp-iris/80 hover:scale-105"
       >
-        {{ anime.type }}
-      </span>
-      <span
+        {{ translatedType }}
+      </NuxtLink>
+      <NuxtLink
         v-if="anime.year"
-        class="rounded-lg bg-rp-base px-3 py-1.5 text-xs font-semibold text-white shadow-md"
+        :to="yearSearchLink"
+        class="rounded-lg bg-rp-base px-3 py-1.5 text-xs font-semibold text-white shadow-md transition-all hover:bg-rp-surface hover:scale-105"
       >
         {{ anime.year }}
-      </span>
+      </NuxtLink>
       <span
         v-if="anime.rating"
         class="rounded-lg bg-rp-base px-3 py-1.5 text-xs font-medium text-white shadow-md"
@@ -37,46 +39,54 @@
 
     <!-- Quick Stats -->
     <div class="flex flex-wrap items-center justify-center gap-2 text-sm md:justify-start md:text-base">
-      <span
+      <UTooltip
         v-if="anime.episodes"
-        class="flex items-center gap-1.5 rounded-lg bg-rp-base px-2.5 py-1 shadow-md"
+        :text="$t('anime.episodesCount')"
       >
-        <UIcon
-          name="i-heroicons-play-circle"
-          class="size-4 text-rp-iris md:size-5"
-        />
-        <span class="font-medium text-white">{{ anime.episodes }} {{ $t('anime.eps') }}</span>
-      </span>
-      <span
+        <span class="flex items-center gap-1.5 rounded-lg bg-rp-base px-2.5 py-1 shadow-md">
+          <UIcon
+            name="i-heroicons-play-circle"
+            class="size-4 text-rp-iris md:size-5"
+          />
+          <span class="font-medium text-white">{{ anime.episodes }} {{ $t('anime.eps') }}</span>
+        </span>
+      </UTooltip>
+      <UTooltip
         v-if="anime.duration"
-        class="flex items-center gap-1.5 rounded-lg bg-rp-base px-2.5 py-1 shadow-md"
+        :text="$t('anime.episodeDuration')"
       >
-        <UIcon
-          name="i-heroicons-clock"
-          class="size-4 text-rp-foam md:size-5"
-        />
-        <span class="font-medium text-white">{{ anime.duration }}</span>
-      </span>
-      <span
+        <span class="flex items-center gap-1.5 rounded-lg bg-rp-base px-2.5 py-1 shadow-md">
+          <UIcon
+            name="i-heroicons-clock"
+            class="size-4 text-rp-foam md:size-5"
+          />
+          <span class="font-medium text-white">{{ anime.duration }}</span>
+        </span>
+      </UTooltip>
+      <UTooltip
         v-if="anime.rank"
-        class="flex items-center gap-1.5 rounded-lg bg-rp-base px-2.5 py-1 shadow-md"
+        :text="$t('anime.rankTooltip')"
       >
-        <UIcon
-          name="i-heroicons-trophy"
-          class="size-4 text-rp-gold md:size-5"
-        />
-        <span class="font-medium text-white">#{{ anime.rank }}</span>
-      </span>
-      <span
+        <span class="flex items-center gap-1.5 rounded-lg bg-rp-base px-2.5 py-1 shadow-md">
+          <UIcon
+            name="i-heroicons-trophy"
+            class="size-4 text-rp-gold md:size-5"
+          />
+          <span class="font-medium text-white">#{{ anime.rank }}</span>
+        </span>
+      </UTooltip>
+      <UTooltip
         v-if="anime.popularity"
-        class="flex items-center gap-1.5 rounded-lg bg-rp-base px-2.5 py-1 shadow-md"
+        :text="$t('anime.popularityTooltip')"
       >
-        <UIcon
-          name="i-heroicons-fire"
-          class="size-4 text-rp-love md:size-5"
-        />
-        <span class="font-medium text-white">#{{ anime.popularity }}</span>
-      </span>
+        <span class="flex items-center gap-1.5 rounded-lg bg-rp-base px-2.5 py-1 shadow-md">
+          <UIcon
+            name="i-heroicons-fire"
+            class="size-4 text-rp-love md:size-5"
+          />
+          <span class="font-medium text-white">#{{ anime.popularity }}</span>
+        </span>
+      </UTooltip>
     </div>
 
     <!-- Genres -->
@@ -84,13 +94,14 @@
       v-if="anime.genres?.length"
       class="flex flex-wrap justify-center gap-2 md:justify-start"
     >
-      <span
+      <NuxtLink
         v-for="genre in anime.genres.slice(0, 5)"
         :key="genre.mal_id"
-        class="rounded-full bg-rp-base px-3 py-1 text-sm font-medium text-white shadow-md transition-all hover:bg-rp-surface"
+        :to="getGenreSearchLink(genre)"
+        class="rounded-full bg-rp-base px-3 py-1 text-sm font-medium text-white shadow-md transition-all hover:bg-rp-surface hover:scale-105"
       >
-        {{ genre.name }}
-      </span>
+        {{ getGenreName(genre) }}
+      </NuxtLink>
     </div>
 
     <!-- Action Buttons -->
@@ -121,18 +132,22 @@
       class="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-lg bg-rp-base px-3 py-1.5 text-sm shadow-md md:justify-start"
     >
       <span class="font-semibold text-rp-subtle">{{ $t('anime.studios') }}:</span>
-      <span
+      <template
         v-for="(studio, index) in anime.studios"
         :key="studio.mal_id"
-        class="font-medium text-white"
       >
-        {{ studio.name
-        }}<span
+        <NuxtLink
+          :to="getStudioSearchLink(studio)"
+          class="font-medium text-white transition-colors hover:text-rp-iris"
+        >
+          {{ studio.name }}
+        </NuxtLink>
+        <span
           v-if="index < anime.studios.length - 1"
           class="text-rp-muted"
         >,</span
         >
-      </span>
+      </template>
     </div>
   </div>
 </template>
@@ -145,10 +160,41 @@ const props = defineProps<{
 }>()
 
 const favoritesStore = useFavoritesStore()
+const localePath = useLocalePath()
+const { translateType, translateGenreById } = useAnimeTranslations()
 
 const isFavorite = computed(() => favoritesStore.isFavorite(props.anime.mal_id))
 
 const toggleFavorite = () => {
   favoritesStore.toggleFavorite(props.anime)
 }
+
+// Translated type
+const translatedType = computed(() => (props.anime.type ? translateType(props.anime.type) : ''))
+
+// Get translated genre name
+const getGenreName = (genre: { mal_id: number; name: string }) => {
+  return translateGenreById(genre.mal_id) || genre.name
+}
+
+// Search links with locale
+const typeSearchLink = computed(() => ({
+  path: localePath('/search'),
+  query: { type: props.anime.type?.toLowerCase() },
+}))
+
+const yearSearchLink = computed(() => ({
+  path: localePath('/search'),
+  query: { year: props.anime.year },
+}))
+
+const getGenreSearchLink = (genre: { mal_id: number; name: string }) => ({
+  path: localePath('/search'),
+  query: { genres: genre.mal_id, name: getGenreName(genre) },
+})
+
+const getStudioSearchLink = (studio: { mal_id: number; name: string }) => ({
+  path: localePath('/search'),
+  query: { producers: studio.mal_id, name: studio.name },
+})
 </script>

@@ -4,57 +4,276 @@
       <!-- Search Header -->
       <div class="mb-6 md:mb-8">
         <h1 class="mb-2 text-xl font-bold text-rp-text sm:text-2xl md:text-3xl">
-          {{ $t('search.resultsFor') }}
-          <span class="text-rp-iris">"{{ query }}"</span>
+          <template v-if="searchTitle">
+            {{ $t('search.resultsFor') }}
+            <span class="text-rp-iris">{{ searchTitle }}</span>
+          </template>
+          <template v-else>
+            {{ $t('nav.explore') }}
+          </template>
         </h1>
         <p
-          v-if="!isLoading && searchResults"
+          v-if="!isLoading && searchResults && hasActiveFilters"
           class="text-sm text-rp-subtle"
         >
           {{ searchResults.pagination?.items?.total || 0 }} {{ $t('search.resultsFound') }}
         </p>
       </div>
 
-      <!-- Search Input -->
-      <form
-        role="search"
-        class="mb-6 flex items-center gap-2 rounded-xl border border-rp-overlay/50 bg-rp-surface/50 px-4 py-2 backdrop-blur-sm transition-all focus-within:border-rp-iris/50 focus-within:bg-rp-surface/80 sm:mb-8 sm:rounded-2xl sm:px-5 sm:py-3"
-        @submit.prevent="handleSearch"
-      >
-        <UIcon
-          name="i-heroicons-magnifying-glass"
-          class="size-5 shrink-0 text-rp-muted"
-          aria-hidden="true"
-        />
-        <input
-          v-model="searchInput"
-          type="search"
-          :placeholder="$t('home.searchPlaceholder')"
-          :aria-label="$t('common.search')"
-          autocomplete="off"
-          class="min-w-0 flex-1 bg-transparent text-sm text-rp-text placeholder-rp-muted outline-none sm:text-base"
-        >
-        <button
-          v-if="searchInput"
-          type="button"
-          :aria-label="$t('search.clear')"
-          class="shrink-0 rounded-lg p-1 text-rp-muted transition-colors hover:bg-rp-overlay/50 hover:text-rp-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris"
-          @click="searchInput = ''"
+      <!-- Search Bar with Filters -->
+      <div class="mb-6 flex items-center gap-2">
+        <!-- Search Input -->
+        <form
+          role="search"
+          class="flex flex-1 items-center gap-2 rounded-xl border border-rp-overlay/50 bg-rp-surface/50 px-4 py-2.5 backdrop-blur-sm transition-all focus-within:border-rp-iris/50 focus-within:bg-rp-surface/80"
+          @submit.prevent="handleSearch"
         >
           <UIcon
-            name="i-heroicons-x-mark"
-            class="size-4"
-            aria-hidden="true"
+            name="i-heroicons-magnifying-glass"
+            class="size-5 shrink-0 text-rp-muted"
           />
-        </button>
+          <input
+            v-model="searchInput"
+            type="search"
+            :placeholder="$t('home.searchPlaceholder')"
+            class="min-w-0 flex-1 bg-transparent text-sm text-rp-text placeholder-rp-muted outline-none"
+          >
+        </form>
+
+        <!-- Filters Button -->
         <button
-          type="submit"
-          :disabled="!searchInput.trim()"
-          class="shrink-0 rounded-lg bg-rp-iris px-3 py-1.5 text-xs font-semibold text-white transition-all hover:bg-rp-iris/90 disabled:opacity-50 disabled:cursor-not-allowed sm:px-4 sm:py-2 sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
+          type="button"
+          class="relative flex items-center gap-2 rounded-xl border border-rp-overlay/50 bg-rp-surface/50 px-4 py-2.5 text-sm font-medium text-rp-text transition-all hover:border-rp-iris/50 hover:bg-rp-surface/80"
+          @click="showFilters = !showFilters"
         >
-          {{ $t('common.search') }}
+          <UIcon
+            name="i-heroicons-funnel"
+            class="size-5"
+          />
+          <span class="hidden sm:inline">{{ $t('search.filters') }}</span>
+          <span
+            v-if="activeFiltersCount > 0"
+            class="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-rp-iris text-xs font-bold text-white"
+          >
+            {{ activeFiltersCount }}
+          </span>
         </button>
-      </form>
+      </div>
+
+      <!-- Filters Panel -->
+      <Transition
+        enter-active-class="transition-all duration-200 ease-out"
+        enter-from-class="opacity-0 -translate-y-2"
+        enter-to-class="opacity-100 translate-y-0"
+        leave-active-class="transition-all duration-150 ease-in"
+        leave-from-class="opacity-100 translate-y-0"
+        leave-to-class="opacity-0 -translate-y-2"
+      >
+        <div
+          v-if="showFilters"
+          class="relative z-20 mb-6 rounded-xl border border-rp-overlay/50 bg-rp-surface/50 p-4 backdrop-blur-sm"
+        >
+          <div class="space-y-4">
+            <!-- Row 1: Type + Year -->
+            <div class="grid gap-4 sm:grid-cols-2">
+              <!-- Type -->
+              <div>
+                <h4 class="mb-2 text-xs font-semibold uppercase tracking-wider text-rp-subtle">
+                  {{ $t('anime.type') }}
+                </h4>
+                <div class="flex flex-wrap gap-1.5">
+                  <button
+                    v-for="type in typeOptions"
+                    :key="type.value"
+                    type="button"
+                    class="rounded-lg px-2.5 py-1 text-xs font-medium transition-all"
+                    :class="
+                      selectedType === type.value
+                        ? 'bg-rp-iris text-white'
+                        : 'bg-rp-overlay/50 text-rp-text hover:bg-rp-overlay'
+                    "
+                    @click="toggleType(type.value)"
+                  >
+                    {{ type.label }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Year Input -->
+              <div>
+                <h4 class="mb-2 text-xs font-semibold uppercase tracking-wider text-rp-subtle">
+                  {{ $t('search.year') }}
+                </h4>
+                <input
+                  v-model="yearInput"
+                  type="number"
+                  :placeholder="$t('search.enterYear')"
+                  :min="1960"
+                  :max="currentYear + 1"
+                  class="w-full rounded-lg border bg-rp-base px-3 py-2 text-sm text-rp-text outline-none transition-colors"
+                  :class="
+                    yearError ? 'border-rp-love focus:border-rp-love' : 'border-rp-overlay/50 focus:border-rp-iris'
+                  "
+                  @keyup.enter="applyYearFilter"
+                  @blur="applyYearFilter"
+                  @input="validateYear"
+                >
+                <p
+                  v-if="yearError"
+                  class="mt-1 text-xs text-rp-love"
+                >
+                  {{ yearError }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Row 2: Genres -->
+            <div>
+              <h4 class="mb-2 text-xs font-semibold uppercase tracking-wider text-rp-subtle">
+                {{ $t('anime.genres') }}
+              </h4>
+
+              <!-- Genre Search -->
+              <div class="relative mb-2">
+                <input
+                  v-model="genreSearch"
+                  type="text"
+                  :placeholder="$t('search.searchGenre')"
+                  class="w-full rounded-lg border border-rp-overlay/50 bg-rp-base px-3 py-2 text-sm text-rp-text outline-none transition-colors focus:border-rp-iris"
+                  @focus="showGenreDropdown = true"
+                  @blur="closeGenreDropdown"
+                >
+
+                <!-- Dropdown -->
+                <Transition
+                  enter-active-class="transition duration-100 ease-out"
+                  enter-from-class="opacity-0 scale-95"
+                  enter-to-class="opacity-100 scale-100"
+                  leave-active-class="transition duration-75 ease-in"
+                  leave-from-class="opacity-100 scale-100"
+                  leave-to-class="opacity-0 scale-95"
+                >
+                  <div
+                    v-if="showGenreDropdown && filteredGenres.length > 0"
+                    class="absolute z-100 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border border-rp-overlay/50 bg-rp-surface shadow-xl"
+                  >
+                    <button
+                      v-for="genre in filteredGenres"
+                      :key="genre.value"
+                      type="button"
+                      class="flex w-full items-center px-3 py-2 text-left text-sm transition-colors hover:bg-rp-overlay/50"
+                      :class="selectedGenre === genre.value ? 'bg-rp-foam/20 text-rp-foam' : 'text-rp-text'"
+                      @click="selectGenre(genre.value)"
+                    >
+                      {{ genre.label }}
+                    </button>
+                  </div>
+                </Transition>
+              </div>
+
+              <!-- Popular Genres Pills -->
+              <div class="flex flex-wrap gap-1.5">
+                <button
+                  v-for="genre in popularGenres"
+                  :key="genre.value"
+                  type="button"
+                  class="rounded-lg px-2.5 py-1 text-xs font-medium transition-all"
+                  :class="
+                    selectedGenre === genre.value
+                      ? 'bg-rp-foam text-rp-base'
+                      : 'bg-rp-overlay/50 text-rp-text hover:bg-rp-overlay'
+                  "
+                  @click="selectGenre(selectedGenre === genre.value ? '' : genre.value)"
+                >
+                  {{ genre.label }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Clear Button -->
+          <div
+            v-if="activeFiltersCount > 0"
+            class="mt-4 border-t border-rp-overlay/50 pt-4"
+          >
+            <button
+              type="button"
+              class="flex items-center gap-1.5 rounded-lg text-sm font-medium text-rp-love transition-all hover:text-rp-love/80"
+              @click="clearAllFilters"
+            >
+              <UIcon
+                name="i-heroicons-x-mark"
+                class="size-4"
+              />
+              {{ $t('search.clearFilters') }}
+            </button>
+          </div>
+        </div>
+      </Transition>
+
+      <!-- Active Filters Tags -->
+      <div
+        v-if="activeFiltersCount > 0 && !showFilters"
+        class="mb-6 flex flex-wrap items-center gap-2"
+      >
+        <span
+          v-if="selectedType"
+          class="flex items-center gap-1 rounded-full bg-rp-iris/20 px-3 py-1 text-sm text-rp-iris"
+        >
+          {{ typeOptions.find((type) => type.value === selectedType)?.label }}
+          <button
+            type="button"
+            class="ml-1 rounded-full p-0.5 hover:bg-rp-iris/30"
+            @click="
+              selectedType = null
+              updateUrl()
+            "
+          >
+            <UIcon
+              name="i-heroicons-x-mark"
+              class="size-3"
+            />
+          </button>
+        </span>
+        <span
+          v-if="selectedGenre"
+          class="flex items-center gap-1 rounded-full bg-rp-foam/20 px-3 py-1 text-sm text-rp-foam"
+        >
+          {{ genres.find((g) => g.value === selectedGenre)?.label }}
+          <button
+            type="button"
+            class="ml-1 rounded-full p-0.5 hover:bg-rp-foam/30"
+            @click="
+              selectedGenre = ''
+              updateUrl()
+            "
+          >
+            <UIcon
+              name="i-heroicons-x-mark"
+              class="size-3"
+            />
+          </button>
+        </span>
+        <span
+          v-if="selectedYear"
+          class="flex items-center gap-1 rounded-full bg-rp-gold/20 px-3 py-1 text-sm text-rp-gold"
+        >
+          {{ selectedYear }}
+          <button
+            type="button"
+            class="ml-1 rounded-full p-0.5 hover:bg-rp-gold/30"
+            @click="
+              selectedYear = null
+              updateUrl()
+            "
+          >
+            <UIcon
+              name="i-heroicons-x-mark"
+              class="size-3"
+            />
+          </button>
+        </span>
+      </div>
 
       <!-- Loading State -->
       <div
@@ -67,18 +286,33 @@
         />
       </div>
 
+      <!-- No Filters Applied -->
+      <div
+        v-else-if="!hasActiveFilters"
+        class="flex flex-col items-center justify-center py-16 md:py-24"
+      >
+        <div class="mb-4 rounded-2xl bg-linear-to-br from-rp-iris/20 to-rp-love/20 p-6">
+          <UIcon
+            name="i-heroicons-sparkles"
+            class="size-12 text-rp-iris"
+          />
+        </div>
+        <p class="mb-2 text-xl font-semibold text-rp-text">{{ $t('search.useFilters') }}</p>
+        <p class="max-w-sm text-center text-sm text-rp-subtle">{{ $t('search.useFiltersDesc') }}</p>
+      </div>
+
       <!-- No Results -->
       <div
         v-else-if="!searchResults?.data?.length"
-        class="flex flex-col items-center justify-center py-12 md:py-20"
+        class="flex flex-col items-center justify-center py-16 md:py-24"
       >
-        <div class="mb-4 rounded-full bg-rp-overlay/50 p-4">
+        <div class="mb-4 rounded-2xl bg-rp-overlay/50 p-6">
           <UIcon
-            name="i-heroicons-magnifying-glass"
-            class="size-8 text-rp-muted"
+            name="i-heroicons-face-frown"
+            class="size-12 text-rp-muted"
           />
         </div>
-        <p class="mb-2 text-lg font-medium text-rp-text">{{ $t('common.noResults') }}</p>
+        <p class="mb-2 text-xl font-semibold text-rp-text">{{ $t('common.noResults') }}</p>
         <p class="text-sm text-rp-subtle">{{ $t('search.tryDifferent') }}</p>
       </div>
 
@@ -104,32 +338,224 @@ import { PAGINATION } from '~~/shared/constants/api'
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
+const localePath = useLocalePath()
+const { translateType, getTranslatedGenre } = useAnimeTranslations()
 
-const query = computed(() => (route.query.q as string) || '')
-const searchInput = ref(query.value)
+// UI state
+const showFilters = ref(false)
 
-const { data: searchResults, status } = useFetch<AnimeListResponse>('/api/jikan/anime', {
-  key: () => `search-${query.value}`,
-  query: computed(() => ({ q: query.value, limit: PAGINATION.DEFAULT_LIMIT })),
-  watch: [query],
-  immediate: !!query.value,
+// Query params from URL
+const queryParam = computed(() => (route.query.q as string) || '')
+const typeFilter = computed(() => (route.query.type as string) || '')
+const yearFilter = computed(() => (route.query.year as string) || '')
+const genresFilter = computed(() => (route.query.genres as string) || '')
+const nameParam = computed(() => (route.query.name as string) || '')
+
+// Local filter state
+const searchInput = ref(queryParam.value)
+const debouncedSearch = ref(queryParam.value)
+const selectedType = ref<string | null>(typeFilter.value || null)
+const selectedYear = ref<string | null>(yearFilter.value || null)
+const selectedGenre = ref(genresFilter.value || '')
+
+// Debounce search input
+let searchTimeout: ReturnType<typeof setTimeout> | null = null
+watch(searchInput, (newValue) => {
+  if (searchTimeout) clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    debouncedSearch.value = newValue
+  }, 500)
 })
 
-const isLoading = computed(() => status.value === 'pending')
+// Type options (all from Jikan API) - translated
+const typeKeys = ['tv', 'movie', 'ova', 'ona', 'special', 'music', 'cm', 'pv', 'tv_special']
+const typeOptions = computed(() => typeKeys.map((key) => ({ value: key, label: translateType(key) })))
 
-const handleSearch = () => {
-  if (searchInput.value.trim()) {
-    router.push({ path: '/search', query: { q: searchInput.value.trim() } })
+// Fetch genres from API
+const { data: genresData } = useFetch<{ data: { mal_id: number; name: string }[] }>('/api/jikan/genres/anime', {
+  key: 'anime-genres',
+  default: () => ({ data: [] }),
+})
+
+const genres = computed(() => genresData.value?.data?.map((g) => getTranslatedGenre(g)) || [])
+
+// Popular genres (top 10)
+const popularGenres = computed(() => genres.value.slice(0, 10))
+
+// Genre search
+const genreSearch = ref('')
+const showGenreDropdown = ref(false)
+
+const filteredGenres = computed(() => {
+  if (!genreSearch.value) return genres.value
+  const search = genreSearch.value.toLowerCase()
+  return genres.value.filter((g) => g.label.toLowerCase().includes(search))
+})
+
+const selectGenre = (value: string) => {
+  selectedGenre.value = value
+  genreSearch.value = ''
+  showGenreDropdown.value = false
+  updateUrl()
+}
+
+// Close dropdown when clicking outside
+const closeGenreDropdown = () => {
+  setTimeout(() => {
+    showGenreDropdown.value = false
+  }, 150)
+}
+
+// Year input
+const currentYear = new Date().getFullYear()
+const yearInput = ref(selectedYear.value || '')
+const yearError = ref('')
+
+const validateYear = () => {
+  if (!yearInput.value) {
+    yearError.value = ''
+    return true
+  }
+  const year = parseInt(yearInput.value)
+  if (isNaN(year)) {
+    yearError.value = t('search.yearInvalid')
+    return false
+  }
+  if (year < 1960) {
+    yearError.value = t('search.yearTooOld')
+    return false
+  }
+  if (year > currentYear + 1) {
+    yearError.value = t('search.yearTooNew')
+    return false
+  }
+  yearError.value = ''
+  return true
+}
+
+const applyYearFilter = () => {
+  if (!validateYear()) return
+
+  const year = parseInt(yearInput.value)
+  if (year >= 1960 && year <= currentYear + 1) {
+    selectedYear.value = String(year)
+    updateUrl()
+  } else if (!yearInput.value) {
+    selectedYear.value = null
+    updateUrl()
   }
 }
 
-// Sync input with query
-watch(query, (newQuery) => {
-  searchInput.value = newQuery
+// Toggle type
+const toggleType = (value: string) => {
+  selectedType.value = selectedType.value === value ? null : value
+  updateUrl()
+}
+
+// Computed
+const activeFiltersCount = computed(() => {
+  let count = 0
+  if (selectedType.value) count++
+  if (selectedYear.value) count++
+  if (selectedGenre.value) count++
+  return count
 })
 
+const hasActiveFilters = computed(
+  () => !!(debouncedSearch.value || selectedType.value || selectedYear.value || selectedGenre.value)
+)
+
+const searchTitle = computed(() => {
+  if (debouncedSearch.value) return `"${debouncedSearch.value}"`
+  if (nameParam.value) return nameParam.value
+
+  const parts: string[] = []
+  if (selectedGenre.value) {
+    const genre = genres.value.find((g) => g.value === selectedGenre.value)
+    if (genre) parts.push(genre.label)
+  }
+  if (selectedType.value) {
+    const type = typeOptions.value.find((tp) => tp.value === selectedType.value)
+    if (type) parts.push(type.label)
+  }
+  if (selectedYear.value) {
+    parts.push(selectedYear.value)
+  }
+
+  return parts.join(' · ')
+})
+
+// API params
+const apiParams = computed(() => {
+  if (!hasActiveFilters.value) return null
+
+  const params: Record<string, string | number> = {
+    limit: PAGINATION.DEFAULT_LIMIT,
+  }
+
+  if (debouncedSearch.value) params.q = debouncedSearch.value
+  if (selectedType.value) params.type = selectedType.value
+  if (selectedYear.value) {
+    params.start_date = `${selectedYear.value}-01-01`
+    params.end_date = `${selectedYear.value}-12-31`
+  }
+  if (selectedGenre.value) params.genres = selectedGenre.value
+
+  return params
+})
+
+const getCacheKey = () =>
+  `search-${debouncedSearch.value}-${selectedType.value}-${selectedYear.value}-${selectedGenre.value}`
+
+const { data: searchResults, status } = useFetch<AnimeListResponse>('/api/jikan/anime', {
+  key: getCacheKey,
+  query: apiParams,
+  watch: [apiParams],
+})
+
+const isLoading = computed(() => status.value === 'pending' && hasActiveFilters.value)
+
+// URL management
+const updateUrl = (includeSearch = false) => {
+  const queryParams: Record<string, string> = {}
+  if (includeSearch && searchInput.value) queryParams.q = searchInput.value
+  else if (debouncedSearch.value) queryParams.q = debouncedSearch.value
+  if (selectedType.value) queryParams.type = selectedType.value
+  if (selectedYear.value) queryParams.year = selectedYear.value
+  if (selectedGenre.value) queryParams.genres = selectedGenre.value
+
+  router.push({ path: localePath('/search'), query: queryParams })
+}
+
+const handleSearch = () => {
+  // Immediate search on Enter
+  updateUrl(true)
+}
+
+const clearAllFilters = () => {
+  selectedType.value = null
+  selectedYear.value = null
+  yearInput.value = ''
+  selectedGenre.value = ''
+  searchInput.value = ''
+  router.push(localePath('/search'))
+}
+
+// Sync with URL
+watch(
+  () => route.query,
+  (newQuery) => {
+    searchInput.value = (newQuery.q as string) || ''
+    selectedType.value = (newQuery.type as string) || null
+    selectedYear.value = (newQuery.year as string) || null
+    yearInput.value = (newQuery.year as string) || ''
+    selectedGenre.value = (newQuery.genres as string) || ''
+  },
+  { immediate: true }
+)
+
 useSeoMeta({
-  title: () => `${query.value} - ${t('common.search')} | VueNime`,
-  description: () => `${t('search.resultsFor')} "${query.value}"`,
+  title: () => `${searchTitle.value || t('nav.explore')} | VueNime`,
+  description: () => (searchTitle.value ? `${t('search.resultsFor')} ${searchTitle.value}` : t('nav.explore')),
 })
 </script>

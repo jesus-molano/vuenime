@@ -16,7 +16,7 @@
           :delay-duration="300"
         >
           <NuxtLink
-            to="/"
+            :to="localePath('/')"
             :aria-label="$t('nav.explore')"
             :aria-current="$route.path === '/' ? 'page' : undefined"
             class="nav-link-explore group relative flex items-center justify-center rounded-xl p-3 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-gold focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
@@ -59,7 +59,7 @@
           :delay-duration="300"
         >
           <NuxtLink
-            to="/favorites"
+            :to="localePath('/favorites')"
             :aria-label="$t('nav.favorites')"
             :aria-current="$route.path === '/favorites' ? 'page' : undefined"
             class="nav-link-favorites group relative flex items-center justify-center rounded-xl p-3 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
@@ -98,6 +98,8 @@ defineProps<{
 defineEmits<{
   toggleSearch: []
 }>()
+
+const localePath = useLocalePath()
 </script>
 
 <style scoped>

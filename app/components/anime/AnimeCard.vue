@@ -33,7 +33,7 @@
       >
         <!-- Mobile: Horizontal layout - toda la card es clickeable -->
         <NuxtLink
-          :to="`/anime/${anime.mal_id}`"
+          :to="animeLink"
           :view-transition="true"
           class="flex sm:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-inset"
           :aria-labelledby="`anime-title-mobile-${anime.mal_id}`"
@@ -123,7 +123,7 @@
                 :key="genre.mal_id"
                 class="rounded-full bg-white/5 px-2 py-0.5 text-[9px] text-rp-subtle"
               >
-                {{ genre.name }}
+                {{ getGenreName(genre) }}
               </span>
             </div>
 
@@ -141,7 +141,7 @@
         <div class="relative hidden aspect-[3/4.2] overflow-hidden sm:block">
           <!-- Imagen -->
           <NuxtLink
-            :to="`/anime/${anime.mal_id}`"
+            :to="animeLink"
             :view-transition="true"
             class="block size-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-inset"
             :aria-labelledby="`anime-title-desktop-${anime.mal_id}`"
@@ -226,7 +226,7 @@
                 :key="genre.mal_id"
                 class="rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-white/80 backdrop-blur-sm md:px-2.5 md:text-xs"
               >
-                {{ genre.name }}
+                {{ getGenreName(genre) }}
               </span>
             </div>
           </div>
@@ -283,6 +283,16 @@ const { cardRef, isHovering, cardTransform, glareStyle, borderMaskStyle, handleM
 const animeRef = toRef(props, 'anime')
 const cardRefForAnimation = computed(() => (props.animateOnRemove ? wrapperRef.value : null))
 const { isFavorite, isAnimating, toggleFavorite } = useFavoriteToggle(animeRef, cardRefForAnimation)
+
+// Translations
+const { translateGenreById } = useAnimeTranslations()
+const getGenreName = (genre: { mal_id: number; name: string }) => {
+  return translateGenreById(genre.mal_id) || genre.name
+}
+
+// Locale-aware link
+const localePath = useLocalePath()
+const animeLink = computed(() => localePath(`/anime/${props.anime.mal_id}`))
 </script>
 
 <style scoped>

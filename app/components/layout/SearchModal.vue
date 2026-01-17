@@ -95,6 +95,7 @@ const emit = defineEmits<{
 }>()
 
 const router = useRouter()
+const localePath = useLocalePath()
 const { searchQuery } = useSearch()
 
 const inputRef = ref<HTMLInputElement | null>(null)
@@ -116,12 +117,12 @@ const handleSearch = () => {
   if (query.value.trim()) {
     searchQuery.value = query.value.trim()
     emit('close')
-    router.push({ path: '/search', query: { q: query.value.trim() } })
+    router.push({ path: localePath('/search'), query: { q: query.value.trim() } })
   }
 }
 
 const navigateAndClose = (path: string) => {
-  router.push(path)
+  router.push(localePath(path))
   emit('close')
 }
 </script>

@@ -48,19 +48,6 @@
               class="min-w-0 flex-1 bg-transparent text-sm text-rp-text placeholder-rp-muted outline-none sm:text-base"
             >
             <button
-              v-if="searchQuery"
-              type="button"
-              :aria-label="$t('search.clear')"
-              class="shrink-0 rounded-lg p-1 text-rp-muted transition-colors hover:bg-rp-overlay/50 hover:text-rp-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris"
-              @click="searchQuery = ''"
-            >
-              <UIcon
-                name="i-heroicons-x-mark"
-                class="size-4"
-                aria-hidden="true"
-              />
-            </button>
-            <button
               type="submit"
               :disabled="!searchQuery.trim()"
               class="shrink-0 rounded-lg bg-rp-iris px-3 py-1.5 text-xs font-semibold text-white transition-all hover:bg-rp-iris/90 disabled:opacity-50 disabled:cursor-not-allowed sm:px-4 sm:py-2 sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
@@ -159,13 +146,14 @@ import { PAGINATION } from '~~/shared/constants/api'
 
 const { t } = useI18n()
 const router = useRouter()
+const localePath = useLocalePath()
 const { animeList, isLoading, error, refresh } = useAnimeList()
 
 const searchQuery = ref('')
 
 const handleSearch = () => {
   if (searchQuery.value.trim()) {
-    router.push({ path: '/search', query: { q: searchQuery.value.trim() } })
+    router.push({ path: localePath('/search'), query: { q: searchQuery.value.trim() } })
   }
 }
 

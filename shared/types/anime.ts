@@ -118,3 +118,32 @@ export interface AnimeFilters {
   page?: number
   limit?: number
 }
+
+// Genre response from /genres/anime
+export interface GenreItem {
+  mal_id: number
+  name: string
+  url: string
+  count: number
+}
+
+export interface GenresResponse {
+  data: GenreItem[]
+}
+
+// Producer response from /producers
+export interface ProducerItem {
+  mal_id: number
+  url: string
+  titles: { type: string; title: string }[]
+  images: { jpg: { image_url: string } }
+  favorites: number
+  count: number
+  established: string | null
+  about: string | null
+}
+
+export interface ProducersResponse {
+  data: ProducerItem[]
+  pagination: AnimePagination
+}
