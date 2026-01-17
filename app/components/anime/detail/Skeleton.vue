@@ -2,7 +2,7 @@
   <section class="relative overflow-hidden bg-rp-base">
     <!-- Background Skeleton -->
     <div class="absolute inset-0 bg-rp-surface/20" />
-    <div class="absolute inset-0 bg-gradient-to-t from-rp-base via-rp-base/80 to-rp-base/40" />
+    <div class="absolute inset-0 bg-linear-to-t from-rp-base via-rp-base/80 to-rp-base/40" />
 
     <!-- Favorite Button Skeleton - Top Right -->
     <div

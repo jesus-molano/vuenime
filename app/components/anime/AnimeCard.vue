@@ -31,7 +31,7 @@
 
       <!-- Card inner content -->
       <div
-        class="card-inner relative overflow-hidden rounded-2xl border border-white/8 bg-rp-surface/95 backdrop-blur-sm transition-[box-shadow,border-color] duration-400 group-hover:border-white/15 group-hover:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-rp-iris has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-rp-base"
+        class="card-inner relative overflow-hidden rounded-2xl border border-white/8 bg-rp-surface/95 backdrop-blur-sm transition-[box-shadow,border-color] duration-400 group-hover:border-white/15 group-hover:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] has-focus-visible:ring-2 has-focus-visible:ring-rp-iris has-focus-visible:ring-offset-2 has-focus-visible:ring-offset-rp-base"
       >
         <!-- Mobile: Horizontal layout -->
         <NuxtLink
