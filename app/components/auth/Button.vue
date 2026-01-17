@@ -1,8 +1,8 @@
 <template>
-  <UDropdown
+  <UDropdownMenu
     v-if="isAuthenticated"
     :items="menuItems"
-    :popper="{ placement: 'bottom-end' }"
+    :content="{ align: 'end' }"
   >
     <button
       type="button"
@@ -16,37 +16,39 @@
         class="ring-2 ring-rp-overlay"
       />
     </button>
-  </UDropdown>
+  </UDropdownMenu>
 
   <button
     v-else
     type="button"
-    class="flex items-center gap-2 rounded-xl bg-rp-iris px-4 py-2 text-sm font-medium text-rp-base transition-all hover:bg-rp-iris/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
+    class="group flex items-center gap-1.5 rounded-xl bg-rp-iris/10 px-3 py-1.5 text-sm font-medium text-rp-iris transition-all hover:bg-rp-iris/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
     :aria-label="$t('auth.signIn')"
     @click="isModalOpen = true"
   >
     <UIcon
       name="i-heroicons-user-circle"
-      class="size-4"
+      class="size-6 sm:size-4"
       aria-hidden="true"
     />
-    <span class="hidden sm:inline">{{ $t('auth.signIn') }}</span>
+    <span class="hidden whitespace-nowrap sm:inline">{{ $t('auth.signIn') }}</span>
+    <span class="sr-only sm:hidden">{{ $t('auth.signIn') }}</span>
   </button>
 
   <AuthModal v-model="isModalOpen" />
 </template>
 
 <script setup lang="ts">
+import type { DropdownMenuItem } from '@nuxt/ui'
+
 const { user, isAuthenticated, signOut } = useAuth()
 const { t } = useI18n()
 
 const isModalOpen = ref(false)
 
-const menuItems = computed(() => [
+const menuItems = computed<DropdownMenuItem[][]>(() => [
   [
     {
       label: user.value?.email || '',
-      slot: 'account',
       disabled: true,
     },
   ],
@@ -54,7 +56,7 @@ const menuItems = computed(() => [
     {
       label: t('auth.signOut'),
       icon: 'i-heroicons-arrow-right-on-rectangle',
-      click: signOut,
+      onSelect: signOut,
     },
   ],
 ])

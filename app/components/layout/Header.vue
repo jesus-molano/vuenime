@@ -1,101 +1,83 @@
 <template>
-  <header
-    class="fixed left-1/2 top-4 z-50 -translate-x-1/2 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] md:top-6"
-  >
-    <nav
-      role="navigation"
-      :aria-label="$t('nav.main')"
-      class="nav-container flex items-center gap-3 rounded-2xl px-4 py-2.5 backdrop-blur-xl md:gap-4 md:px-5"
-      :class="isScrolled ? 'nav-scrolled' : 'nav-top'"
+  <header class="fixed inset-x-0 top-4 z-50 flex items-center justify-between px-4 md:top-6 md:px-6">
+    <!-- Logo (izquierda) - con fondo para contraste -->
+    <NuxtLink
+      :to="localePath('/')"
+      class="logo-container group flex items-center gap-1.5 rounded-2xl px-3 py-2 backdrop-blur-xl transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base md:gap-2 md:px-4"
+      :class="isScrolled ? 'bg-rp-surface/95 shadow-lg shadow-rp-base/30' : 'bg-rp-surface/50'"
+      :aria-label="$t('nav.home')"
     >
-      <NuxtLink
-        :to="localePath('/')"
-        class="group flex items-center gap-1.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base md:gap-2"
-        :aria-label="$t('nav.home')"
-      >
-        <span class="text-base font-bold md:text-lg">
-          <span class="text-rp-text">Vue</span>
-          <span class="text-rp-iris">Nime</span>
-        </span>
-        <img
-          src="~/assets/icons/straw-hat.svg"
-          alt=""
-          aria-hidden="true"
-          class="straw-hat w-5 -rotate-12 drop-shadow-md md:w-6"
-        />
-      </NuxtLink>
-
-      <div
-        class="h-4 w-px bg-white/10 transition-opacity duration-300 md:opacity-100"
-        :class="isScrolled ? 'opacity-0 md:opacity-100' : 'opacity-100'"
+      <span class="text-base font-bold md:text-lg">
+        <span class="text-rp-text">Vue</span>
+        <span class="text-rp-iris">Nime</span>
+      </span>
+      <img
+        src="~/assets/icons/straw-hat.svg"
+        alt=""
         aria-hidden="true"
+        class="straw-hat w-5 -rotate-12 drop-shadow-md md:w-6"
       />
+    </NuxtLink>
 
-      <div
-        ref="menuRef"
-        class="flex items-center gap-1 transition-opacity duration-300 md:gap-2 md:opacity-100"
-        :class="isScrolled ? 'pointer-events-none opacity-0 md:pointer-events-auto md:opacity-100' : 'opacity-100'"
-        role="group"
+    <div class="flex items-center gap-2 md:gap-3">
+      <!-- Navbar pill -->
+      <nav
+        role="navigation"
         :aria-label="$t('nav.main')"
+        class="nav-container flex items-center gap-1 rounded-2xl px-3 py-2 backdrop-blur-xl md:gap-2 md:px-4 md:py-2.5"
+        :class="isScrolled ? 'nav-scrolled' : 'nav-top'"
       >
-        <UTooltip
-          :text="$t('nav.explore')"
-          :delay-duration="400"
-          :disabled="!isMobile"
+        <!-- Nav links hidden on mobile - MobileDock handles them -->
+        <NuxtLink
+          :to="localePath('/')"
+          class="nav-link-explore group hidden items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-all hover:bg-rp-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-gold focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base md:flex"
+          :class="$route.path === localePath('/') ? 'bg-rp-gold/10 text-rp-gold' : 'text-white hover:text-rp-gold'"
+          :aria-current="$route.path === localePath('/') ? 'page' : undefined"
         >
-          <NuxtLink
-            ref="exploreRef"
-            :to="localePath('/')"
-            class="nav-link-explore group flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-all hover:bg-rp-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-gold focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
-            :class="$route.path === localePath('/') ? 'bg-rp-gold/10 text-rp-gold' : 'text-white hover:text-rp-gold'"
-            :aria-current="$route.path === localePath('/') ? 'page' : undefined"
+          <UIcon
+            name="i-heroicons-fire-solid"
+            class="nav-icon-fire size-4"
+            aria-hidden="true"
+          />
+          <span>{{ $t('nav.explore') }}</span>
+        </NuxtLink>
+        <NuxtLink
+          :to="localePath('/favorites')"
+          class="group hidden items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-all hover:bg-rp-love/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base md:flex"
+          :class="
+            $route.path === localePath('/favorites') ? 'bg-rp-love/10 text-rp-love' : 'text-white hover:text-rp-love'
+          "
+          :aria-current="$route.path === localePath('/favorites') ? 'page' : undefined"
+        >
+          <span
+            class="nav-icon-favorites relative flex size-4 items-center justify-center"
+            aria-hidden="true"
           >
             <UIcon
-              name="i-heroicons-fire-solid"
-              class="nav-icon-fire size-4"
-              aria-hidden="true"
+              name="i-heroicons-heart"
+              class="absolute size-4 transition-all group-hover:opacity-0"
             />
-            <span class="hidden sm:inline">{{ $t('nav.explore') }}</span>
-            <span class="sr-only sm:hidden">{{ $t('nav.explore') }}</span>
-          </NuxtLink>
-        </UTooltip>
-        <UTooltip
-          :text="$t('nav.favorites')"
-          :delay-duration="400"
-          :disabled="!isMobile"
-        >
-          <NuxtLink
-            ref="favoritesRef"
-            :to="localePath('/favorites')"
-            class="group flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-all hover:bg-rp-love/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
-            :class="
-              $route.path === localePath('/favorites') ? 'bg-rp-love/10 text-rp-love' : 'text-white hover:text-rp-love'
-            "
-            :aria-current="$route.path === localePath('/favorites') ? 'page' : undefined"
-          >
-            <span
-              class="nav-icon-favorites relative flex size-4 items-center justify-center"
-              aria-hidden="true"
-            >
-              <UIcon
-                name="i-heroicons-heart"
-                class="absolute size-4 transition-all group-hover:opacity-0"
-              />
-              <UIcon
-                name="i-heroicons-heart-solid"
-                class="nav-icon-heart absolute size-4 opacity-0 transition-all group-hover:opacity-100"
-              />
-            </span>
-            <span class="hidden sm:inline">{{ $t('nav.favorites') }}</span>
-            <span class="sr-only sm:hidden">{{ $t('nav.favorites') }}</span>
-          </NuxtLink>
-        </UTooltip>
-      </div>
+            <UIcon
+              name="i-heroicons-heart-solid"
+              class="nav-icon-heart absolute size-4 opacity-0 transition-all group-hover:opacity-100"
+            />
+          </span>
+          <span>{{ $t('nav.favorites') }}</span>
+        </NuxtLink>
 
-      <LayoutLangSelector />
+        <AuthButton />
 
-      <AuthButton />
-    </nav>
+        <div
+          class="h-4 w-px bg-white/10"
+          aria-hidden="true"
+        />
+
+        <LayoutLangSelector />
+      </nav>
+
+      <!-- Search button (tablet+ only, MobileDock handles mobile) -->
+      <LayoutSearchPill @click="$emit('search')" />
+    </div>
   </header>
 </template>
 
@@ -104,17 +86,11 @@ defineProps<{
   isScrolled: boolean
 }>()
 
-const localePath = useLocalePath()
-const isMobile = ref(false)
+defineEmits<{
+  search: []
+}>()
 
-onMounted(() => {
-  const checkMobile = () => {
-    isMobile.value = window.innerWidth < 640
-  }
-  checkMobile()
-  window.addEventListener('resize', checkMobile)
-  onUnmounted(() => window.removeEventListener('resize', checkMobile))
-})
+const localePath = useLocalePath()
 </script>
 
 <style scoped>

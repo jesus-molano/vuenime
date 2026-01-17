@@ -8,7 +8,7 @@
       :aria-expanded="isOpen"
       aria-haspopup="menu"
       :aria-label="$t('lang.selector')"
-      class="flex items-center gap-1.5 rounded-xl border border-rp-overlay/50 bg-rp-overlay/30 px-2.5 py-1.5 text-sm font-medium text-rp-text transition-all hover:border-rp-iris/50 hover:bg-rp-overlay/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
+      class="flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-sm font-medium text-white transition-all hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
       @click="isOpen = !isOpen"
       @keydown.escape="isOpen = false"
     >
