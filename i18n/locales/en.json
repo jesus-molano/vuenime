@@ -5,7 +5,8 @@
     "retry": "Retry",
     "search": "Search",
     "noResults": "No results found",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "readMore": "Read more"
   },
   "lang": {
     "selector": "Select language"
@@ -88,6 +89,10 @@
     "votes": "votes",
     "noTrailer": "No Trailer Available",
     "noTrailerDesc": "This anime doesn't have a trailer yet",
+    "episode": "Episode",
+    "showAllEpisodes": "Show all {count} episodes",
+    "showLess": "Show less",
+    "loadMoreEpisodes": "Load more episodes",
     "episodesCount": "Total number of episodes",
     "episodeDuration": "Duration per episode",
     "rankTooltip": "Ranking based on score",

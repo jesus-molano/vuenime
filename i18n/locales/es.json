@@ -5,7 +5,8 @@
     "retry": "Reintentar",
     "search": "Buscar",
     "noResults": "No se encontraron resultados",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "readMore": "Leer más"
   },
   "lang": {
     "selector": "Seleccionar idioma"
@@ -88,6 +89,10 @@
     "votes": "votos",
     "noTrailer": "Trailer No Disponible",
     "noTrailerDesc": "Este anime aún no tiene trailer",
+    "episode": "Episodio",
+    "showAllEpisodes": "Ver los {count} episodios",
+    "showLess": "Ver menos",
+    "loadMoreEpisodes": "Cargar más episodios",
     "episodesCount": "Número total de episodios",
     "episodeDuration": "Duración por episodio",
     "rankTooltip": "Ranking basado en puntuación",

@@ -35,13 +35,12 @@
         key="content"
       >
         <AnimeDetailHero :anime="anime" />
-        <AnimeDetailInfoSection :anime="anime" />
-        <AnimeDetailSynopsis
-          :title="$t('anime.synopsis')"
-          :text="anime.synopsis"
-          icon="i-heroicons-document-text"
-          color="rose"
+        <AnimeDetailContentGrid
+          :synopsis="anime.synopsis"
+          :anime-id="animeId"
+          :total-episodes="anime.episodes"
         />
+        <AnimeDetailInfoSection :anime="anime" />
         <AnimeDetailTrailer :trailer="anime.trailer" />
       </div>
 

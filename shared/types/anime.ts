@@ -117,6 +117,24 @@ export interface AnimeStreamingResponse {
   data: StreamingLink[]
 }
 
+// Episodes response from /anime/{id}/episodes
+export interface Episode {
+  mal_id: number
+  url: string
+  title: string
+  title_japanese: string | null
+  title_romanji: string | null
+  aired: string | null
+  score: number | null
+  filler: boolean
+  recap: boolean
+}
+
+export interface AnimeEpisodesResponse {
+  data: Episode[]
+  pagination: AnimePagination
+}
+
 // Filter types
 export interface AnimeFilters {
   q?: string

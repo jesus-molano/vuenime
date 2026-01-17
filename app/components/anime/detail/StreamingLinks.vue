@@ -1,24 +1,40 @@
 <template>
   <div
     v-if="streamingLinks.length"
-    class="flex flex-wrap items-center justify-center gap-3 pt-2 md:justify-start"
+    class="space-y-2 pt-2"
   >
-    <span class="text-sm font-semibold text-white/70">{{ $t('anime.watchOn') }}:</span>
-    <a
-      v-for="link in streamingLinks"
-      :key="link.url"
-      :href="link.url"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="group flex items-center gap-2 rounded-xl px-4 py-2.5 font-medium shadow-lg transition-all hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
-      :class="getPlatformClasses(link.name)"
-    >
-      <UIcon
-        :name="getPlatformIcon(link.name)"
-        class="size-5"
-      />
-      {{ link.name }}
-    </a>
+    <!-- Header with icon - mobile only -->
+    <div class="flex items-center justify-center gap-2 md:hidden">
+      <div class="flex size-8 items-center justify-center rounded-lg bg-rp-iris/30">
+        <UIcon
+          name="i-heroicons-play-circle-solid"
+          class="size-5 text-rp-iris"
+        />
+      </div>
+      <span class="text-sm font-bold text-white">{{ $t('anime.watchOn') }}</span>
+    </div>
+
+    <!-- Desktop label -->
+    <div class="flex flex-wrap items-center justify-center gap-2 md:justify-start md:gap-3">
+      <span class="hidden text-sm font-semibold text-white/70 md:inline">{{ $t('anime.watchOn') }}:</span>
+
+      <!-- Streaming buttons -->
+      <a
+        v-for="link in streamingLinks"
+        :key="link.url"
+        :href="link.url"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium shadow-lg transition-all hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base md:px-4 md:py-2.5 md:text-base"
+        :class="getPlatformClasses(link.name)"
+      >
+        <UIcon
+          :name="getPlatformIcon(link.name)"
+          class="size-4 md:size-5"
+        />
+        {{ link.name }}
+      </a>
+    </div>
   </div>
 </template>
 
