@@ -25,17 +25,6 @@
           <p class="mx-auto mt-3 max-w-2xl text-rp-subtle md:mt-4 md:text-lg">
             {{ $t('favorites.subtitle') }}
           </p>
-
-          <!-- Stats -->
-          <div
-            v-if="favoritesCount > 0"
-            class="mt-6 flex justify-center gap-6"
-          >
-            <div class="rounded-xl bg-rp-surface px-4 py-2">
-              <span class="text-lg font-bold text-rp-love md:text-xl">{{ favoritesCount }}</span>
-              <span class="ml-2 text-sm text-rp-subtle">{{ $t('favorites.animeCount') }}</span>
-            </div>
-          </div>
         </div>
       </UContainer>
     </section>

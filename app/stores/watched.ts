@@ -11,8 +11,6 @@ import {
   deleteAllWatched,
 } from '~/services/supabase/watched'
 
-export type { WatchedEpisode, MarkWatchedInput } from '~/types/watched'
-
 export const useWatchedStore = defineStore(
   'watched',
   () => {
@@ -275,7 +273,10 @@ export const useWatchedStore = defineStore(
   },
   {
     persist: {
-      storage: persistedState.localStorage,
+      storage: persistedState.cookiesWithOptions({
+        maxAge: 60 * 60 * 24 * 365, // 1 year
+        sameSite: 'lax',
+      }),
       pick: ['watchedEpisodes'],
     },
   }

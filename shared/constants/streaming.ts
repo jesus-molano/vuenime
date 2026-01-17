@@ -6,43 +6,43 @@ export interface StreamingPlatformConfig {
 export const STREAMING_PLATFORMS: Record<string, StreamingPlatformConfig> = {
   crunchyroll: {
     icon: 'i-simple-icons-crunchyroll',
-    classes: 'bg-[#F47521] text-white hover:bg-[#ff8533]',
+    classes: 'bg-crunchyroll text-white',
   },
   netflix: {
     icon: 'i-simple-icons-netflix',
-    classes: 'bg-[#E50914] text-white hover:bg-[#ff1a1a]',
+    classes: 'bg-netflix text-white',
   },
   hulu: {
     icon: 'i-simple-icons-hulu',
-    classes: 'bg-[#1CE783] text-black hover:bg-[#3dffa0]',
+    classes: 'bg-hulu text-black',
   },
   'amazon prime': {
     icon: 'i-simple-icons-primevideo',
-    classes: 'bg-[#00A8E1] text-white hover:bg-[#1ab8f0]',
+    classes: 'bg-prime text-white',
   },
   'prime video': {
     icon: 'i-simple-icons-primevideo',
-    classes: 'bg-[#00A8E1] text-white hover:bg-[#1ab8f0]',
+    classes: 'bg-prime text-white',
   },
   funimation: {
     icon: 'i-simple-icons-funimation',
-    classes: 'bg-[#5B0BB5] text-white hover:bg-[#7a1ed6]',
+    classes: 'bg-funimation text-white',
   },
   'disney+': {
     icon: 'i-simple-icons-disneyplus',
-    classes: 'bg-[#113CCF] text-white hover:bg-[#2952e0]',
+    classes: 'bg-disney text-white',
   },
   'hbo max': {
     icon: 'i-simple-icons-hbo',
-    classes: 'bg-[#B017E6] text-white hover:bg-[#c73df0]',
+    classes: 'bg-hbo text-white',
   },
   'tubi tv': {
     icon: 'i-heroicons-tv',
-    classes: 'bg-[#FA382F] text-white hover:bg-[#ff5349]',
+    classes: 'bg-tubi text-white',
   },
   hidive: {
     icon: 'i-heroicons-play',
-    classes: 'bg-[#00BAFF] text-white hover:bg-[#33c7ff]',
+    classes: 'bg-hidive text-white',
   },
 }
 

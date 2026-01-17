@@ -33,7 +33,10 @@ export const usePreferencesStore = defineStore(
   },
   {
     persist: {
-      storage: persistedState.localStorage,
+      storage: persistedState.cookiesWithOptions({
+        maxAge: 60 * 60 * 24 * 365, // 1 year
+        sameSite: 'lax',
+      }),
     },
   }
 )

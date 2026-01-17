@@ -12,7 +12,6 @@ export const useAnimeEpisodes = (id: Ref<string> | string) => {
     () => `/api/jikan/anime/${animeId.value}/episodes?page=${currentPage.value}`,
     {
       key: () => `anime-episodes-${animeId.value}-page-${currentPage.value}`,
-      lazy: true,
       watch: [currentPage],
     }
   )

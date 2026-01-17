@@ -7,7 +7,6 @@ export const useAnimeStreaming = (id: Ref<string> | string) => {
     () => `/api/jikan/anime/${animeId.value}/streaming`,
     {
       key: () => `anime-streaming-${animeId.value}`,
-      lazy: true,
     }
   )
 

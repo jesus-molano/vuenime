@@ -1,6 +1,79 @@
 @import 'tailwindcss' theme(static);
 @import '@nuxt/ui';
 
+/* Streaming platform colors */
+.bg-crunchyroll {
+  background-color: #f47521;
+}
+.bg-crunchyroll:hover,
+.hover\:bg-crunchyroll-hover:hover {
+  background-color: #ff8533;
+}
+
+.bg-netflix {
+  background-color: #e50914;
+}
+.bg-netflix:hover,
+.hover\:bg-netflix-hover:hover {
+  background-color: #ff1a1a;
+}
+
+.bg-hulu {
+  background-color: #1ce783;
+}
+.bg-hulu:hover,
+.hover\:bg-hulu-hover:hover {
+  background-color: #3dffa0;
+}
+
+.bg-prime {
+  background-color: #00a8e1;
+}
+.bg-prime:hover,
+.hover\:bg-prime-hover:hover {
+  background-color: #1ab8f0;
+}
+
+.bg-funimation {
+  background-color: #5b0bb5;
+}
+.bg-funimation:hover,
+.hover\:bg-funimation-hover:hover {
+  background-color: #7a1ed6;
+}
+
+.bg-disney {
+  background-color: #113ccf;
+}
+.bg-disney:hover,
+.hover\:bg-disney-hover:hover {
+  background-color: #2952e0;
+}
+
+.bg-hbo {
+  background-color: #b017e6;
+}
+.bg-hbo:hover,
+.hover\:bg-hbo-hover:hover {
+  background-color: #c73df0;
+}
+
+.bg-tubi {
+  background-color: #fa382f;
+}
+.bg-tubi:hover,
+.hover\:bg-tubi-hover:hover {
+  background-color: #ff5349;
+}
+
+.bg-hidive {
+  background-color: #00baff;
+}
+.bg-hidive:hover,
+.hover\:bg-hidive-hover:hover {
+  background-color: #33c7ff;
+}
+
 /*
  * Rosé Pine Theme
  * https://rosepinetheme.com/

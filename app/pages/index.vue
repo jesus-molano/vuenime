@@ -11,12 +11,17 @@
           <div>
             <h2 class="text-lg font-bold text-rp-text sm:text-xl md:text-2xl">{{ $t('home.trending') }}</h2>
             <p class="text-[10px] text-rp-muted sm:text-xs md:text-sm">
-              <template v-if="animeList.length > 0 && totalItems > 0">
-                {{ $t('home.showingCount', { current: animeList.length, total: totalItems }) }}
-              </template>
-              <template v-else>
-                {{ $t('home.trendingSubtitle') }}
-              </template>
+              <ClientOnly fallback-tag="span">
+                <template v-if="animeList.length > 0 && totalItems > 0">
+                  {{ $t('home.showingCount', { current: animeList.length, total: totalItems }) }}
+                </template>
+                <template v-else>
+                  {{ $t('home.trendingSubtitle') }}
+                </template>
+                <template #fallback>
+                  {{ $t('home.trendingSubtitle') }}
+                </template>
+              </ClientOnly>
             </p>
           </div>
         </div>

@@ -28,196 +28,198 @@
         </div>
 
         <!-- Episodes Column -->
-        <div
-          v-if="hasEpisodes || isLoading"
-          class="min-w-0"
-        >
-          <!-- Header with count -->
-          <div class="mb-3 flex items-center justify-between sm:mb-4">
-            <div class="flex items-center gap-2 sm:gap-3">
-              <div class="flex size-8 items-center justify-center rounded-lg bg-rp-iris/20 sm:size-10 sm:rounded-xl">
-                <UIcon
-                  name="i-heroicons-play-circle"
-                  class="size-4 text-rp-iris sm:size-5"
-                />
-              </div>
-              <div>
-                <h2 class="text-lg font-bold text-rp-text sm:text-xl md:text-2xl">
-                  {{ $t('anime.episodes') }}
-                </h2>
-                <div class="flex items-center gap-2 text-xs text-rp-subtle sm:text-sm">
-                  <span v-if="displayEpisodeCount">{{ displayEpisodeCount }} {{ $t('anime.eps') }}</span>
-                  <span
-                    v-if="watchedCount > 0"
-                    class="flex items-center gap-1 text-rp-foam"
-                  >
-                    <UIcon
-                      name="i-heroicons-check-circle-solid"
-                      class="size-3 sm:size-3.5"
-                    />
-                    {{ $t('watched.watchedCount', { count: watchedCount }) }}
-                  </span>
+        <ClientOnly>
+          <div
+            v-if="hasEpisodes || isLoading"
+            class="min-w-0"
+          >
+            <!-- Header with count -->
+            <div class="mb-3 flex items-center justify-between sm:mb-4">
+              <div class="flex items-center gap-2 sm:gap-3">
+                <div class="flex size-8 items-center justify-center rounded-lg bg-rp-iris/20 sm:size-10 sm:rounded-xl">
+                  <UIcon
+                    name="i-heroicons-play-circle"
+                    class="size-4 text-rp-iris sm:size-5"
+                  />
+                </div>
+                <div>
+                  <h2 class="text-lg font-bold text-rp-text sm:text-xl md:text-2xl">
+                    {{ $t('anime.episodes') }}
+                  </h2>
+                  <div class="flex items-center gap-2 text-xs text-rp-subtle sm:text-sm">
+                    <span v-if="displayEpisodeCount">{{ displayEpisodeCount }} {{ $t('anime.eps') }}</span>
+                    <span
+                      v-if="watchedCount > 0"
+                      class="flex items-center gap-1 text-rp-foam"
+                    >
+                      <UIcon
+                        name="i-heroicons-check-circle-solid"
+                        class="size-3 sm:size-3.5"
+                      />
+                      {{ $t('watched.watchedCount', { count: watchedCount }) }}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Controls -->
-            <div class="flex items-center gap-1.5 sm:gap-2">
-              <!-- Watched actions dropdown -->
-              <UDropdownMenu
-                v-if="episodes.length > 0"
-                :items="watchedMenuItems"
-                :content="{ align: 'end' }"
-              >
-                <div class="flex h-6 items-center justify-center rounded-md bg-rp-surface px-1.5">
+              <!-- Controls -->
+              <div class="flex items-center gap-1.5 sm:gap-2">
+                <!-- Watched actions dropdown -->
+                <UDropdownMenu
+                  v-if="episodes.length > 0"
+                  :items="watchedMenuItems"
+                  :content="{ align: 'end' }"
+                >
+                  <div class="flex h-6 items-center justify-center rounded-md bg-rp-surface px-1.5">
+                    <button
+                      type="button"
+                      class="flex items-center gap-0.5 text-rp-subtle transition-colors hover:text-rp-text"
+                      :title="$t('watched.markAsWatched')"
+                    >
+                      <UIcon
+                        name="i-heroicons-eye"
+                        class="size-4"
+                      />
+                      <UIcon
+                        name="i-heroicons-chevron-down"
+                        class="size-3"
+                      />
+                    </button>
+                  </div>
+                </UDropdownMenu>
+
+                <!-- View toggle -->
+                <div class="flex h-6 items-center gap-0.5 rounded-md bg-rp-surface px-0.5">
                   <button
                     type="button"
-                    class="flex items-center gap-0.5 text-rp-subtle transition-colors hover:text-rp-text"
-                    :title="$t('watched.markAsWatched')"
+                    class="flex size-5 items-center justify-center rounded transition-colors"
+                    :class="viewMode === 'list' ? 'bg-rp-overlay text-rp-text' : 'text-rp-subtle hover:text-rp-text'"
+                    @click="viewMode = 'list'"
                   >
                     <UIcon
-                      name="i-heroicons-eye"
+                      name="i-heroicons-bars-3"
                       class="size-4"
                     />
+                  </button>
+                  <button
+                    type="button"
+                    class="flex size-5 items-center justify-center rounded transition-colors"
+                    :class="viewMode === 'grid' ? 'bg-rp-overlay text-rp-text' : 'text-rp-subtle hover:text-rp-text'"
+                    @click="viewMode = 'grid'"
+                  >
                     <UIcon
-                      name="i-heroicons-chevron-down"
-                      class="size-3"
+                      name="i-heroicons-squares-2x2"
+                      class="size-4"
                     />
                   </button>
                 </div>
-              </UDropdownMenu>
-
-              <!-- View toggle -->
-              <div class="flex h-6 items-center gap-0.5 rounded-md bg-rp-surface px-0.5">
-                <button
-                  type="button"
-                  class="flex size-5 items-center justify-center rounded transition-colors"
-                  :class="viewMode === 'list' ? 'bg-rp-overlay text-rp-text' : 'text-rp-subtle hover:text-rp-text'"
-                  @click="viewMode = 'list'"
-                >
-                  <UIcon
-                    name="i-heroicons-bars-3"
-                    class="size-4"
-                  />
-                </button>
-                <button
-                  type="button"
-                  class="flex size-5 items-center justify-center rounded transition-colors"
-                  :class="viewMode === 'grid' ? 'bg-rp-overlay text-rp-text' : 'text-rp-subtle hover:text-rp-text'"
-                  @click="viewMode = 'grid'"
-                >
-                  <UIcon
-                    name="i-heroicons-squares-2x2"
-                    class="size-4"
-                  />
-                </button>
               </div>
             </div>
-          </div>
 
-          <!-- Loading state -->
-          <div
-            v-if="isLoading"
-            class="space-y-1.5 sm:space-y-2"
-          >
+            <!-- Loading state -->
             <div
-              v-for="i in 5"
-              :key="i"
-              class="flex animate-pulse items-center gap-2 rounded-lg bg-rp-surface p-2 sm:gap-3 sm:rounded-xl sm:p-3"
+              v-if="isLoading"
+              class="space-y-1.5 sm:space-y-2"
             >
-              <div class="size-8 shrink-0 rounded-md bg-rp-overlay sm:size-10 sm:rounded-lg" />
-              <div class="flex-1 space-y-1.5 sm:space-y-2">
-                <div class="h-3 w-3/4 rounded bg-rp-overlay sm:h-4" />
-                <div class="h-2.5 w-1/2 rounded bg-rp-overlay sm:h-3" />
+              <div
+                v-for="i in 5"
+                :key="i"
+                class="flex animate-pulse items-center gap-2 rounded-lg bg-rp-surface p-2 sm:gap-3 sm:rounded-xl sm:p-3"
+              >
+                <div class="size-8 shrink-0 rounded-md bg-rp-overlay sm:size-10 sm:rounded-lg" />
+                <div class="flex-1 space-y-1.5 sm:space-y-2">
+                  <div class="h-3 w-3/4 rounded bg-rp-overlay sm:h-4" />
+                  <div class="h-2.5 w-1/2 rounded bg-rp-overlay sm:h-3" />
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- List view -->
-          <div
-            v-else-if="viewMode === 'list'"
-            class="max-h-112 space-y-1.5 overflow-y-auto scrollbar-none sm:space-y-2"
-          >
-            <TransitionGroup name="episode-list">
-              <AnimeDetailEpisodeListItem
-                v-for="episode in displayedEpisodes"
-                :key="episode.mal_id"
-                :episode="episode"
-                :is-watched="isEpisodeWatched(episode.mal_id)"
-                @toggle-watched="toggleWatched(episode.mal_id)"
-              />
-            </TransitionGroup>
-          </div>
-
-          <!-- Grid view -->
-          <div
-            v-else
-            class="grid max-h-112 grid-cols-4 gap-1.5 overflow-y-auto scrollbar-none sm:grid-cols-5 sm:gap-2 lg:grid-cols-4 xl:grid-cols-5"
-          >
-            <TransitionGroup name="episode-grid">
-              <AnimeDetailEpisodeGridItem
-                v-for="episode in displayedEpisodes"
-                :key="episode.mal_id"
-                :episode="episode"
-                :is-watched="isEpisodeWatched(episode.mal_id)"
-                @toggle-watched="toggleWatched(episode.mal_id)"
-              />
-            </TransitionGroup>
-          </div>
-
-          <!-- Show more/less and Load more buttons -->
-          <div class="mt-4 flex flex-wrap items-center justify-center gap-2 sm:mt-6 sm:gap-3">
-            <!-- Show all/less toggle for current loaded episodes -->
-            <button
-              v-if="episodes.length > initialCount && !showAll"
-              type="button"
-              class="group flex items-center gap-1.5 rounded-full bg-rp-iris px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-rp-iris/25 transition-all hover:scale-105 hover:shadow-xl hover:shadow-rp-iris/30 sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm"
-              @click="showAll = true"
+            <!-- List view -->
+            <div
+              v-else-if="viewMode === 'list'"
+              class="max-h-112 space-y-1.5 overflow-y-auto scrollbar-none sm:space-y-2"
             >
-              {{ $t('anime.showAllEpisodes', { count: episodes.length }) }}
-              <UIcon
-                name="i-heroicons-chevron-down"
-                class="size-3.5 transition-transform group-hover:translate-y-0.5 sm:size-4"
-              />
-            </button>
-            <button
-              v-else-if="showAll && episodes.length > initialCount"
-              type="button"
-              class="group flex items-center gap-1.5 rounded-full border border-rp-overlay bg-rp-surface px-4 py-2 text-xs font-semibold text-rp-text transition-all hover:border-rp-iris/50 hover:bg-rp-overlay sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm"
-              @click="showAll = false"
-            >
-              {{ $t('anime.showLess') }}
-              <UIcon
-                name="i-heroicons-chevron-up"
-                class="size-3.5 transition-transform group-hover:-translate-y-0.5 sm:size-4"
-              />
-            </button>
-
-            <!-- Load more pages from API -->
-            <button
-              v-if="hasNextPage && showAll"
-              type="button"
-              :disabled="isLoadingMore"
-              class="group flex items-center gap-1.5 rounded-full bg-rp-foam px-4 py-2 text-xs font-semibold text-rp-base shadow-lg shadow-rp-foam/25 transition-all hover:scale-105 hover:shadow-xl hover:shadow-rp-foam/30 disabled:opacity-50 disabled:hover:scale-100 sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm"
-              @click="loadMore"
-            >
-              <template v-if="isLoadingMore">
-                <UIcon
-                  name="i-heroicons-arrow-path"
-                  class="size-3.5 animate-spin sm:size-4"
+              <TransitionGroup name="episode-list">
+                <AnimeDetailEpisodeListItem
+                  v-for="episode in displayedEpisodes"
+                  :key="episode.mal_id"
+                  :episode="episode"
+                  :is-watched="isEpisodeWatched(episode.mal_id)"
+                  @toggle-watched="toggleWatched(episode.mal_id)"
                 />
-                {{ $t('common.loading') }}
-              </template>
-              <template v-else>
-                {{ $t('anime.loadMoreEpisodes') }}
-                <UIcon
-                  name="i-heroicons-plus"
-                  class="size-3.5 transition-transform group-hover:rotate-90 sm:size-4"
+              </TransitionGroup>
+            </div>
+
+            <!-- Grid view -->
+            <div
+              v-else
+              class="grid max-h-112 grid-cols-4 gap-1.5 overflow-y-auto scrollbar-none sm:grid-cols-5 sm:gap-2 lg:grid-cols-4 xl:grid-cols-5"
+            >
+              <TransitionGroup name="episode-grid">
+                <AnimeDetailEpisodeGridItem
+                  v-for="episode in displayedEpisodes"
+                  :key="episode.mal_id"
+                  :episode="episode"
+                  :is-watched="isEpisodeWatched(episode.mal_id)"
+                  @toggle-watched="toggleWatched(episode.mal_id)"
                 />
-              </template>
-            </button>
+              </TransitionGroup>
+            </div>
+
+            <!-- Show more/less and Load more buttons -->
+            <div class="mt-4 flex flex-wrap items-center justify-center gap-2 sm:mt-6 sm:gap-3">
+              <!-- Show all/less toggle for current loaded episodes -->
+              <button
+                v-if="episodes.length > initialCount && !showAll"
+                type="button"
+                class="group flex items-center gap-1.5 rounded-full bg-rp-iris px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-rp-iris/25 transition-all hover:scale-105 hover:shadow-xl hover:shadow-rp-iris/30 sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm"
+                @click="showAll = true"
+              >
+                {{ $t('anime.showAllEpisodes', { count: episodes.length }) }}
+                <UIcon
+                  name="i-heroicons-chevron-down"
+                  class="size-3.5 transition-transform group-hover:translate-y-0.5 sm:size-4"
+                />
+              </button>
+              <button
+                v-else-if="showAll && episodes.length > initialCount"
+                type="button"
+                class="group flex items-center gap-1.5 rounded-full border border-rp-overlay bg-rp-surface px-4 py-2 text-xs font-semibold text-rp-text transition-all hover:border-rp-iris/50 hover:bg-rp-overlay sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm"
+                @click="showAll = false"
+              >
+                {{ $t('anime.showLess') }}
+                <UIcon
+                  name="i-heroicons-chevron-up"
+                  class="size-3.5 transition-transform group-hover:-translate-y-0.5 sm:size-4"
+                />
+              </button>
+
+              <!-- Load more pages from API -->
+              <button
+                v-if="hasNextPage && showAll"
+                type="button"
+                :disabled="isLoadingMore"
+                class="group flex items-center gap-1.5 rounded-full bg-rp-foam px-4 py-2 text-xs font-semibold text-rp-base shadow-lg shadow-rp-foam/25 transition-all hover:scale-105 hover:shadow-xl hover:shadow-rp-foam/30 disabled:opacity-50 disabled:hover:scale-100 sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm"
+                @click="loadMore"
+              >
+                <template v-if="isLoadingMore">
+                  <UIcon
+                    name="i-heroicons-arrow-path"
+                    class="size-3.5 animate-spin sm:size-4"
+                  />
+                  {{ $t('common.loading') }}
+                </template>
+                <template v-else>
+                  {{ $t('anime.loadMoreEpisodes') }}
+                  <UIcon
+                    name="i-heroicons-plus"
+                    class="size-3.5 transition-transform group-hover:rotate-90 sm:size-4"
+                  />
+                </template>
+              </button>
+            </div>
           </div>
-        </div>
+        </ClientOnly>
       </div>
     </UContainer>
   </section>

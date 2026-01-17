@@ -211,8 +211,11 @@ export const useFavoritesStore = defineStore(
   },
   {
     persist: {
-      storage: persistedState.localStorage,
-      pick: ['favorites'], // Only persist favorites, not isLoading or hasSynced
+      storage: persistedState.cookiesWithOptions({
+        maxAge: 60 * 60 * 24 * 365, // 1 year
+        sameSite: 'lax',
+      }),
+      pick: ['favorites'],
     },
   }
 )
