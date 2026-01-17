@@ -8,7 +8,7 @@
       class="flex items-center gap-3 rounded-2xl bg-rp-base/95 px-4 py-2.5 shadow-2xl shadow-black/30 ring-1 ring-white/10 backdrop-blur-xl transition-all duration-500 md:gap-4 md:px-5"
     >
       <NuxtLink
-        to="/"
+        :to="localePath('/')"
         class="group flex items-center gap-1.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base md:gap-2"
         :aria-label="$t('nav.home')"
       >
@@ -46,14 +46,14 @@
         <UTooltip :text="$t('nav.explore')" :delay-duration="400" :disabled="!isMobile">
           <NuxtLink
             ref="exploreRef"
-            to="/"
+            :to="localePath('/')"
             class="nav-link-explore group flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-all hover:bg-rp-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-gold focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
             :class="
-              $route.path === '/'
+              $route.path === localePath('/')
                 ? 'bg-rp-gold/10 text-rp-gold'
                 : 'text-white hover:text-rp-gold'
             "
-            :aria-current="$route.path === '/' ? 'page' : undefined"
+            :aria-current="$route.path === localePath('/') ? 'page' : undefined"
           >
             <UIcon name="i-heroicons-fire-solid" class="nav-icon-fire size-4" aria-hidden="true" />
             <span class="hidden sm:inline">{{ $t('nav.explore') }}</span>
@@ -63,14 +63,14 @@
         <UTooltip :text="$t('nav.favorites')" :delay-duration="400" :disabled="!isMobile">
           <NuxtLink
             ref="favoritesRef"
-            to="/favorites"
+            :to="localePath('/favorites')"
             class="group flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-all hover:bg-rp-love/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
             :class="
-              $route.path === '/favorites'
+              $route.path === localePath('/favorites')
                 ? 'bg-rp-love/10 text-rp-love'
                 : 'text-white hover:text-rp-love'
             "
-            :aria-current="$route.path === '/favorites' ? 'page' : undefined"
+            :aria-current="$route.path === localePath('/favorites') ? 'page' : undefined"
           >
             <span
               class="nav-icon-favorites relative flex size-4 items-center justify-center"
@@ -100,6 +100,8 @@
 defineProps<{
   isScrolled: boolean
 }>()
+
+const localePath = useLocalePath()
 
 // Refs for keyboard navigation
 const menuRef = ref<HTMLElement | null>(null)

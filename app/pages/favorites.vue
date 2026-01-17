@@ -51,7 +51,7 @@
             {{ $t('favorites.emptyDesc') }}
           </p>
           <NuxtLink
-            to="/"
+            :to="localePath('/')"
             class="mt-6 inline-flex items-center gap-2 rounded-xl bg-rp-iris px-6 py-3 font-medium text-rp-base transition-all hover:bg-rp-iris/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
           >
             <UIcon name="i-heroicons-magnifying-glass" class="size-5" aria-hidden="true" />
@@ -95,7 +95,7 @@
                   :class="sortBy === option.value
                     ? 'text-white'
                     : 'text-rp-subtle hover:text-rp-text'"
-                  @click="sortBy = option.value"
+                  @click="preferencesStore.setFavoritesSortBy(option.value)"
                 >
                   <UIcon
                     :name="option.icon"
@@ -170,11 +170,13 @@
 
 <script setup lang="ts">
 const { t } = useI18n()
+const localePath = useLocalePath()
 const favoritesStore = useFavoritesStore()
+const preferencesStore = usePreferencesStore()
 const { favoritesCount } = storeToRefs(favoritesStore)
+const { favoritesSortBy: sortBy } = storeToRefs(preferencesStore)
 
 const showClearConfirm = ref(false)
-const sortBy = ref<'recent' | 'score' | 'title'>('recent')
 
 // Ref for sort container
 const sortContainerRef = ref<HTMLElement | null>(null)

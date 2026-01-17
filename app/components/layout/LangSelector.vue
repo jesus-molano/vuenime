@@ -55,12 +55,13 @@
 </template>
 
 <script setup lang="ts">
-const { locale, locales, setLocale } = useI18n()
+import type { LocaleCode } from '~/stores/preferences'
+
+const { locale, locales, setLocale: setI18nLocale } = useI18n()
+const preferencesStore = usePreferencesStore()
 
 const isOpen = ref(false)
 const selectorRef = ref<HTMLElement | null>(null)
-
-type LocaleCode = 'en' | 'es' | 'ja'
 
 interface LocaleConfig {
   code: LocaleCode
@@ -77,19 +78,20 @@ const availableLocales = computed<LocaleConfig[]>(() => {
 })
 
 const switchLocale = (code: LocaleCode) => {
-  setLocale(code)
+  setI18nLocale(code)
+  preferencesStore.setLocale(code)
   isOpen.value = false
 }
+
+onMounted(() => {
+  window.addEventListener('click', handleClickOutside)
+})
 
 const handleClickOutside = (e: MouseEvent) => {
   if (selectorRef.value && !selectorRef.value.contains(e.target as Node)) {
     isOpen.value = false
   }
 }
-
-onMounted(() => {
-  window.addEventListener('click', handleClickOutside)
-})
 
 onUnmounted(() => {
   window.removeEventListener('click', handleClickOutside)
