@@ -7,11 +7,12 @@
     <div
       class="group relative overflow-hidden rounded-2xl shadow-2xl shadow-black/50 ring-1 ring-white/20 transition-all duration-700 hover:scale-[1.02] hover:shadow-rp-iris/30"
     >
-      <img
+      <NuxtImg
         :src="anime.images.webp.large_image_url"
         :alt="$t('anime.coverAlt', { title: anime.title })"
         :style="{ viewTransitionName: `poster-${anime.mal_id}` }"
         class="aspect-3/4 w-full object-cover"
+        placeholder
       />
 
       <!-- Shimmer effect on hover -->

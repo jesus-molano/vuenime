@@ -21,10 +21,18 @@ export default defineNuxtConfig({
     '@nuxt/test-utils',
     '@nuxt/fonts',
     '@nuxt/icon',
+    '@nuxt/image',
     '@nuxtjs/i18n',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
   ],
+
+  // Image optimization - use 'none' provider for external CDN images
+  image: {
+    provider: 'none', // Don't proxy external images, serve directly from CDN
+    domains: ['cdn.myanimelist.net'],
+    quality: 100,
+  },
 
   // CSS
   css: ['~/assets/css/main.css'],

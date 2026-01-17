@@ -18,13 +18,14 @@
         class="card-border pointer-events-none absolute -inset-px overflow-hidden rounded-2xl opacity-0 transition-opacity duration-300 max-sm:hidden"
         :class="{ 'opacity-100': isHovering }"
       >
-        <img
+        <NuxtImg
           :src="anime.images.webp.large_image_url"
           alt=""
           class="size-full scale-105 object-cover blur-xl brightness-150 saturate-200 select-none"
           :style="borderMaskStyle"
           aria-hidden="true"
           draggable="false"
+          loading="lazy"
         />
       </div>
 
@@ -41,13 +42,14 @@
         >
           <!-- Imagen (lado izquierdo) -->
           <div class="relative h-32 w-24 shrink-0 overflow-hidden">
-            <img
+            <NuxtImg
               :src="anime.images.webp.large_image_url"
               :alt="$t('anime.coverAlt', { title: anime.title })"
               :style="{ viewTransitionName: `poster-${anime.mal_id}` }"
               class="size-full object-cover select-none"
               loading="lazy"
               draggable="false"
+              placeholder
             />
             <!-- Badge de puntuación -->
             <UiScoreBadge
@@ -142,13 +144,14 @@
             class="block size-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-inset"
             :aria-labelledby="`anime-title-desktop-${anime.mal_id}`"
           >
-            <img
+            <NuxtImg
               :src="anime.images.webp.large_image_url"
               :alt="$t('anime.coverAlt', { title: anime.title })"
               :style="{ viewTransitionName: `poster-${anime.mal_id}` }"
               class="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 select-none"
               draggable="false"
               loading="lazy"
+              placeholder
             />
           </NuxtLink>
 
