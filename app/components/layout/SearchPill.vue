@@ -1,36 +1,57 @@
 <template>
-  <div
-    class="fixed inset-x-0 z-40 hidden justify-center md:flex"
-    :style="{ bottom: `calc(${footerHeight + 24}px)` }"
+  <!-- Tablet (md-lg): Bottom-right -->
+  <button
+    type="button"
+    :aria-label="$t('common.search')"
+    class="group fixed bottom-6 right-6 z-40 hidden items-center gap-1.5 rounded-xl border border-rp-overlay/50 bg-rp-surface/95 px-3 py-2 shadow-xl shadow-rp-base/40 backdrop-blur-xl transition-all duration-300 hover:border-rp-iris/50 hover:bg-rp-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base md:flex lg:hidden"
+    @click="$emit('click')"
   >
-    <Transition name="search-slide">
-      <button
-        v-if="isVisible"
-        type="button"
-        :aria-label="$t('common.search')"
-        class="group flex items-center gap-3 rounded-2xl border border-rp-overlay/50 bg-rp-surface/95 px-5 py-3 shadow-2xl shadow-rp-base/50 backdrop-blur-xl transition-all hover:border-rp-iris/50 hover:shadow-rp-iris/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
-        @click="$emit('click')"
-      >
-        <UIcon
-          name="i-heroicons-magnifying-glass"
-          class="size-5 text-rp-muted transition-colors group-hover:text-rp-iris"
-          aria-hidden="true"
-        />
-        <span class="text-sm text-rp-subtle">{{ $t('home.searchPlaceholder') }}</span>
-        <kbd
-          class="rounded-lg bg-rp-overlay px-2 py-0.5 text-xs font-medium text-rp-text"
-          aria-hidden="true"
-        >
-          &#8984;K
-        </kbd>
-      </button>
-    </Transition>
-  </div>
+    <UIcon
+      name="i-heroicons-magnifying-glass"
+      class="size-4 text-rp-muted transition-colors group-hover:text-rp-iris"
+      aria-hidden="true"
+    />
+    <kbd
+      class="rounded bg-rp-overlay/80 px-1.5 py-0.5 text-[10px] font-medium text-rp-muted"
+      aria-hidden="true"
+    >
+      ⌘K
+    </kbd>
+  </button>
+
+  <!-- Desktop (lg+): Top-right, aligned with navbar -->
+  <button
+    type="button"
+    :aria-label="$t('common.search')"
+    class="group fixed right-6 top-7 z-40 hidden items-center gap-1.5 rounded-xl border border-rp-overlay/50 bg-rp-surface/90 px-2.5 py-2 shadow-lg shadow-rp-base/30 backdrop-blur-xl transition-all duration-300 hover:border-rp-iris/50 hover:bg-rp-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base lg:flex"
+    @click="$emit('click')"
+  >
+    <UIcon
+      name="i-heroicons-magnifying-glass"
+      class="size-3.5 text-rp-muted transition-colors group-hover:text-rp-iris"
+      aria-hidden="true"
+    />
+    <!-- Text container with grid animation -->
+    <div
+      class="search-text-container grid transition-all duration-300 ease-out"
+      :class="isScrolled ? 'grid-cols-[1fr]' : 'grid-cols-[0fr]'"
+    >
+      <span class="overflow-hidden whitespace-nowrap text-xs text-rp-subtle">
+        {{ $t('home.searchPlaceholder') }}
+      </span>
+    </div>
+    <kbd
+      class="rounded bg-rp-overlay/80 px-1 py-0.5 text-[10px] font-medium text-rp-muted"
+      aria-hidden="true"
+    >
+      ⌘K
+    </kbd>
+  </button>
 </template>
 
 <script setup lang="ts">
 defineProps<{
-  isVisible: boolean
+  isScrolled: boolean
   footerHeight: number
 }>()
 
@@ -40,14 +61,11 @@ defineEmits<{
 </script>
 
 <style scoped>
-.search-slide-enter-active,
-.search-slide-leave-active {
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+.search-text-container {
+  transition: grid-template-columns 0.3s ease-out;
 }
 
-.search-slide-enter-from,
-.search-slide-leave-to {
-  opacity: 0;
-  transform: translateY(20px);
+.search-text-container > span {
+  min-width: 0;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <footer
     ref="footerRef"
-    class="border-t border-rp-overlay/30 py-6 pb-8"
+    class="border-t border-white/5 py-6 pb-8"
     role="contentinfo"
   >
     <UContainer>

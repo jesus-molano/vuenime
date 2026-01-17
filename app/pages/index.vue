@@ -1,9 +1,7 @@
 <template>
   <div>
     <!-- Hero Section con fondo animado -->
-    <section
-      class="relative overflow-hidden border-b border-rp-overlay/30 pb-8 pt-20 sm:pb-12 sm:pt-24 md:pb-20 md:pt-32"
-    >
+    <section class="relative overflow-hidden border-b border-white/5 pb-8 pt-20 sm:pb-12 sm:pt-24 md:pb-20 md:pt-32">
       <!-- Background gradient animado -->
       <div class="absolute inset-0 bg-linear-to-br from-rp-iris/10 via-transparent to-rp-love/10" />
       <div

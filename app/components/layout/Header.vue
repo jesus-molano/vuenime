@@ -5,7 +5,8 @@
     <nav
       role="navigation"
       :aria-label="$t('nav.main')"
-      class="flex items-center gap-3 rounded-2xl bg-rp-base/95 px-4 py-2.5 shadow-2xl shadow-black/30 ring-1 ring-white/10 backdrop-blur-xl transition-all duration-500 md:gap-4 md:px-5"
+      class="nav-container flex items-center gap-3 rounded-2xl px-4 py-2.5 backdrop-blur-xl md:gap-4 md:px-5"
+      :class="isScrolled ? 'nav-scrolled' : 'nav-top'"
     >
       <NuxtLink
         :to="localePath('/')"
@@ -74,7 +75,7 @@
       </NuxtLink>
 
       <div
-        class="h-5 w-px bg-rp-overlay/50"
+        class="h-4 w-px bg-white/10"
         aria-hidden="true"
       />
 
@@ -191,6 +192,24 @@ const handleMenuKeydown = (e: KeyboardEvent) => {
 </script>
 
 <style scoped>
+.nav-container {
+  transition:
+    background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-top {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.nav-scrolled {
+  background-color: rgb(25 23 36 / 0.95);
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.3),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
 .straw-hat {
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
