@@ -6,7 +6,8 @@
     "search": "Search",
     "noResults": "No results found",
     "cancel": "Cancel",
-    "readMore": "Read more"
+    "readMore": "Read more",
+    "back": "Back"
   },
   "lang": {
     "selector": "Select language"
@@ -53,6 +54,7 @@
     "searchPlaceholder": "Search anime by title, genre...",
     "trending": "Trending Now",
     "trendingSubtitle": "The most popular anime this season",
+    "endOfList": "You've reached the end of the list",
     "stats": {
       "titles": "25,000+ Titles",
       "updated": "Updated daily"

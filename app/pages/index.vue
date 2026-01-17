@@ -130,10 +130,30 @@
           class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 xl:grid-cols-5 xl:gap-6"
         >
           <AnimeCard
-            v-for="anime in animeList?.data"
+            v-for="anime in animeList"
             :key="anime.mal_id"
             :anime="anime"
           />
+        </div>
+
+        <!-- Load More Trigger & Loading -->
+        <div
+          ref="loadMoreTrigger"
+          class="flex justify-center py-8"
+        >
+          <div
+            v-if="isLoadingMore"
+            class="flex items-center gap-3"
+          >
+            <div class="size-5 animate-spin rounded-full border-2 border-rp-iris border-t-transparent" />
+            <span class="text-sm text-rp-subtle">{{ $t('common.loading') }}</span>
+          </div>
+          <p
+            v-else-if="!hasNextPage && animeList.length > 0"
+            class="text-sm text-rp-muted"
+          >
+            {{ $t('home.endOfList') }}
+          </p>
         </div>
       </UContainer>
     </section>
@@ -146,9 +166,10 @@ import { PAGINATION } from '~~/shared/constants/api'
 const { t } = useI18n()
 const router = useRouter()
 const localePath = useLocalePath()
-const { animeList, isLoading, error, refresh } = useAnimeList()
+const { animeList, isLoading, isLoadingMore, hasNextPage, error, loadMore, refresh } = useAnimeList()
 
 const searchQuery = ref('')
+const loadMoreTrigger = ref<HTMLElement | null>(null)
 
 const handleSearch = () => {
   if (searchQuery.value.trim()) {
@@ -157,6 +178,26 @@ const handleSearch = () => {
     router.push(localePath('/search'))
   }
 }
+
+// Infinite scroll with IntersectionObserver
+onMounted(() => {
+  if (!loadMoreTrigger.value) return
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0]?.isIntersecting && hasNextPage.value && !isLoadingMore.value) {
+        loadMore()
+      }
+    },
+    { rootMargin: '200px' }
+  )
+
+  observer.observe(loadMoreTrigger.value)
+
+  onUnmounted(() => {
+    observer.disconnect()
+  })
+})
 
 useSeoMeta({
   title: `VueNime - ${t('home.title')} ${t('home.titleHighlight')}`,

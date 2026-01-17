@@ -1,11 +1,15 @@
 <template>
+  <!-- Skeleton while image loads -->
+  <AnimeCardSkeleton v-if="!isImageLoaded" />
+
   <!-- Wrapper con perspective para el efecto 3D -->
   <div
+    v-show="isImageLoaded"
     ref="wrapperRef"
     class="group card-perspective relative"
     @mouseenter="onCardHover"
     @mousemove="handleMouseMove"
-    @mouseleave="handleMouseLeave"
+    @mouseleave="onMouseLeave"
   >
     <!-- Card con efecto 3D -->
     <div
@@ -50,6 +54,7 @@
               loading="lazy"
               draggable="false"
               placeholder
+              @load="onImageLoad"
             />
             <UiScoreBadge
               v-if="anime.score"
@@ -109,6 +114,7 @@
               draggable="false"
               loading="lazy"
               placeholder
+              @load="onImageLoad"
             />
           </NuxtLink>
 
@@ -186,6 +192,12 @@ const props = withDefaults(
 // Wrapper ref for remove animation
 const wrapperRef = ref<HTMLElement | null>(null)
 
+// Image loading state
+const isImageLoaded = ref(false)
+const onImageLoad = () => {
+  isImageLoaded.value = true
+}
+
 // 3D Tilt Effect
 const { cardRef, isHovering, cardTransform, glareStyle, borderMaskStyle, handleMouseMove, handleMouseLeave } =
   useCard3DTilt({ maxRotation: 6, minWidth: 640 })
@@ -202,6 +214,12 @@ const animeLink = computed(() => localePath(`/anime/${props.anime.mal_id}`))
 // Prefetch data on hover (desktop only)
 const onCardHover = () => {
   prefetchAnimeDetail(props.anime.mal_id)
+}
+
+// Handle mouse leave: cancel prefetch + reset 3D effect
+const onMouseLeave = () => {
+  cancelPrefetchAnimeDetail(props.anime.mal_id)
+  handleMouseLeave()
 }
 </script>
 

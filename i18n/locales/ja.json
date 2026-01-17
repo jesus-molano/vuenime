@@ -6,7 +6,8 @@
     "search": "検索",
     "noResults": "結果が見つかりませんでした",
     "cancel": "キャンセル",
-    "readMore": "続きを読む"
+    "readMore": "続きを読む",
+    "back": "戻る"
   },
   "lang": {
     "selector": "言語を選択"
@@ -53,6 +54,7 @@
     "searchPlaceholder": "タイトル、ジャンルでアニメを検索...",
     "trending": "トレンド",
     "trendingSubtitle": "今季最も人気のアニメ",
+    "endOfList": "リストの最後に到達しました",
     "stats": {
       "titles": "25,000作品以上",
       "updated": "毎日更新"

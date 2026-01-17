@@ -8,5 +8,11 @@ export default defineAppConfig({
       error: 'rose',
       neutral: 'slate',
     },
+    modal: {
+      slots: {
+        overlay: 'bg-rp-base/80 backdrop-blur-sm',
+        content: 'bg-rp-surface ring-1 ring-rp-overlay',
+      },
+    },
   },
 })
