@@ -12,10 +12,19 @@ export interface AnimeImages {
   webp: AnimeImage
 }
 
+export interface AnimeTrailerImages {
+  image_url: string | null
+  small_image_url: string | null
+  medium_image_url: string | null
+  large_image_url: string | null
+  maximum_image_url: string | null
+}
+
 export interface AnimeTrailer {
   youtube_id: string | null
   url: string | null
   embed_url: string | null
+  images: AnimeTrailerImages
 }
 
 export interface AnimeTitle {
@@ -98,6 +107,34 @@ export interface AnimeDetailResponse {
   data: Anime
 }
 
+// Streaming response from /anime/{id}/streaming
+export interface StreamingLink {
+  name: string
+  url: string
+}
+
+export interface AnimeStreamingResponse {
+  data: StreamingLink[]
+}
+
+// Episodes response from /anime/{id}/episodes
+export interface Episode {
+  mal_id: number
+  url: string
+  title: string
+  title_japanese: string | null
+  title_romanji: string | null
+  aired: string | null
+  score: number | null
+  filler: boolean
+  recap: boolean
+}
+
+export interface AnimeEpisodesResponse {
+  data: Episode[]
+  pagination: AnimePagination
+}
+
 // Filter types
 export interface AnimeFilters {
   q?: string
@@ -108,4 +145,33 @@ export interface AnimeFilters {
   sort?: 'asc' | 'desc'
   page?: number
   limit?: number
+}
+
+// Genre response from /genres/anime
+export interface GenreItem {
+  mal_id: number
+  name: string
+  url: string
+  count: number
+}
+
+export interface GenresResponse {
+  data: GenreItem[]
+}
+
+// Producer response from /producers
+export interface ProducerItem {
+  mal_id: number
+  url: string
+  titles: { type: string; title: string }[]
+  images: { jpg: { image_url: string } }
+  favorites: number
+  count: number
+  established: string | null
+  about: string | null
+}
+
+export interface ProducersResponse {
+  data: ProducerItem[]
+  pagination: AnimePagination
 }

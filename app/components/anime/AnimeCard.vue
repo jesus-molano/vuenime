@@ -1,169 +1,233 @@
 <template>
-  <!-- Mobile: Layout horizontal | Desktop: Layout vertical -->
-  <article
-    class="group relative cursor-pointer overflow-hidden rounded-lg bg-rp-surface shadow-md border border-rp-overlay transition-all duration-300 hover:border-rp-iris/50 hover:shadow-rp-iris/20 focus-rp sm:rounded-xl sm:shadow-lg md:rounded-2xl md:shadow-2xl"
-    :style="{ viewTransitionName: isNavigating ? `anime-card-${anime.mal_id}` : '' }"
-    @click="navigateToDetail"
-    @keydown.enter="navigateToDetail"
-    tabindex="0"
-    role="article"
-    :aria-labelledby="`anime-title-${anime.mal_id}`"
+  <div
+    ref="wrapperRef"
+    class="group card-perspective relative"
+    @mouseenter="onCardHover"
+    @mousemove="handleMouseMove"
+    @mouseleave="onMouseLeave"
   >
-    <!-- Mobile: Horizontal layout -->
-    <div class="flex sm:hidden">
-      <!-- Imagen (lado izquierdo) -->
-      <div class="relative h-32 w-24 shrink-0 overflow-hidden">
-        <img
-          :src="anime.images.jpg.large_image_url"
-          :alt="$t('anime.coverAlt', { title: anime.title })"
-          :style="{ viewTransitionName: isNavigating ? `anime-image-${anime.mal_id}` : '' }"
-          class="size-full object-cover"
+    <div
+      ref="cardRef"
+      class="card-3d relative rounded-2xl transition-transform duration-200 ease-out"
+      :style="cardTransform"
+    >
+      <!-- Glow border (desktop only) -->
+      <div
+        class="card-border pointer-events-none absolute -inset-px overflow-hidden rounded-2xl opacity-0 transition-opacity duration-300 max-sm:hidden"
+        :class="{ 'opacity-100': isHovering }"
+      >
+        <NuxtImg
+          :src="anime.images.webp.large_image_url"
+          alt=""
+          class="size-full scale-105 object-cover blur-xl brightness-150 saturate-200 select-none"
+          :style="borderMaskStyle"
+          aria-hidden="true"
+          draggable="false"
           loading="lazy"
         />
-        <!-- Badge de puntuación -->
-        <div
-          v-if="anime.score"
-          class="absolute right-1 top-1 flex items-center gap-0.5 rounded-full bg-gradient-rp-score px-1.5 py-0.5 text-[9px] font-bold text-white shadow-lg"
-        >
-          <UIcon name="i-heroicons-star-solid" class="size-2" />
-          {{ anime.score.toFixed(1) }}
-        </div>
       </div>
 
-      <!-- Contenido (lado derecho) -->
-      <div class="flex flex-1 flex-col justify-center gap-1 p-3">
-        <h3
-          :id="`anime-title-${anime.mal_id}`"
-          :style="{ viewTransitionName: isNavigating ? `anime-title-${anime.mal_id}` : '' }"
-          class="line-clamp-2 text-sm font-bold text-rp-text"
+      <div
+        class="card-inner relative overflow-hidden rounded-2xl border border-white/8 bg-rp-surface/95 backdrop-blur-sm transition-[box-shadow,border-color] duration-400 group-hover:border-white/15 group-hover:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] has-focus-visible:ring-2 has-focus-visible:ring-rp-iris has-focus-visible:ring-offset-2 has-focus-visible:ring-offset-rp-base"
+      >
+        <!-- Mobile -->
+        <NuxtLink
+          :to="animeLink"
+          :view-transition="true"
+          class="flex sm:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-inset"
+          :aria-labelledby="`anime-title-mobile-${anime.mal_id}`"
         >
-          {{ anime.title }}
-        </h3>
+          <div class="relative h-32 w-24 shrink-0 overflow-hidden">
+            <NuxtImg
+              :src="anime.images.webp.large_image_url"
+              :alt="$t('anime.coverAlt', { title: anime.title })"
+              :style="{ viewTransitionName: `poster-${anime.mal_id}` }"
+              class="size-full object-cover select-none"
+              loading="lazy"
+              draggable="false"
+              placeholder
+            />
+            <UiScoreBadge
+              v-if="anime.score"
+              :score="anime.score"
+              size="xs"
+              class="absolute right-1.5 top-1.5"
+            />
+          </div>
 
-        <!-- Info -->
-        <div class="flex items-center gap-2 text-[10px] text-rp-subtle">
-          <span v-if="anime.year" class="flex items-center gap-0.5">
-            <UIcon name="i-heroicons-calendar" class="size-2.5" />
-            {{ anime.year }}
-          </span>
-          <span v-if="anime.episodes" class="flex items-center gap-0.5">
-            <UIcon name="i-heroicons-play" class="size-2.5" />
-            {{ anime.episodes }} {{ $t('anime.eps') }}
-          </span>
-        </div>
+          <div class="flex flex-1 flex-col justify-center gap-1.5 p-3">
+            <div class="flex items-start justify-between gap-2">
+              <h3
+                :id="`anime-title-mobile-${anime.mal_id}`"
+                class="line-clamp-2 flex-1 text-sm font-bold text-rp-text"
+              >
+                {{ anime.title }}
+              </h3>
+              <AnimeCardFavoriteButton
+                :is-favorite="isFavorite"
+                :is-animating="isAnimating"
+                variant="mobile"
+                @toggle="toggleFavorite"
+              />
+            </div>
 
-        <!-- Géneros -->
-        <div class="flex flex-wrap gap-1">
-          <span
-            v-for="genre in anime.genres?.slice(0, 2)"
-            :key="genre.mal_id"
-            class="rounded-full bg-rp-overlay/80 px-1.5 py-0.5 text-[9px] text-rp-subtle"
+            <AnimeCardInfo
+              :year="anime.year"
+              :episodes="anime.episodes"
+              size="xs"
+            />
+            <AnimeCardGenres
+              :genres="anime.genres"
+              size="xs"
+            />
+            <UiAiringBadge
+              v-if="anime.airing"
+              size="xs"
+              class="mt-0.5 w-fit"
+            />
+          </div>
+        </NuxtLink>
+
+        <!-- Desktop -->
+        <div class="relative hidden aspect-[3/4.2] overflow-hidden sm:block">
+          <NuxtLink
+            :to="animeLink"
+            :view-transition="true"
+            class="block size-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-inset"
+            :aria-labelledby="`anime-title-desktop-${anime.mal_id}`"
           >
-            {{ genre.name }}
-          </span>
-        </div>
+            <NuxtImg
+              :src="anime.images.webp.large_image_url"
+              :alt="$t('anime.coverAlt', { title: anime.title })"
+              :style="posterStyle"
+              class="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 select-none"
+              draggable="false"
+              loading="lazy"
+              placeholder
+            />
+          </NuxtLink>
 
-        <!-- Badge "En emisión" -->
-        <div
-          v-if="anime.airing"
-          class="mt-1 inline-flex w-fit items-center rounded-full bg-rp-foam/90 px-1.5 py-0.5 text-[9px] font-semibold text-rp-base"
-        >
-          {{ $t('anime.airing') }}
+          <div
+            class="card-overlay card-content-fade pointer-events-none absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent"
+          />
+
+          <div
+            class="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            :style="glareStyle"
+          />
+
+          <UiScoreBadge
+            v-if="anime.score"
+            :score="anime.score"
+            size="sm"
+            position="top-right"
+            class="card-content-fade"
+          />
+          <UiAiringBadge
+            v-if="anime.airing"
+            size="sm"
+            position="top-left"
+            class="card-content-fade"
+          />
+
+          <div class="card-content-fade absolute inset-x-0 bottom-0 flex flex-col gap-1.5 p-3 md:gap-2 md:p-4">
+            <h3
+              :id="`anime-title-desktop-${anime.mal_id}`"
+              class="line-clamp-2 text-sm font-bold leading-tight text-white drop-shadow-lg transition-colors duration-300 group-hover:text-rp-iris md:text-base"
+            >
+              {{ anime.title }}
+            </h3>
+
+            <AnimeCardInfo
+              :year="anime.year"
+              :episodes="anime.episodes"
+              size="sm"
+            />
+            <AnimeCardGenres
+              :genres="anime.genres"
+              size="sm"
+            />
+          </div>
+
+          <AnimeCardFavoriteButton
+            :is-favorite="isFavorite"
+            :is-animating="isAnimating"
+            variant="desktop"
+            class="card-content-fade absolute bottom-3 right-3 md:bottom-4 md:right-4"
+            @toggle="toggleFavorite"
+          />
         </div>
       </div>
     </div>
-
-    <!-- Desktop: Vertical layout (card clásica) -->
-    <div class="relative hidden aspect-[3/4] overflow-hidden sm:block">
-      <!-- Imagen con zoom en hover -->
-      <img
-        :src="anime.images.jpg.large_image_url"
-        :alt="$t('anime.coverAlt', { title: anime.title })"
-        :style="{ viewTransitionName: isNavigating ? `anime-image-${anime.mal_id}` : '' }"
-        class="size-full object-cover transition-transform duration-500 group-hover:scale-110"
-        loading="lazy"
-      />
-
-      <!-- Gradiente oscuro Rosé Pine -->
-      <div class="absolute inset-0 bg-gradient-rp-card" />
-
-      <!-- Badge de puntuación (arriba derecha) -->
-      <div
-        v-if="anime.score"
-        class="absolute right-2 top-2 flex items-center gap-0.5 rounded-full bg-gradient-rp-score px-1.5 py-0.5 text-[10px] font-bold text-white shadow-lg md:right-3 md:top-3 md:gap-1 md:px-2.5 md:py-1 md:text-xs"
-      >
-        <UIcon name="i-heroicons-star-solid" class="size-2.5 md:size-3.5" />
-        {{ anime.score.toFixed(1) }}
-      </div>
-
-      <!-- Badge "En emisión" (arriba izquierda) -->
-      <div
-        v-if="anime.airing"
-        class="absolute left-2 top-2 rounded-full bg-rp-foam/90 px-1.5 py-0.5 text-[10px] font-semibold text-rp-base backdrop-blur-sm md:left-3 md:top-3 md:px-2.5 md:py-1 md:text-xs"
-      >
-        {{ $t('anime.airing') }}
-      </div>
-
-      <!-- Contenido sobre la imagen (abajo) -->
-      <div class="absolute inset-x-0 bottom-0 p-2 md:p-4">
-        <!-- Título -->
-        <h3
-          :id="`anime-title-${anime.mal_id}`"
-          :style="{ viewTransitionName: isNavigating ? `anime-title-${anime.mal_id}` : '' }"
-          class="line-clamp-2 text-xs font-bold text-rp-text transition-colors group-hover:text-rp-iris md:text-sm lg:text-base"
-        >
-          {{ anime.title }}
-        </h3>
-
-        <!-- Info: año y episodios -->
-        <div class="mt-0.5 flex items-center gap-2 text-[9px] text-rp-subtle md:gap-3 md:text-xs">
-          <span v-if="anime.year" class="flex items-center gap-0.5 md:gap-1">
-            <UIcon name="i-heroicons-calendar" class="size-2.5 md:size-3.5" />
-            {{ anime.year }}
-          </span>
-          <span v-if="anime.episodes" class="flex items-center gap-0.5 md:gap-1">
-            <UIcon name="i-heroicons-play" class="size-2.5 md:size-3.5" />
-            {{ anime.episodes }} {{ $t('anime.eps') }}
-          </span>
-        </div>
-
-        <!-- Géneros -->
-        <div class="mt-1 flex flex-wrap gap-1 md:mt-2">
-          <span
-            v-for="genre in anime.genres?.slice(0, 2)"
-            :key="genre.mal_id"
-            class="rounded-full bg-rp-overlay/80 px-1.5 py-0.5 text-[10px] text-rp-subtle backdrop-blur-sm md:px-2 md:text-xs"
-          >
-            {{ genre.name }}
-          </span>
-        </div>
-      </div>
-
-      <!-- Overlay en hover con "Ver detalles" - solo en desktop -->
-      <div class="absolute inset-0 hidden items-center justify-center bg-rp-iris/80 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100 md:flex">
-        <div class="text-center text-rp-base">
-          <UIcon name="i-heroicons-play-circle-solid" class="mb-2 size-12" />
-          <p class="text-sm font-semibold">{{ $t('anime.viewDetails') }}</p>
-        </div>
-      </div>
-    </div>
-  </article>
+  </div>
 </template>
 
 <script setup lang="ts">
 import type { Anime } from '~~/shared/types/anime'
+import type { FavoriteAnime } from '~/types/favorites'
 
-const props = defineProps<{
-  anime: Anime
-}>()
+const props = withDefaults(
+  defineProps<{
+    anime: Anime | FavoriteAnime
+    /** Animate card out when removing from favorites (only use in favorites page) */
+    animateOnRemove?: boolean
+  }>(),
+  {
+    animateOnRemove: false,
+  }
+)
 
-const router = useRouter()
-const isNavigating = ref(false)
+const wrapperRef = ref<HTMLElement | null>(null)
 
-const navigateToDetail = () => {
-  isNavigating.value = true
-  nextTick(() => {
-    router.push(`/anime/${props.anime.mal_id}`)
-  })
+const { cardRef, isHovering, cardTransform, glareStyle, borderMaskStyle, handleMouseMove, handleMouseLeave } =
+  useCard3DTilt({ maxRotation: 6, minWidth: 640 })
+
+const animeRef = toRef(props, 'anime')
+const cardRefForAnimation = computed(() => (props.animateOnRemove ? wrapperRef.value : null))
+const { isFavorite, isAnimating, toggleFavorite } = useFavoriteToggle(animeRef, cardRefForAnimation)
+
+const localePath = useLocalePath()
+const animeLink = computed(() => localePath(`/anime/${props.anime.mal_id}`))
+
+const { posterStyle } = usePosterTransition(() => props.anime.mal_id)
+
+const onCardHover = () => {
+  prefetchAnimeDetail(props.anime.mal_id)
+}
+
+const onMouseLeave = () => {
+  cancelPrefetchAnimeDetail(props.anime.mal_id)
+  handleMouseLeave()
 }
 </script>
+
+<style scoped>
+.card-perspective {
+  perspective: 1200px;
+  contain: layout style;
+}
+
+.card-border {
+  z-index: 0;
+}
+
+.card-3d {
+  z-index: 1;
+}
+
+.card-inner {
+  isolation: isolate;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .card-3d,
+  .card-border,
+  .card-inner {
+    transition: none !important;
+  }
+  .card-3d {
+    transform: none !important;
+  }
+}
+</style>

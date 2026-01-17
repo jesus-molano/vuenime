@@ -1,138 +1,134 @@
 <template>
   <div>
-    <!-- Hero Section con fondo animado -->
-    <section class="relative overflow-hidden border-b border-rp-overlay/30 pb-8 pt-20 sm:pb-12 sm:pt-24 md:pb-20 md:pt-32">
-      <!-- Background gradient animado -->
-      <div class="absolute inset-0 bg-gradient-to-br from-rp-iris/10 via-transparent to-rp-love/10" />
-      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-rp-iris/5 via-transparent to-transparent" />
+    <!-- Hero Section -->
+    <HomeHero />
 
-      <!-- Círculos decorativos (ocultos en mobile) -->
-      <div class="absolute -left-32 -top-32 hidden size-64 rounded-full bg-rp-iris/10 blur-3xl md:block" />
-      <div class="absolute -bottom-32 -right-32 hidden size-64 rounded-full bg-rp-love/10 blur-3xl md:block" />
-
-      <UContainer class="relative px-4 sm:px-6">
-        <div class="mx-auto max-w-3xl text-center">
-          <!-- Título con efecto de gradiente -->
-          <h1 class="mb-3 text-2xl font-black tracking-tight xs:text-3xl sm:text-4xl md:mb-6 md:text-5xl lg:text-7xl">
-            <span class="text-rp-text">{{ $t('home.title') }}</span>
-            <br />
-            <span class="bg-gradient-to-r from-[#c4a7e7] via-[#ebbcba] to-[#eb6f92] bg-clip-text text-transparent">
-              {{ $t('home.titleHighlight') }}
-            </span>
-          </h1>
-
-          <!-- Subtítulo -->
-          <p class="mx-auto mb-5 max-w-xl text-xs text-rp-subtle sm:text-sm md:mb-10 md:text-lg">
-            {{ $t('home.subtitle') }}
-          </p>
-
-          <!-- Search Bar funcional -->
-          <form
-            @submit.prevent="handleSearch"
-            class="group relative mx-auto flex w-full max-w-md items-center gap-2 rounded-xl border border-rp-overlay/50 bg-rp-surface/50 px-4 py-2 backdrop-blur-sm transition-all focus-within:border-rp-iris/50 focus-within:bg-rp-surface/80 hover:border-rp-iris/30 sm:rounded-2xl sm:px-5 sm:py-3"
-          >
-            <UIcon name="i-heroicons-magnifying-glass" class="size-5 shrink-0 text-rp-muted transition-colors group-focus-within:text-rp-iris" />
-            <input
-              v-model="searchQuery"
-              type="text"
-              :placeholder="$t('home.searchPlaceholder')"
-              class="min-w-0 flex-1 bg-transparent text-sm text-rp-text placeholder-rp-muted outline-none sm:text-base"
-            />
-            <button
-              v-if="searchQuery"
-              type="button"
-              @click="searchQuery = ''"
-              class="shrink-0 rounded-lg p-1 text-rp-muted transition-colors hover:bg-rp-overlay/50 hover:text-rp-text"
-            >
-              <UIcon name="i-heroicons-x-mark" class="size-4" />
-            </button>
-            <button
-              type="submit"
-              :disabled="!searchQuery.trim()"
-              class="shrink-0 rounded-lg bg-rp-iris px-3 py-1.5 text-xs font-semibold text-white transition-all hover:bg-rp-iris/90 disabled:opacity-50 disabled:cursor-not-allowed sm:px-4 sm:py-2 sm:text-sm"
-            >
-              {{ $t('common.search') }}
-            </button>
-          </form>
-
-          <!-- Stats rápidos -->
-          <div class="mt-5 flex items-center justify-center gap-3 text-[10px] sm:mt-8 sm:gap-4 sm:text-xs md:mt-12 md:gap-8 md:text-sm">
-            <div class="flex items-center gap-1 md:gap-2">
-              <UIcon name="i-heroicons-film" class="size-3 text-rp-iris sm:size-4 md:size-5" />
-              <span class="text-rp-subtle">{{ $t('home.stats.titles') }}</span>
-            </div>
-            <div class="h-3 w-px bg-rp-overlay sm:h-4" />
-            <div class="flex items-center gap-1 md:gap-2">
-              <UIcon name="i-heroicons-arrow-path" class="size-3 text-rp-foam sm:size-4 md:size-5" />
-              <span class="text-rp-subtle">{{ $t('home.stats.updated') }}</span>
-            </div>
-          </div>
-        </div>
-      </UContainer>
-    </section>
-
-    <!-- Grid de Animes -->
+    <!-- Anime Grid Section -->
     <section class="py-6 sm:py-8 md:py-12">
       <UContainer class="px-4 sm:px-6">
         <!-- Section header -->
         <div class="mb-4 flex items-center justify-between sm:mb-6 md:mb-8">
           <div>
             <h2 class="text-lg font-bold text-rp-text sm:text-xl md:text-2xl">{{ $t('home.trending') }}</h2>
-            <p class="text-[10px] text-rp-muted sm:text-xs md:text-sm">{{ $t('home.trendingSubtitle') }}</p>
+            <p class="text-[10px] text-rp-muted sm:text-xs md:text-sm">
+              <template v-if="animeList.length > 0 && totalItems > 0">
+                {{ $t('home.showingCount', { current: animeList.length, total: totalItems }) }}
+              </template>
+              <template v-else>
+                {{ $t('home.trendingSubtitle') }}
+              </template>
+            </p>
           </div>
         </div>
 
-        <!-- Loading State con skeletons -->
-        <div v-if="isLoading" class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 xl:grid-cols-5 xl:gap-6">
-          <AnimeCardSkeleton v-for="i in PAGINATION.DEFAULT_LIMIT" :key="i" />
+        <!-- Loading State -->
+        <div
+          v-if="isLoading"
+          class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 xl:grid-cols-5 xl:gap-6"
+        >
+          <AnimeCardSkeleton
+            v-for="i in 24"
+            :key="i"
+          />
         </div>
 
         <!-- Error State -->
-        <div v-else-if="error" class="flex flex-col items-center justify-center py-12 md:py-20">
+        <div
+          v-else-if="error && animeList.length === 0"
+          class="flex flex-col items-center justify-center py-12 md:py-20"
+          role="alert"
+        >
           <div class="mb-4 rounded-full bg-rp-love/10 p-3 md:p-4">
-            <UIcon name="i-heroicons-exclamation-triangle" class="size-6 text-rp-love md:size-8" />
+            <UIcon
+              name="i-heroicons-exclamation-triangle"
+              class="size-6 text-rp-love md:size-8"
+              aria-hidden="true"
+            />
           </div>
-          <p class="mb-4 text-sm text-rp-subtle md:text-base">{{ error }}</p>
+          <p class="mb-4 text-sm text-rp-subtle md:text-base">{{ error.message }}</p>
           <button
-            @click="fetchTopAnime()"
-            class="rounded-lg bg-rp-surface px-4 py-2 text-sm font-medium text-rp-text transition-all hover:bg-rp-overlay md:rounded-xl md:px-6 md:py-3"
+            type="button"
+            class="rounded-lg bg-rp-surface px-4 py-2 text-sm font-medium text-rp-text transition-all hover:bg-rp-overlay md:rounded-xl md:px-6 md:py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
+            @click="refresh()"
           >
             {{ $t('common.retry') }}
           </button>
         </div>
 
         <!-- Anime Grid -->
-        <div v-else class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 xl:grid-cols-5 xl:gap-6">
+        <div
+          v-else
+          class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 xl:grid-cols-5 xl:gap-6"
+        >
           <AnimeCard
-            v-for="anime in animeList?.data"
+            v-for="anime in animeList"
             :key="anime.mal_id"
             :anime="anime"
           />
         </div>
+
+        <!-- Load More Trigger -->
+        <div
+          ref="triggerRef"
+          class="flex flex-col items-center justify-center gap-4 py-8"
+        >
+          <div
+            v-if="isLoadingMore"
+            class="flex items-center gap-3"
+          >
+            <div class="size-5 animate-spin rounded-full border-2 border-rp-iris border-t-transparent" />
+            <span class="text-sm text-rp-subtle">{{ $t('common.loading') }}</span>
+          </div>
+
+          <div
+            v-else-if="loadMoreError"
+            class="flex flex-col items-center gap-3"
+          >
+            <p class="text-sm text-rp-love">{{ $t('home.loadMoreError') }}</p>
+            <button
+              type="button"
+              class="flex items-center gap-2 rounded-lg bg-rp-surface px-4 py-2 text-sm font-medium text-rp-text transition-all hover:bg-rp-overlay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
+              @click="loadMore"
+            >
+              <UIcon
+                name="i-heroicons-arrow-path"
+                class="size-4"
+              />
+              {{ $t('common.retry') }}
+            </button>
+          </div>
+
+          <p
+            v-else-if="!hasNextPage && animeList.length > 0"
+            class="text-sm text-rp-muted"
+          >
+            {{ $t('home.endOfList') }}
+          </p>
+        </div>
       </UContainer>
     </section>
+
+    <!-- Back to Top -->
+    <UiBackToTop />
   </div>
 </template>
 
 <script setup lang="ts">
-import { PAGINATION } from '~~/shared/constants/api'
-
 const { t } = useI18n()
-const router = useRouter()
-const { animeList, isLoading, error, fetchTopAnime } = useAnimeList()
 
-const searchQuery = ref('')
+// Anime list data
+const { animeList, isLoading, isLoadingMore, hasNextPage, totalItems, error, loadMoreError, loadMore, refresh } =
+  useAnimeList()
 
-const handleSearch = () => {
-  if (searchQuery.value.trim()) {
-    router.push({ path: '/search', query: { q: searchQuery.value.trim() } })
-  }
-}
-
-onMounted(async () => {
-  await fetchTopAnime()
+// Infinite scroll
+const { triggerRef } = useInfiniteScroll({
+  hasMore: hasNextPage,
+  isLoading: isLoadingMore,
+  hasError: loadMoreError,
+  onLoadMore: loadMore,
 })
 
+// SEO
 useSeoMeta({
   title: `VueNime - ${t('home.title')} ${t('home.titleHighlight')}`,
   description: t('home.subtitle'),

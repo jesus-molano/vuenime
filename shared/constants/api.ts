@@ -21,4 +21,5 @@ export const PAGINATION = {
   DEFAULT_PAGE: 1,
   DEFAULT_LIMIT: 24,
   MAX_LIMIT: 25,
+  MAX_PAGES_TO_RESTORE: 5,
 } as const

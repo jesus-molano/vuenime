@@ -19,28 +19,28 @@ export const ROSE_PINE = {
   text: '#e0def4',
 
   // Accent colors
-  love: '#eb6f92',      // Red/Pink - errors, hearts, favorites
-  gold: '#f6c177',      // Yellow/Orange - warnings, stars, scores
-  rose: '#ebbcba',      // Rose - primary accent
-  pine: '#31748f',      // Teal - links, info
-  foam: '#9ccfd8',      // Cyan - success, highlights
-  iris: '#c4a7e7',      // Purple - secondary accent
+  love: '#eb6f92', // Red/Pink - errors, hearts, favorites
+  gold: '#f6c177', // Yellow/Orange - warnings, stars, scores
+  rose: '#ebbcba', // Rose - primary accent
+  pine: '#31748f', // Teal - links, info
+  foam: '#9ccfd8', // Cyan - success, highlights
+  iris: '#c4a7e7', // Purple - secondary accent
 } as const
 
 // Semantic color mapping for the app
 export const THEME = {
   // Score colors based on rating
   score: {
-    high: 'text-[#f6c177]',       // gold - >= 8
-    medium: 'text-[#ebbcba]',     // rose - >= 6
-    low: 'text-[#eb6f92]',        // love - < 6
+    high: 'text-[#f6c177]', // gold - >= 8
+    medium: 'text-[#ebbcba]', // rose - >= 6
+    low: 'text-[#eb6f92]', // love - < 6
   },
 
   // Badge variants
   badge: {
-    airing: 'bg-[#31748f]/90 text-white',           // pine
-    completed: 'bg-[#9ccfd8]/90 text-[#191724]',    // foam
-    upcoming: 'bg-[#c4a7e7]/90 text-[#191724]',     // iris
+    airing: 'bg-[#31748f]/90 text-white', // pine
+    completed: 'bg-[#9ccfd8]/90 text-[#191724]', // foam
+    upcoming: 'bg-[#c4a7e7]/90 text-[#191724]', // iris
     score: 'bg-gradient-to-r from-[#f6c177] to-[#eb6f92]', // gold to love
   },
 

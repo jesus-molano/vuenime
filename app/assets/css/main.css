@@ -1,5 +1,5 @@
-@import "tailwindcss" theme(static);
-@import "@nuxt/ui";
+@import 'tailwindcss' theme(static);
+@import '@nuxt/ui';
 
 /*
  * Rosé Pine Theme
@@ -8,22 +8,22 @@
 
 :root {
   /* Rosé Pine Base */
-  --rp-base: 25 23 36;          /* #191724 */
-  --rp-surface: 31 29 46;       /* #1f1d2e */
-  --rp-overlay: 38 35 58;       /* #26233a */
+  --rp-base: 25 23 36; /* #191724 */
+  --rp-surface: 31 29 46; /* #1f1d2e */
+  --rp-overlay: 38 35 58; /* #26233a */
 
   /* Rosé Pine Text */
-  --rp-muted: 110 106 134;      /* #6e6a86 */
-  --rp-subtle: 144 140 170;     /* #908caa */
-  --rp-text: 224 222 244;       /* #e0def4 */
+  --rp-muted: 110 106 134; /* #6e6a86 */
+  --rp-subtle: 144 140 170; /* #908caa */
+  --rp-text: 224 222 244; /* #e0def4 */
 
   /* Rosé Pine Accents */
-  --rp-love: 235 111 146;       /* #eb6f92 */
-  --rp-gold: 246 193 119;       /* #f6c177 */
-  --rp-rose: 235 188 186;       /* #ebbcba */
-  --rp-pine: 49 116 143;        /* #31748f */
-  --rp-foam: 156 207 216;       /* #9ccfd8 */
-  --rp-iris: 196 167 231;       /* #c4a7e7 */
+  --rp-love: 235 111 146; /* #eb6f92 */
+  --rp-gold: 246 193 119; /* #f6c177 */
+  --rp-rose: 235 188 186; /* #ebbcba */
+  --rp-pine: 49 116 143; /* #31748f */
+  --rp-foam: 156 207 216; /* #9ccfd8 */
+  --rp-iris: 196 167 231; /* #c4a7e7 */
 }
 
 /* Dark mode - Rosé Pine */
@@ -42,52 +42,254 @@
 }
 
 /* Utility classes for Rosé Pine */
-.bg-rp-base { background-color: rgb(var(--rp-base)); }
-.bg-rp-surface { background-color: rgb(var(--rp-surface)); }
-.bg-rp-overlay { background-color: rgb(var(--rp-overlay)); }
+.bg-rp-base {
+  background-color: rgb(var(--rp-base));
+}
+.bg-rp-surface {
+  background-color: rgb(var(--rp-surface));
+}
+.bg-rp-overlay {
+  background-color: rgb(var(--rp-overlay));
+}
 
-.text-rp-text { color: rgb(var(--rp-text)); }
-.text-rp-subtle { color: rgb(var(--rp-subtle)); }
-.text-rp-muted { color: rgb(var(--rp-muted)); }
+.text-rp-text {
+  color: rgb(var(--rp-text));
+}
+.text-rp-subtle {
+  color: rgb(var(--rp-subtle));
+}
+.text-rp-muted {
+  color: rgb(var(--rp-muted));
+}
 
-.text-rp-love { color: rgb(var(--rp-love)); }
-.text-rp-gold { color: rgb(var(--rp-gold)); }
-.text-rp-rose { color: rgb(var(--rp-rose)); }
-.text-rp-pine { color: rgb(var(--rp-pine)); }
-.text-rp-foam { color: rgb(var(--rp-foam)); }
-.text-rp-iris { color: rgb(var(--rp-iris)); }
+.text-rp-love {
+  color: rgb(var(--rp-love));
+}
+.text-rp-gold {
+  color: rgb(var(--rp-gold));
+}
+.text-rp-rose {
+  color: rgb(var(--rp-rose));
+}
+.text-rp-pine {
+  color: rgb(var(--rp-pine));
+}
+.text-rp-foam {
+  color: rgb(var(--rp-foam));
+}
+.text-rp-iris {
+  color: rgb(var(--rp-iris));
+}
 
-.bg-rp-love { background-color: rgb(var(--rp-love)); }
-.bg-rp-gold { background-color: rgb(var(--rp-gold)); }
-.bg-rp-rose { background-color: rgb(var(--rp-rose)); }
-.bg-rp-pine { background-color: rgb(var(--rp-pine)); }
-.bg-rp-foam { background-color: rgb(var(--rp-foam)); }
-.bg-rp-iris { background-color: rgb(var(--rp-iris)); }
+.bg-rp-love {
+  background-color: rgb(var(--rp-love));
+}
+.bg-rp-gold {
+  background-color: rgb(var(--rp-gold));
+}
+.bg-rp-rose {
+  background-color: rgb(var(--rp-rose));
+}
+.bg-rp-pine {
+  background-color: rgb(var(--rp-pine));
+}
+.bg-rp-foam {
+  background-color: rgb(var(--rp-foam));
+}
+.bg-rp-iris {
+  background-color: rgb(var(--rp-iris));
+}
 
-.border-rp-overlay { border-color: rgb(var(--rp-overlay)); }
-.border-rp-iris { border-color: rgb(var(--rp-iris)); }
+.border-rp-overlay {
+  border-color: rgb(var(--rp-overlay));
+}
+.border-rp-iris {
+  border-color: rgb(var(--rp-iris));
+}
 
 /* Gradient utilities */
 .bg-gradient-rp-card {
-  background: linear-gradient(
-    to top,
-    rgb(var(--rp-base) / 0.95),
-    rgb(var(--rp-base) / 0.5),
-    transparent
-  );
+  background: linear-gradient(to top, rgb(var(--rp-base) / 0.95), rgb(var(--rp-base) / 0.5), transparent);
 }
 
 .bg-gradient-rp-score {
-  background: linear-gradient(
-    to right,
-    rgb(var(--rp-gold)),
-    rgb(var(--rp-love))
-  );
+  background: linear-gradient(to right, rgb(var(--rp-gold)), rgb(var(--rp-love)));
 }
 
 /* Focus ring for accessibility */
-.focus-rp {
-  @apply focus-visible:ring-2 focus-visible:ring-offset-2;
-  --tw-ring-color: rgb(var(--rp-iris));
-  --tw-ring-offset-color: rgb(var(--rp-base));
+.focus-rp:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow:
+    0 0 0 2px rgb(var(--rp-base)),
+    0 0 0 4px rgb(var(--rp-iris));
+}
+
+/* ===========================================
+   Shared Navigation Animations
+   Used by Header.vue and MobileDock.vue
+   =========================================== */
+
+/* Fire icon animation */
+@keyframes nav-fire {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 2px rgb(var(--rp-gold)));
+  }
+  25% {
+    transform: scale(1.15) rotate(-5deg);
+    filter: drop-shadow(0 0 6px rgb(var(--rp-gold)));
+  }
+  50% {
+    transform: scale(1.2) rotate(3deg);
+    filter: drop-shadow(0 0 8px rgb(var(--rp-love)));
+  }
+  75% {
+    transform: scale(1.15) rotate(-3deg);
+    filter: drop-shadow(0 0 6px rgb(var(--rp-gold)));
+  }
+}
+
+/* Heartbeat animation */
+@keyframes nav-heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  75% {
+    transform: scale(1.25);
+  }
+}
+
+/* Heart particles */
+@keyframes nav-particle-right {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(6px, -8px) scale(0);
+  }
+}
+
+@keyframes nav-particle-left {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-6px, -8px) scale(0);
+  }
+}
+
+/* Utility classes for nav animations */
+.nav-fire-animate:hover {
+  animation: nav-fire 0.4s ease-in-out infinite;
+}
+
+.nav-heart-animate {
+  animation: nav-heartbeat 0.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgb(var(--rp-love)));
+}
+
+/* Heart beat on AnimeCard */
+@keyframes heart-beat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+}
+
+.animate-heart-beat {
+  animation: heart-beat 0.3s ease-in-out;
+}
+
+/* View Transitions API */
+@supports (view-transition-name: none) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.3s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  ::view-transition-old(root) {
+    animation-name: fade-out;
+  }
+
+  ::view-transition-new(root) {
+    animation-name: fade-in;
+  }
+
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* Hide card content during transition, fade in after */
+  :root:active-view-transition .card-content-fade {
+    opacity: 0;
+  }
+
+  .card-content-fade {
+    transition: opacity 0.25s ease-out 0.05s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(root),
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation: none !important;
+    }
+    .card-content-fade {
+      transition: none !important;
+    }
+  }
+}
+
+/* ===========================================
+   Modal Transitions
+   =========================================== */
+
+/* Backdrop fade */
+.modal-backdrop-enter-active,
+.modal-backdrop-leave-active {
+  transition: opacity 0.2s ease-out;
+}
+
+.modal-backdrop-enter-from,
+.modal-backdrop-leave-to {
+  opacity: 0;
+}
+
+/* Panel scale + fade */
+.modal-panel-enter-active,
+.modal-panel-leave-active {
+  transition:
+    opacity 0.2s ease-out,
+    transform 0.2s ease-out;
+}
+
+.modal-panel-enter-from,
+.modal-panel-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
 }

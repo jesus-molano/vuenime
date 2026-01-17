@@ -1,0 +1,24 @@
+echo "🔍 Running pre-push checks..."
+
+echo "📝 Checking linter..."
+npm run lint
+if [ $? -ne 0 ]; then
+  echo "❌ Linter failed. Fix errors before pushing."
+  exit 1
+fi
+
+echo "🔎 Checking TypeScript..."
+npm run typecheck
+if [ $? -ne 0 ]; then
+  echo "❌ TypeScript check failed. Fix type errors before pushing."
+  exit 1
+fi
+
+echo "🏗️ Building project..."
+npm run build
+if [ $? -ne 0 ]; then
+  echo "❌ Build failed. Fix errors before pushing."
+  exit 1
+fi
+
+echo "✅ All checks passed!"

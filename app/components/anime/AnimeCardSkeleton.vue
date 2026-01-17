@@ -29,7 +29,7 @@
     </div>
 
     <!-- Desktop: Vertical layout -->
-    <div class="relative hidden aspect-[3/4] overflow-hidden sm:block">
+    <div class="relative hidden aspect-3/4 overflow-hidden sm:block">
       <!-- Imagen placeholder -->
       <div class="size-full bg-rp-overlay" />
 
