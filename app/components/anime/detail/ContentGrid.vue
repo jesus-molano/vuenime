@@ -23,7 +23,7 @@
           <!-- Synopsis text -->
           <div class="relative overflow-hidden">
             <p
-              class="break-words text-sm leading-relaxed text-rp-subtle sm:text-base"
+              class="wrap-break-word text-sm leading-relaxed text-rp-subtle sm:text-base"
               :class="[isExpanded ? '' : 'line-clamp-6 sm:line-clamp-10 lg:line-clamp-14']"
             >
               {{ synopsis || $t('common.noResults') }}
