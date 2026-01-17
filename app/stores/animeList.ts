@@ -17,23 +17,42 @@ export const useAnimeListStore = defineStore('animeList', () => {
   const isEmpty = computed(() => items.value.length === 0 && !isLoading.value)
 
   // Actions
-  const fetchInitialData = async () => {
+  const fetchInitialData = async (targetPage: number = PAGINATION.DEFAULT_PAGE) => {
     if (items.value.length > 0) return // Already have data
 
     isLoading.value = true
     error.value = null
 
     try {
-      const response = await $fetch<AnimeListResponse>('/api/jikan/anime', {
-        query: { page: PAGINATION.DEFAULT_PAGE, limit: PAGINATION.DEFAULT_LIMIT },
-      })
+      // If target page > 1, we need to load all pages up to that point
+      const pagesToLoad = Math.max(1, targetPage)
+      const allItems: Anime[] = []
 
-      if (response?.data) {
-        items.value = response.data
-        hasNextPage.value = response.pagination?.has_next_page ?? false
-        totalItems.value = response.pagination?.items?.total ?? 0
-        currentPage.value = PAGINATION.DEFAULT_PAGE
+      for (let page = 1; page <= pagesToLoad; page++) {
+        const response = await $fetch<AnimeListResponse>('/api/jikan/anime', {
+          query: { page, limit: PAGINATION.DEFAULT_LIMIT },
+        })
+
+        if (response?.data) {
+          allItems.push(...response.data)
+          hasNextPage.value = response.pagination?.has_next_page ?? false
+          totalItems.value = response.pagination?.items?.total ?? 0
+          currentPage.value = page
+        }
+
+        // Small delay between requests to avoid rate limiting
+        if (page < pagesToLoad) {
+          await new Promise((resolve) => setTimeout(resolve, 300))
+        }
       }
+
+      // Deduplicate by mal_id
+      const seen = new Set<number>()
+      items.value = allItems.filter((anime) => {
+        if (seen.has(anime.mal_id)) return false
+        seen.add(anime.mal_id)
+        return true
+      })
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Failed to load anime'
       console.error('Failed to fetch anime:', e)

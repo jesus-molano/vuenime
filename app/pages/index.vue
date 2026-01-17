@@ -214,8 +214,7 @@ const route = useRoute()
 const localePath = useLocalePath()
 const store = useAnimeListStore()
 
-const { items, isLoading, isLoadingMore, hasNextPage, error, totalItems, itemsCount, lastScrollPosition } =
-  storeToRefs(store)
+const { items, isLoading, isLoadingMore, hasNextPage, error, totalItems, itemsCount } = storeToRefs(store)
 
 const searchQuery = ref('')
 const loadMoreTrigger = ref<HTMLElement | null>(null)
@@ -247,6 +246,13 @@ const handleScroll = () => {
   store.saveScrollPosition(window.scrollY)
 }
 
+// Save scroll position to sessionStorage before unload (for page refresh)
+const saveScrollBeforeUnload = () => {
+  if (window.scrollY > 0) {
+    sessionStorage.setItem('animeListScroll', String(window.scrollY))
+  }
+}
+
 // Sync page with URL
 const syncPageToUrl = () => {
   const page = store.currentPage
@@ -263,18 +269,24 @@ watch(() => store.currentPage, syncPageToUrl)
 
 // Initialize
 onMounted(async () => {
-  // Fetch data if needed
-  await store.fetchInitialData()
+  // Get target page from URL
+  const pageFromUrl = Number(route.query.page) || 1
 
-  // Restore scroll position
-  if (lastScrollPosition.value > 0) {
+  // Fetch data if needed (will load all pages up to pageFromUrl)
+  await store.fetchInitialData(pageFromUrl)
+
+  // Restore scroll position from sessionStorage on page reload
+  const savedScroll = sessionStorage.getItem('animeListScroll')
+  if (savedScroll) {
     nextTick(() => {
-      window.scrollTo(0, lastScrollPosition.value)
+      window.scrollTo(0, Number(savedScroll))
+      sessionStorage.removeItem('animeListScroll')
     })
   }
 
   // Setup scroll listener
   window.addEventListener('scroll', handleScroll, { passive: true })
+  window.addEventListener('beforeunload', saveScrollBeforeUnload)
 
   // Setup IntersectionObserver for infinite scroll
   if (loadMoreTrigger.value) {
@@ -297,6 +309,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('beforeunload', saveScrollBeforeUnload)
 })
 
 useSeoMeta({
