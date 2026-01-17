@@ -1,10 +1,9 @@
 <template>
   <section class="relative overflow-hidden bg-rp-base">
-    <!-- Background with video trailer if available -->
+    <!-- Background -->
     <AnimeDetailHeroBackground
       :image-url="anime.images.webp.large_image_url"
       :title="anime.title"
-      :trailer="anime.trailer"
     />
 
     <!-- Favorite Button - Top Right -->
