@@ -14,6 +14,7 @@ export type Database = {
           mal_id: number
           score: number | null
           title: string
+          title_english: string | null
           user_id: string
           year: number | null
         }
@@ -27,6 +28,7 @@ export type Database = {
           mal_id: number
           score?: number | null
           title: string
+          title_english?: string | null
           user_id: string
           year?: number | null
         }
@@ -40,6 +42,7 @@ export type Database = {
           mal_id?: number
           score?: number | null
           title?: string
+          title_english?: string | null
           user_id?: string
           year?: number | null
         }

@@ -51,14 +51,14 @@
 
         <button
           type="button"
-          :disabled="isLoadingApple"
-          :aria-busy="isLoadingApple"
-          class="social-btn-apple group relative flex items-center justify-center gap-2 overflow-hidden rounded-xl border border-rp-overlay bg-rp-overlay/40 px-4 py-3 text-sm font-medium text-rp-text transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface disabled:cursor-not-allowed disabled:opacity-50"
-          @click="handleAppleSignIn"
+          :disabled="isLoadingGitHub"
+          :aria-busy="isLoadingGitHub"
+          class="social-btn-github group relative flex items-center justify-center gap-2 overflow-hidden rounded-xl border border-rp-overlay bg-rp-overlay/40 px-4 py-3 text-sm font-medium text-rp-text transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface disabled:cursor-not-allowed disabled:opacity-50"
+          @click="handleGitHubSignIn"
         >
           <Icon
-            v-if="!isLoadingApple"
-            name="logos:apple"
+            v-if="!isLoadingGitHub"
+            name="mdi:github"
             class="relative z-10 size-5"
             aria-hidden="true"
           />
@@ -68,7 +68,7 @@
             class="relative z-10 size-5 animate-spin"
             aria-hidden="true"
           />
-          <span class="relative z-10 transition-colors duration-300 group-hover:text-white">Apple</span>
+          <span class="relative z-10 transition-colors duration-300 group-hover:text-white">GitHub</span>
         </button>
       </div>
 
@@ -228,7 +228,7 @@
 <script setup lang="ts">
 const isOpen = defineModel<boolean>({ default: false })
 
-const { signInWithGoogle, signInWithApple, signInWithEmail, signUpWithEmail } = useAuth()
+const { signInWithGoogle, signInWithGitHub, signInWithEmail, signUpWithEmail } = useAuth()
 
 const email = ref('')
 const password = ref('')
@@ -237,7 +237,7 @@ const showPassword = ref(false)
 const errorMessage = ref('')
 
 const isLoadingGoogle = ref(false)
-const isLoadingApple = ref(false)
+const isLoadingGitHub = ref(false)
 const isLoadingEmail = ref(false)
 
 function toggleMode() {
@@ -258,16 +258,16 @@ async function handleGoogleSignIn() {
   }
 }
 
-async function handleAppleSignIn() {
-  isLoadingApple.value = true
+async function handleGitHubSignIn() {
+  isLoadingGitHub.value = true
   errorMessage.value = ''
   try {
-    await signInWithApple()
+    await signInWithGitHub()
   } catch (error) {
-    console.error('Apple sign in error:', error)
+    console.error('GitHub sign in error:', error)
     errorMessage.value = error instanceof Error ? error.message : 'An error occurred'
   } finally {
-    isLoadingApple.value = false
+    isLoadingGitHub.value = false
   }
 }
 
@@ -319,21 +319,21 @@ async function handleEmailAuth() {
   box-shadow: 0 0 20px rgba(66, 133, 244, 0.2);
 }
 
-.social-btn-apple::before {
+.social-btn-github::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #555, #000);
+  background: linear-gradient(135deg, #333, #24292e);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
-.social-btn-apple:hover::before {
-  opacity: 0.3;
+.social-btn-github:hover::before {
+  opacity: 0.4;
 }
 
-.social-btn-apple:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+.social-btn-github:hover {
+  border-color: rgba(110, 84, 148, 0.5);
+  box-shadow: 0 0 20px rgba(110, 84, 148, 0.2);
 }
 </style>
