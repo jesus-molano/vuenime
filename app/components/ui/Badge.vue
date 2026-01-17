@@ -26,6 +26,7 @@ const props = withDefaults(
   {
     variant: 'base',
     size: 'sm',
+    to: undefined,
   }
 )
 

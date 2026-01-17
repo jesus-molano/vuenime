@@ -7,13 +7,13 @@
     @mousemove="handleMouseMove"
     @mouseleave="handleMouseLeave"
   >
-    <!-- Card con efecto 3D - agrupa borde y contenido -->
+    <!-- Card con efecto 3D -->
     <div
       ref="cardRef"
       class="card-3d relative rounded-2xl transition-transform duration-200 ease-out"
       :style="cardTransform"
     >
-      <!-- Borde brillante que sigue el cursor con colores de la imagen (solo desktop) -->
+      <!-- Borde brillante (solo desktop) -->
       <div
         class="card-border pointer-events-none absolute -inset-px overflow-hidden rounded-2xl opacity-0 transition-opacity duration-300 max-sm:hidden"
         :class="{ 'opacity-100': isHovering }"
@@ -33,14 +33,14 @@
       <div
         class="card-inner relative overflow-hidden rounded-2xl border border-white/8 bg-rp-surface/95 backdrop-blur-sm transition-[box-shadow,border-color] duration-400 group-hover:border-white/15 group-hover:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-rp-iris has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-rp-base"
       >
-        <!-- Mobile: Horizontal layout - toda la card es clickeable -->
+        <!-- Mobile: Horizontal layout -->
         <NuxtLink
           :to="animeLink"
           :view-transition="true"
           class="flex sm:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-inset"
           :aria-labelledby="`anime-title-mobile-${anime.mal_id}`"
         >
-          <!-- Imagen (lado izquierdo) -->
+          <!-- Imagen -->
           <div class="relative h-32 w-24 shrink-0 overflow-hidden">
             <NuxtImg
               :src="anime.images.webp.large_image_url"
@@ -51,7 +51,6 @@
               draggable="false"
               placeholder
             />
-            <!-- Badge de puntuación -->
             <UiScoreBadge
               v-if="anime.score"
               :score="anime.score"
@@ -60,7 +59,7 @@
             />
           </div>
 
-          <!-- Contenido (lado derecho) -->
+          <!-- Contenido -->
           <div class="flex flex-1 flex-col justify-center gap-1.5 p-3">
             <div class="flex items-start justify-between gap-2">
               <h3
@@ -69,64 +68,23 @@
               >
                 {{ anime.title }}
               </h3>
-              <!-- Mobile favorite button -->
-              <button
-                type="button"
-                class="relative z-10 flex size-7 shrink-0 items-center justify-center rounded-full outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
-                :class="
-                  isFavorite
-                    ? 'bg-rp-love text-white shadow-lg shadow-rp-love/30'
-                    : 'bg-rp-overlay/80 text-rp-subtle hover:text-rp-love'
-                "
-                :aria-label="isFavorite ? $t('anime.removeFavorite') : $t('anime.addFavorite')"
-                :aria-pressed="isFavorite"
-                @click.stop.prevent="toggleFavorite"
-              >
-                <UIcon
-                  :name="isFavorite ? 'i-heroicons-heart-solid' : 'i-heroicons-heart'"
-                  class="size-4"
-                  :class="{ 'animate-heart-beat': isAnimating }"
-                  aria-hidden="true"
-                />
-              </button>
+              <AnimeCardFavoriteButton
+                :is-favorite="isFavorite"
+                :is-animating="isAnimating"
+                variant="mobile"
+                @toggle="toggleFavorite"
+              />
             </div>
 
-            <!-- Info -->
-            <div class="flex items-center gap-2 text-[10px] text-rp-subtle">
-              <span
-                v-if="anime.year"
-                class="flex items-center gap-0.5"
-              >
-                <UIcon
-                  name="i-heroicons-calendar"
-                  class="size-2.5"
-                />
-                {{ anime.year }}
-              </span>
-              <span
-                v-if="anime.episodes"
-                class="flex items-center gap-0.5"
-              >
-                <UIcon
-                  name="i-heroicons-play"
-                  class="size-2.5"
-                />
-                {{ anime.episodes }} {{ $t('anime.eps') }}
-              </span>
-            </div>
-
-            <!-- Géneros -->
-            <div class="flex flex-wrap gap-1">
-              <span
-                v-for="genre in anime.genres?.slice(0, 2)"
-                :key="genre.mal_id"
-                class="rounded-full bg-white/5 px-2 py-0.5 text-[9px] text-rp-subtle"
-              >
-                {{ getGenreName(genre) }}
-              </span>
-            </div>
-
-            <!-- Badge "En emisión" -->
+            <AnimeCardInfo
+              :year="anime.year"
+              :episodes="anime.episodes"
+              size="xs"
+            />
+            <AnimeCardGenres
+              :genres="anime.genres"
+              size="xs"
+            />
             <UiAiringBadge
               v-if="anime.airing"
               size="xs"
@@ -135,9 +93,8 @@
           </div>
         </NuxtLink>
 
-        <!-- Desktop: Vertical layout con efecto 3D -->
+        <!-- Desktop: Vertical layout -->
         <div class="relative hidden aspect-[3/4.2] overflow-hidden sm:block">
-          <!-- Imagen -->
           <NuxtLink
             :to="animeLink"
             :view-transition="true"
@@ -164,24 +121,21 @@
             :style="glareStyle"
           />
 
-          <!-- Badge de puntuación -->
+          <!-- Badges -->
           <UiScoreBadge
             v-if="anime.score"
             :score="anime.score"
             size="sm"
             position="top-right"
           />
-
-          <!-- Badge "En emisión" -->
           <UiAiringBadge
             v-if="anime.airing"
             size="sm"
             position="top-left"
           />
 
-          <!-- Contenido sobre la imagen (abajo) -->
+          <!-- Contenido sobre la imagen -->
           <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1.5 p-3 md:gap-2 md:p-4">
-            <!-- Título -->
             <h3
               :id="`anime-title-desktop-${anime.mal_id}`"
               class="line-clamp-2 text-sm font-bold leading-tight text-white drop-shadow-lg transition-colors duration-300 group-hover:text-rp-iris md:text-base"
@@ -189,62 +143,25 @@
               {{ anime.title }}
             </h3>
 
-            <!-- Info: año y episodios -->
-            <div class="flex items-center gap-3 text-[10px] text-white/70 md:text-xs">
-              <span
-                v-if="anime.year"
-                class="flex items-center gap-1"
-              >
-                <UIcon
-                  name="i-heroicons-calendar"
-                  class="size-3 md:size-3.5"
-                />
-                {{ anime.year }}
-              </span>
-              <span
-                v-if="anime.episodes"
-                class="flex items-center gap-1"
-              >
-                <UIcon
-                  name="i-heroicons-play"
-                  class="size-3 md:size-3.5"
-                />
-                {{ anime.episodes }} {{ $t('anime.eps') }}
-              </span>
-            </div>
-
-            <!-- Géneros -->
-            <div class="flex flex-wrap gap-1.5">
-              <span
-                v-for="genre in anime.genres?.slice(0, 2)"
-                :key="genre.mal_id"
-                class="rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-white/80 backdrop-blur-sm md:px-2.5 md:text-xs"
-              >
-                {{ getGenreName(genre) }}
-              </span>
-            </div>
+            <AnimeCardInfo
+              :year="anime.year"
+              :episodes="anime.episodes"
+              size="sm"
+            />
+            <AnimeCardGenres
+              :genres="anime.genres"
+              size="sm"
+            />
           </div>
 
           <!-- Favorite button -->
-          <button
-            type="button"
-            class="absolute bottom-3 right-3 flex size-10 items-center justify-center rounded-full outline-none backdrop-blur-md transition-all duration-300 focus-visible:ring-2 focus-visible:ring-rp-love focus-visible:ring-offset-2 focus-visible:ring-offset-black/50 focus-visible:opacity-100 md:bottom-4 md:right-4 md:size-11"
-            :class="
-              isFavorite
-                ? 'bg-rp-love text-white shadow-lg shadow-rp-love/40 scale-100 opacity-100'
-                : 'bg-black/40 text-white opacity-0 hover:bg-rp-love hover:shadow-lg hover:shadow-rp-love/40 group-hover:opacity-100'
-            "
-            :aria-label="isFavorite ? $t('anime.removeFavorite') : $t('anime.addFavorite')"
-            :aria-pressed="isFavorite"
-            @click.stop.prevent="toggleFavorite"
-          >
-            <UIcon
-              :name="isFavorite ? 'i-heroicons-heart-solid' : 'i-heroicons-heart'"
-              class="size-5 transition-transform duration-300 md:size-6"
-              :class="{ 'animate-heart-beat': isAnimating }"
-              aria-hidden="true"
-            />
-          </button>
+          <AnimeCardFavoriteButton
+            :is-favorite="isFavorite"
+            :is-animating="isAnimating"
+            variant="desktop"
+            class="absolute bottom-3 right-3 md:bottom-4 md:right-4"
+            @toggle="toggleFavorite"
+          />
         </div>
       </div>
     </div>
@@ -273,16 +190,10 @@ const wrapperRef = ref<HTMLElement | null>(null)
 const { cardRef, isHovering, cardTransform, glareStyle, borderMaskStyle, handleMouseMove, handleMouseLeave } =
   useCard3DTilt({ maxRotation: 6, minWidth: 640 })
 
-// Favorites - only pass wrapper ref if animateOnRemove is true
+// Favorites
 const animeRef = toRef(props, 'anime')
 const cardRefForAnimation = computed(() => (props.animateOnRemove ? wrapperRef.value : null))
 const { isFavorite, isAnimating, toggleFavorite } = useFavoriteToggle(animeRef, cardRefForAnimation)
-
-// Translations
-const { translateGenreById } = useAnimeTranslations()
-const getGenreName = (genre: { mal_id: number; name: string }) => {
-  return translateGenreById(genre.mal_id) || genre.name
-}
 
 // Locale-aware link
 const localePath = useLocalePath()
