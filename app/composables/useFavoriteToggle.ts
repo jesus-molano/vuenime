@@ -1,5 +1,5 @@
 import type { Anime } from '~~/shared/types/anime'
-import type { FavoriteAnime } from '~/stores/favorites'
+import type { FavoriteAnime } from '~/types/favorites'
 
 /**
  * Composable for favorite button functionality with animation

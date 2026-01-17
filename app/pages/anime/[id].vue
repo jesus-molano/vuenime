@@ -25,23 +25,34 @@
       </div>
     </div>
 
-    <!-- Content -->
-    <template v-else-if="anime">
-      <AnimeDetailHero :anime="anime" />
-      <AnimeDetailInfoSection :anime="anime" />
-      <AnimeDetailSynopsis
-        :title="$t('anime.synopsis')"
-        :text="anime.synopsis"
-        icon="i-heroicons-document-text"
-        color="rose"
-      />
-      <AnimeDetailTrailer :trailer="anime.trailer" />
-    </template>
+    <!-- Content with fade transition -->
+    <Transition
+      name="content-fade"
+      mode="out-in"
+    >
+      <div
+        v-if="anime"
+        key="content"
+      >
+        <AnimeDetailHero :anime="anime" />
+        <AnimeDetailInfoSection :anime="anime" />
+        <AnimeDetailSynopsis
+          :title="$t('anime.synopsis')"
+          :text="anime.synopsis"
+          icon="i-heroicons-document-text"
+          color="rose"
+        />
+        <AnimeDetailTrailer :trailer="anime.trailer" />
+      </div>
 
-    <!-- Loading Skeleton -->
-    <template v-else-if="isLoading">
-      <AnimeDetailSkeleton :anime-id="animeId" />
-    </template>
+      <!-- Loading Skeleton -->
+      <div
+        v-else-if="isLoading"
+        key="skeleton"
+      >
+        <AnimeDetailSkeleton :anime-id="animeId" />
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -59,3 +70,18 @@ useSeoMeta({
   ogImage: () => anime.value?.images.jpg.large_image_url || '',
 })
 </script>
+
+<style scoped>
+.content-fade-enter-active {
+  transition: opacity 0.3s ease-out;
+}
+
+.content-fade-leave-active {
+  transition: opacity 0.15s ease-in;
+}
+
+.content-fade-enter-from,
+.content-fade-leave-to {
+  opacity: 0;
+}
+</style>

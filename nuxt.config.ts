@@ -58,9 +58,15 @@ export default defineNuxtConfig({
     },
   },
 
-  // View Transitions API - native browser support
+  // View Transitions API and prefetch configuration
   experimental: {
     viewTransition: true,
+    defaults: {
+      nuxtLink: {
+        prefetch: true,
+        prefetchOn: { visibility: false, interaction: true }, // Prefetch on hover/focus like Next.js
+      },
+    },
   },
 
   // Runtime config for environment variables

@@ -3,6 +3,7 @@
   <div
     ref="wrapperRef"
     class="group card-perspective relative"
+    @mouseenter="onCardHover"
     @mousemove="handleMouseMove"
     @mouseleave="handleMouseLeave"
   >
@@ -259,7 +260,7 @@
 
 <script setup lang="ts">
 import type { Anime } from '~~/shared/types/anime'
-import type { FavoriteAnime } from '~/stores/favorites'
+import type { FavoriteAnime } from '~/types/favorites'
 
 const props = withDefaults(
   defineProps<{
@@ -293,6 +294,11 @@ const getGenreName = (genre: { mal_id: number; name: string }) => {
 // Locale-aware link
 const localePath = useLocalePath()
 const animeLink = computed(() => localePath(`/anime/${props.anime.mal_id}`))
+
+// Prefetch data on hover (desktop only)
+const onCardHover = () => {
+  prefetchAnimeDetail(props.anime.mal_id)
+}
 </script>
 
 <style scoped>
