@@ -21,34 +21,10 @@
           </div>
 
           <!-- Synopsis text -->
-          <div class="relative overflow-hidden">
-            <p
-              class="wrap-break-word text-sm leading-relaxed text-rp-subtle sm:text-base"
-              :class="[isExpanded ? '' : 'line-clamp-6 sm:line-clamp-10 lg:line-clamp-14']"
-            >
-              {{ synopsis || $t('common.noResults') }}
-            </p>
-
-            <!-- Gradient fade when collapsed -->
-            <div
-              v-if="!isExpanded && isLongText"
-              class="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-linear-to-t from-rp-base to-transparent sm:h-10"
-            />
-          </div>
-
-          <!-- Expand/collapse button -->
-          <button
-            v-if="isLongText"
-            type="button"
-            class="mt-3 flex items-center gap-1 text-xs font-medium text-rp-iris transition-colors hover:text-rp-iris/80 sm:mt-4 sm:gap-1.5 sm:text-sm"
-            @click="isExpanded = !isExpanded"
-          >
-            {{ isExpanded ? $t('anime.showLess') : $t('common.readMore') }}
-            <UIcon
-              :name="isExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'"
-              class="size-3.5 sm:size-4"
-            />
-          </button>
+          <UiExpandableText
+            :text="synopsis"
+            :fallback-text="$t('common.noResults')"
+          />
         </div>
 
         <!-- Episodes Column -->
@@ -93,46 +69,46 @@
                 :items="watchedMenuItems"
                 :content="{ align: 'end' }"
               >
-                <div class="flex items-center rounded-md bg-rp-surface p-0.5 sm:rounded-lg sm:p-1">
+                <div class="flex h-6 items-center justify-center rounded-md bg-rp-surface px-1.5">
                   <button
                     type="button"
-                    class="flex items-center gap-0.5 rounded p-1 text-rp-subtle transition-colors hover:bg-rp-overlay hover:text-rp-text sm:rounded-md sm:gap-1 sm:p-1.5"
+                    class="flex items-center gap-0.5 text-rp-subtle transition-colors hover:text-rp-text"
                     :title="$t('watched.markAsWatched')"
                   >
                     <UIcon
                       name="i-heroicons-eye"
-                      class="size-3.5 sm:size-4"
+                      class="size-4"
                     />
                     <UIcon
                       name="i-heroicons-chevron-down"
-                      class="size-2.5 sm:size-3"
+                      class="size-3"
                     />
                   </button>
                 </div>
               </UDropdownMenu>
 
               <!-- View toggle -->
-              <div class="flex items-center gap-0.5 rounded-md bg-rp-surface p-0.5 sm:gap-1 sm:rounded-lg sm:p-1">
+              <div class="flex h-6 items-center gap-0.5 rounded-md bg-rp-surface px-0.5">
                 <button
                   type="button"
-                  class="rounded p-1 transition-colors sm:rounded-md sm:p-1.5"
+                  class="flex size-5 items-center justify-center rounded transition-colors"
                   :class="viewMode === 'list' ? 'bg-rp-overlay text-rp-text' : 'text-rp-subtle hover:text-rp-text'"
                   @click="viewMode = 'list'"
                 >
                   <UIcon
                     name="i-heroicons-bars-3"
-                    class="size-3.5 sm:size-4"
+                    class="size-4"
                   />
                 </button>
                 <button
                   type="button"
-                  class="rounded p-1 transition-colors sm:rounded-md sm:p-1.5"
+                  class="flex size-5 items-center justify-center rounded transition-colors"
                   :class="viewMode === 'grid' ? 'bg-rp-overlay text-rp-text' : 'text-rp-subtle hover:text-rp-text'"
                   @click="viewMode = 'grid'"
                 >
                   <UIcon
                     name="i-heroicons-squares-2x2"
-                    class="size-3.5 sm:size-4"
+                    class="size-4"
                   />
                 </button>
               </div>
@@ -163,143 +139,13 @@
             class="max-h-112 space-y-1.5 overflow-y-auto scrollbar-none sm:space-y-2"
           >
             <TransitionGroup name="episode-list">
-              <div
+              <AnimeDetailEpisodeListItem
                 v-for="episode in displayedEpisodes"
                 :key="episode.mal_id"
-                class="group flex items-center gap-2 rounded-lg border border-transparent bg-rp-surface p-2 transition-all duration-300 hover:border-rp-iris/30 hover:bg-rp-overlay hover:shadow-lg hover:shadow-rp-iris/5 sm:gap-3 sm:rounded-xl sm:p-3"
-                :class="{ 'border-rp-foam/30 bg-rp-foam/5': isEpisodeWatched(episode.mal_id) }"
-              >
-                <!-- Watched toggle button -->
-                <button
-                  type="button"
-                  class="flex size-6 shrink-0 items-center justify-center rounded-md transition-all duration-200 hover:scale-110 sm:size-7"
-                  :class="
-                    isEpisodeWatched(episode.mal_id)
-                      ? 'bg-rp-foam text-white shadow-md shadow-rp-foam/30 hover:bg-rp-love hover:shadow-rp-love/30'
-                      : 'bg-rp-overlay text-rp-muted hover:bg-rp-foam hover:text-white hover:shadow-md hover:shadow-rp-foam/30'
-                  "
-                  :title="
-                    isEpisodeWatched(episode.mal_id) ? $t('watched.markAsUnwatched') : $t('watched.markAsWatched')
-                  "
-                  @click.stop="toggleWatched(episode.mal_id)"
-                >
-                  <UIcon
-                    :name="isEpisodeWatched(episode.mal_id) ? 'i-heroicons-check' : 'i-heroicons-eye'"
-                    class="size-3.5 sm:size-4"
-                  />
-                </button>
-
-                <!-- Episode number badge -->
-                <div
-                  class="relative flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-md text-sm font-bold transition-all duration-300 sm:size-10 sm:rounded-lg sm:text-base"
-                  :class="
-                    isEpisodeWatched(episode.mal_id)
-                      ? 'bg-rp-foam/20 text-rp-foam'
-                      : 'bg-linear-to-br from-rp-iris/20 to-rp-iris/5 text-rp-iris group-hover:from-rp-iris group-hover:to-rp-iris/80 group-hover:text-white'
-                  "
-                >
-                  <span class="relative z-10">{{ episode.mal_id }}</span>
-                </div>
-
-                <!-- Episode info -->
-                <a
-                  :href="episode.url"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="min-w-0 flex-1"
-                >
-                  <div class="flex items-center gap-1.5">
-                    <h4
-                      class="truncate text-xs font-semibold text-rp-text transition-colors group-hover:text-rp-iris sm:text-sm"
-                      :class="{ 'text-rp-foam': isEpisodeWatched(episode.mal_id) }"
-                    >
-                      {{ episode.title || $t('anime.episode') + ' ' + episode.mal_id }}
-                    </h4>
-                    <!-- Watched badge - mobile -->
-                    <span
-                      v-if="isEpisodeWatched(episode.mal_id)"
-                      class="shrink-0 text-[10px] font-medium text-rp-foam sm:hidden"
-                    >
-                      {{ $t('watched.watched') }}
-                    </span>
-                    <!-- Tags - mobile (inline dots) -->
-                    <div
-                      v-if="episode.filler || episode.recap"
-                      class="flex shrink-0 items-center gap-0.5 sm:hidden"
-                    >
-                      <span
-                        v-if="episode.filler"
-                        class="size-1.5 rounded-full bg-rp-gold"
-                        title="Filler"
-                      />
-                      <span
-                        v-if="episode.recap"
-                        class="size-1.5 rounded-full bg-rp-foam"
-                        title="Recap"
-                      />
-                    </div>
-                  </div>
-                  <div
-                    class="mt-0.5 flex flex-wrap items-center gap-1.5 text-[10px] text-rp-subtle sm:gap-2 sm:text-xs"
-                  >
-                    <span
-                      v-if="episode.aired"
-                      class="flex items-center gap-0.5 sm:gap-1"
-                    >
-                      <UIcon
-                        name="i-heroicons-calendar"
-                        class="size-2.5 sm:size-3"
-                      />
-                      {{ formatDate(episode.aired) }}
-                    </span>
-                    <span
-                      v-if="episode.score"
-                      class="flex items-center gap-0.5 sm:gap-1"
-                    >
-                      <UIcon
-                        name="i-heroicons-star-solid"
-                        class="size-2.5 text-rp-gold sm:size-3"
-                      />
-                      {{ episode.score.toFixed(1) }}
-                    </span>
-                  </div>
-                </a>
-
-                <!-- Tags - desktop -->
-                <div class="hidden items-center gap-1 sm:flex">
-                  <span
-                    v-if="isEpisodeWatched(episode.mal_id)"
-                    class="rounded-full bg-rp-foam/20 px-2 py-0.5 text-[10px] font-medium text-rp-foam"
-                  >
-                    {{ $t('watched.watched') }}
-                  </span>
-                  <span
-                    v-if="episode.filler"
-                    class="rounded-full bg-rp-gold/20 px-2 py-0.5 text-[10px] font-medium text-rp-gold"
-                  >
-                    Filler
-                  </span>
-                  <span
-                    v-if="episode.recap"
-                    class="rounded-full bg-rp-foam/20 px-2 py-0.5 text-[10px] font-medium text-rp-foam"
-                  >
-                    Recap
-                  </span>
-                </div>
-
-                <!-- Arrow -->
-                <a
-                  :href="episode.url"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="shrink-0"
-                >
-                  <UIcon
-                    name="i-heroicons-arrow-top-right-on-square"
-                    class="size-3.5 text-rp-muted opacity-0 transition-all group-hover:text-rp-iris group-hover:opacity-100 sm:size-4"
-                  />
-                </a>
-              </div>
+                :episode="episode"
+                :is-watched="isEpisodeWatched(episode.mal_id)"
+                @toggle-watched="toggleWatched(episode.mal_id)"
+              />
             </TransitionGroup>
           </div>
 
@@ -309,76 +155,13 @@
             class="grid max-h-112 grid-cols-4 gap-1.5 overflow-y-auto scrollbar-none sm:grid-cols-5 sm:gap-2 lg:grid-cols-4 xl:grid-cols-5"
           >
             <TransitionGroup name="episode-grid">
-              <div
+              <AnimeDetailEpisodeGridItem
                 v-for="episode in displayedEpisodes"
                 :key="episode.mal_id"
-                class="group relative flex flex-col items-center justify-center rounded-lg border border-transparent bg-rp-surface p-2 text-center transition-all duration-300 hover:border-rp-iris/30 hover:bg-rp-overlay hover:shadow-lg hover:shadow-rp-iris/5 sm:rounded-xl sm:p-3"
-                :class="{ 'border-rp-foam/30 bg-rp-foam/5': isEpisodeWatched(episode.mal_id) }"
-              >
-                <!-- Watched toggle button (top-left) -->
-                <button
-                  type="button"
-                  class="absolute left-1 top-1 z-10 flex size-5 items-center justify-center rounded transition-all duration-200 hover:scale-110 sm:left-1.5 sm:top-1.5 sm:size-6"
-                  :class="
-                    isEpisodeWatched(episode.mal_id)
-                      ? 'bg-rp-foam text-white shadow-md shadow-rp-foam/30 hover:bg-rp-love hover:shadow-rp-love/30'
-                      : 'bg-rp-overlay/80 text-rp-muted opacity-0 group-hover:opacity-100 hover:bg-rp-foam hover:text-white hover:shadow-md hover:shadow-rp-foam/30'
-                  "
-                  :title="
-                    isEpisodeWatched(episode.mal_id) ? $t('watched.markAsUnwatched') : $t('watched.markAsWatched')
-                  "
-                  @click.stop="toggleWatched(episode.mal_id)"
-                >
-                  <UIcon
-                    :name="isEpisodeWatched(episode.mal_id) ? 'i-heroicons-check' : 'i-heroicons-eye'"
-                    class="size-3 sm:size-3.5"
-                  />
-                </button>
-
-                <!-- Episode number -->
-                <a
-                  :href="episode.url"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="flex flex-col items-center"
-                >
-                  <div
-                    class="mb-1 flex size-8 items-center justify-center rounded-md text-sm font-bold transition-all duration-300 group-hover:scale-110 sm:mb-2 sm:size-10 sm:rounded-lg sm:text-lg"
-                    :class="
-                      isEpisodeWatched(episode.mal_id)
-                        ? 'bg-rp-foam/20 text-rp-foam'
-                        : 'bg-linear-to-br from-rp-iris/20 to-rp-iris/5 text-rp-iris group-hover:from-rp-iris group-hover:to-rp-iris/80 group-hover:text-white'
-                    "
-                  >
-                    {{ episode.mal_id }}
-                  </div>
-
-                  <!-- Title -->
-                  <h4
-                    class="line-clamp-1 text-[10px] font-medium transition-colors sm:line-clamp-2 sm:text-xs"
-                    :class="isEpisodeWatched(episode.mal_id) ? 'text-rp-foam' : 'text-rp-text group-hover:text-rp-iris'"
-                  >
-                    {{ episode.title || $t('anime.episode') + ' ' + episode.mal_id }}
-                  </h4>
-                </a>
-
-                <!-- Badges (top-right) -->
-                <div
-                  v-if="episode.filler || episode.recap"
-                  class="absolute right-1 top-1 flex gap-0.5 sm:right-1.5 sm:top-1.5"
-                >
-                  <span
-                    v-if="episode.filler"
-                    class="size-1.5 rounded-full bg-rp-gold"
-                    title="Filler"
-                  />
-                  <span
-                    v-if="episode.recap"
-                    class="size-1.5 rounded-full bg-rp-foam"
-                    title="Recap"
-                  />
-                </div>
-              </div>
+                :episode="episode"
+                :is-watched="isEpisodeWatched(episode.mal_id)"
+                @toggle-watched="toggleWatched(episode.mal_id)"
+              />
             </TransitionGroup>
           </div>
 
@@ -447,21 +230,16 @@ const props = defineProps<{
   totalEpisodes: number | null
 }>()
 
-const { locale } = useI18n()
+const { t } = useI18n()
 const { episodes, isLoading, isLoadingMore, hasEpisodes, hasNextPage, loadMore } = useAnimeEpisodes(props.animeId)
 
 // Watched episodes functionality
 const malId = computed(() => parseInt(props.animeId, 10))
 const { isEpisodeWatched, watchedCount, toggleWatched, markAllAsWatched, clearAllWatched } = useWatchedToggle(malId)
 
-const isExpanded = ref(false)
-const isLongText = computed(() => (props.synopsis?.length ?? 0) > 500)
-
 const initialCount = 10
 const showAll = ref(false)
 const viewMode = ref<'list' | 'grid'>('list')
-
-const { t } = useI18n()
 
 // Dropdown menu items for watched actions
 const watchedMenuItems = computed(() => [
@@ -496,18 +274,6 @@ const displayEpisodeCount = computed(() => {
   }
   return null
 })
-
-const formatDate = (dateString: string) => {
-  try {
-    const date = new Date(dateString)
-    return date.toLocaleDateString(locale.value, {
-      month: 'short',
-      day: 'numeric',
-    })
-  } catch {
-    return dateString
-  }
-}
 </script>
 
 <style scoped>

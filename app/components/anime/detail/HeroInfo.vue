@@ -1,134 +1,156 @@
 <template>
-  <div class="flex-1 space-y-4 text-center md:text-left">
-    <!-- Badges Row -->
-    <div class="flex flex-wrap items-center justify-center gap-2 md:justify-start">
-      <NuxtLink
-        v-if="anime.type"
-        :to="typeSearchLink"
-        class="rounded-lg bg-rp-base px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-md ring-1 ring-white/10 transition-all hover:scale-105 hover:bg-rp-surface hover:ring-white/30"
-      >
-        {{ translatedType }}
-      </NuxtLink>
-      <NuxtLink
-        v-if="anime.year"
-        :to="yearSearchLink"
-        class="rounded-lg bg-rp-base px-3 py-1.5 text-xs font-semibold text-white shadow-md ring-1 ring-white/10 transition-all hover:scale-105 hover:bg-rp-surface hover:ring-white/30"
-      >
-        {{ anime.year }}
-      </NuxtLink>
-      <span
-        v-if="anime.rating"
-        class="glass-badge rounded-lg border border-white/20 bg-black/30 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-md"
-      >
-        {{ anime.rating }}
-      </span>
-    </div>
-
-    <!-- Title -->
-    <h1 class="text-4xl font-black leading-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
-      {{ anime.title }}
-    </h1>
-
-    <!-- Japanese Title -->
-    <p
-      v-if="anime.title_japanese"
-      class="text-lg font-medium text-white/80 md:text-xl"
-    >
-      {{ anime.title_japanese }}
-    </p>
-
-    <!-- Quick Stats (non-clickable) -->
-    <div class="flex flex-wrap items-center justify-center gap-2 text-sm md:justify-start md:text-base">
-      <UTooltip
-        v-if="anime.episodes"
-        :text="$t('anime.episodesCount')"
-      >
-        <span
-          class="flex items-center gap-1.5 rounded-lg border border-white/20 bg-black/30 px-2.5 py-1 backdrop-blur-md"
+  <div class="flex flex-1 flex-col justify-between text-center md:text-left">
+    <!-- Info Section -->
+    <div class="space-y-3">
+      <!-- Title -->
+      <div>
+        <h1 class="text-3xl font-black leading-tight text-white drop-shadow-lg sm:text-4xl md:text-5xl">
+          {{ anime.title }}
+        </h1>
+        <p
+          v-if="anime.title_japanese && anime.title_japanese !== anime.title"
+          class="mt-1 text-base text-white/70 drop-shadow"
         >
-          <UIcon
-            name="i-heroicons-play-circle"
-            class="size-4 text-rp-iris md:size-5"
-          />
-          <span class="font-medium text-white">{{ anime.episodes }} {{ $t('anime.eps') }}</span>
-        </span>
-      </UTooltip>
-      <UTooltip
-        v-if="anime.duration"
-        :text="$t('anime.episodeDuration')"
-      >
+          {{ anime.title_japanese }}
+        </p>
+      </div>
+
+      <!-- Meta Info -->
+      <div class="flex flex-wrap items-center justify-center gap-2 md:justify-start">
+        <NuxtLink
+          v-if="anime.type"
+          :to="typeSearchLink"
+          class="rounded-md bg-rp-iris px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-white shadow-sm transition-all hover:scale-105"
+        >
+          {{ translatedType }}
+        </NuxtLink>
+        <NuxtLink
+          v-if="anime.year"
+          :to="yearSearchLink"
+          class="rounded-md bg-black/50 px-2.5 py-1 text-xs font-semibold text-white shadow-sm backdrop-blur-sm transition-all hover:scale-105"
+        >
+          {{ anime.year }}
+        </NuxtLink>
         <span
-          class="flex items-center gap-1.5 rounded-lg border border-white/20 bg-black/30 px-2.5 py-1 backdrop-blur-md"
+          v-if="anime.rating"
+          class="rounded-md bg-black/50 px-2.5 py-1 text-xs text-white shadow-sm backdrop-blur-sm"
+        >
+          {{ anime.rating }}
+        </span>
+        <span
+          v-if="anime.duration"
+          class="flex items-center gap-1 text-sm text-white drop-shadow"
         >
           <UIcon
             name="i-heroicons-clock"
-            class="size-4 text-rp-foam md:size-5"
+            class="size-4 text-rp-foam"
           />
-          <span class="font-medium text-white">{{ anime.duration }}</span>
+          {{ anime.duration }}
         </span>
-      </UTooltip>
-      <UTooltip
-        v-if="anime.rank"
-        :text="$t('anime.rankTooltip')"
-      >
         <span
-          class="flex items-center gap-1.5 rounded-lg border border-white/20 bg-black/30 px-2.5 py-1 backdrop-blur-md"
+          v-if="anime.episodes"
+          class="flex items-center gap-1 text-sm text-white drop-shadow"
+        >
+          <UIcon
+            name="i-heroicons-play-circle"
+            class="size-4 text-rp-iris"
+          />
+          {{ anime.episodes }} {{ $t('anime.eps') }}
+        </span>
+        <span
+          v-if="anime.rank"
+          class="flex items-center gap-1 text-sm text-white drop-shadow"
         >
           <UIcon
             name="i-heroicons-trophy"
-            class="size-4 text-rp-gold md:size-5"
+            class="size-4 text-rp-gold"
           />
-          <span class="font-medium text-white">#{{ anime.rank }}</span>
+          #{{ anime.rank }}
         </span>
-      </UTooltip>
-      <UTooltip
-        v-if="anime.popularity"
-        :text="$t('anime.popularityTooltip')"
-      >
         <span
-          class="flex items-center gap-1.5 rounded-lg border border-white/20 bg-black/30 px-2.5 py-1 backdrop-blur-md"
+          v-if="anime.popularity"
+          class="flex items-center gap-1 text-sm text-white drop-shadow"
         >
           <UIcon
             name="i-heroicons-fire"
-            class="size-4 text-rp-love md:size-5"
+            class="size-4 text-rp-love"
           />
-          <span class="font-medium text-white">#{{ anime.popularity }}</span>
+          #{{ anime.popularity }}
         </span>
-      </UTooltip>
+      </div>
+
+      <!-- Genres -->
+      <AnimeCardGenres
+        v-if="anime.genres?.length"
+        :genres="anime.genres"
+        size="hero"
+        :limit="6"
+        linkable
+        class="justify-center md:justify-start"
+      />
+
+      <!-- Studios + MAL -->
+      <div class="flex flex-wrap items-center justify-center gap-4 text-sm text-white/70 md:justify-start">
+        <div
+          v-if="anime.studios?.length"
+          class="flex items-center gap-1.5"
+        >
+          <UIcon
+            name="i-heroicons-building-office-2"
+            class="size-4"
+          />
+          <NuxtLink
+            v-for="(studio, index) in anime.studios"
+            :key="studio.mal_id"
+            :to="getStudioSearchLink(studio)"
+            class="hover:text-white hover:underline"
+          >
+            {{ studio.name }}
+            <span v-if="index < anime.studios.length - 1">,&nbsp;</span>
+          </NuxtLink>
+        </div>
+        <a
+          :href="anime.url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center gap-1.5 hover:text-white"
+        >
+          <UIcon
+            name="i-simple-icons-myanimelist"
+            class="size-4"
+          />
+          MyAnimeList
+        </a>
+      </div>
     </div>
 
-    <!-- Genres (clickable) -->
-    <div
-      v-if="anime.genres?.length"
-      class="flex flex-wrap justify-center gap-2 md:justify-start"
-    >
-      <NuxtLink
-        v-for="genre in anime.genres.slice(0, 5)"
-        :key="genre.mal_id"
-        :to="getGenreSearchLink(genre)"
-        class="rounded-full bg-rp-base px-3 py-1 text-sm font-medium text-white shadow-md ring-1 ring-white/10 transition-all hover:scale-105 hover:bg-rp-surface hover:ring-white/30"
-      >
-        {{ getGenreName(genre) }}
-      </NuxtLink>
-    </div>
+    <!-- Actions Section (separated at bottom) -->
+    <div class="mt-6 flex flex-wrap items-center justify-center gap-3 md:justify-start">
+      <!-- Favorite Button -->
+      <AnimeCardFavoriteButton
+        :is-favorite="isFavorite"
+        :is-animating="isAnimating"
+        variant="hero"
+        @toggle="toggleFavorite"
+      />
 
-    <!-- Streaming Links -->
-    <AnimeDetailStreamingLinks :anime-id="anime.mal_id" />
+      <!-- Streaming Links -->
+      <AnimeDetailStreamingLinks :anime-id="anime.mal_id" />
 
-    <!-- Studios (clickable) -->
-    <div
-      v-if="anime.studios?.length"
-      class="inline-flex flex-wrap items-center justify-center gap-2 md:justify-start"
-    >
-      <span class="text-sm font-semibold text-white">{{ $t('anime.studios') }}:</span>
-      <NuxtLink
-        v-for="studio in anime.studios"
-        :key="studio.mal_id"
-        :to="getStudioSearchLink(studio)"
-        class="rounded-lg bg-rp-base px-2.5 py-1 text-sm font-medium text-white shadow-md ring-1 ring-white/10 transition-all hover:scale-105 hover:bg-rp-surface hover:ring-white/30"
+      <!-- Trailer Button -->
+      <a
+        v-if="anime.trailer?.youtube_id"
+        :href="`https://www.youtube.com/watch?v=${anime.trailer.youtube_id}`"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center gap-1.5 rounded-lg bg-black/50 px-4 py-2.5 text-sm font-medium text-white shadow-lg backdrop-blur-sm transition-all hover:scale-105 hover:bg-black/60"
       >
-        {{ studio.name }}
-      </NuxtLink>
+        <UIcon
+          name="i-heroicons-play-solid"
+          class="size-4"
+        />
+        {{ $t('anime.trailer') }}
+      </a>
     </div>
   </div>
 </template>
@@ -141,17 +163,13 @@ const props = defineProps<{
 }>()
 
 const localePath = useLocalePath()
-const { translateType, translateGenreById } = useAnimeTranslations()
+const { translateType } = useAnimeTranslations()
 
-// Translated type
+const animeRef = toRef(props, 'anime')
+const { isFavorite, isAnimating, toggleFavorite } = useFavoriteToggle(animeRef)
+
 const translatedType = computed(() => (props.anime.type ? translateType(props.anime.type) : ''))
 
-// Get translated genre name
-const getGenreName = (genre: { mal_id: number; name: string }) => {
-  return translateGenreById(genre.mal_id) || genre.name
-}
-
-// Search links with locale
 const typeSearchLink = computed(() => ({
   path: localePath('/search'),
   query: { type: props.anime.type?.toLowerCase() },
@@ -161,11 +179,6 @@ const yearSearchLink = computed(() => ({
   path: localePath('/search'),
   query: { year: props.anime.year },
 }))
-
-const getGenreSearchLink = (genre: { mal_id: number; name: string }) => ({
-  path: localePath('/search'),
-  query: { genres: genre.mal_id, name: getGenreName(genre) },
-})
 
 const getStudioSearchLink = (studio: { mal_id: number; name: string }) => ({
   path: localePath('/search'),
