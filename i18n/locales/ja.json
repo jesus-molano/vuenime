@@ -322,6 +322,15 @@
     "error": "エラー",
     "favoriteErrorDesc": "お気に入りを更新できませんでした。もう一度お試しください。",
     "clearFavorites": "お気に入りを削除しました",
-    "clearFavoritesDesc": "すべてのお気に入りが削除されました"
+    "clearFavoritesDesc": "すべてのお気に入りが削除されました",
+    "episodeWatched": "エピソードを視聴済みにしました",
+    "episodeWatchedDesc": "{title} - エピソード{episode}を視聴済みにしました",
+    "episodeUnwatched": "エピソードの視聴済みを解除しました",
+    "episodeUnwatchedDesc": "{title} - エピソード{episode}の視聴済みを解除しました",
+    "allEpisodesWatched": "すべてのエピソードを視聴済みにしました",
+    "allEpisodesWatchedDesc": "{title}のすべてのエピソードを視聴済みにしました",
+    "watchedCleared": "視聴履歴をクリアしました",
+    "watchedClearedDesc": "{title}の視聴履歴をクリアしました",
+    "watchedErrorDesc": "視聴状態を更新できませんでした。もう一度お試しください。"
   }
 }

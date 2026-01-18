@@ -23,11 +23,7 @@ describe('Jikan API Endpoint', () => {
     })
 
     it('rejects path traversal attempts with 400', async () => {
-      const maliciousPaths = [
-        '../etc/passwd',
-        'anime/../../../etc/passwd',
-        '..%2F..%2Fetc/passwd',
-      ]
+      const maliciousPaths = ['../etc/passwd', 'anime/../../../etc/passwd', '..%2F..%2Fetc/passwd']
 
       for (const path of maliciousPaths) {
         try {
@@ -52,12 +48,7 @@ describe('Jikan API Endpoint', () => {
     })
 
     it('rejects paths with invalid characters with 400', async () => {
-      const invalidPaths = [
-        'anime?id=1',
-        'anime<script>',
-        'anime&test=1',
-        'anime;ls',
-      ]
+      const invalidPaths = ['anime?id=1', 'anime<script>', 'anime&test=1', 'anime;ls']
 
       for (const path of invalidPaths) {
         try {
@@ -73,14 +64,7 @@ describe('Jikan API Endpoint', () => {
 
   describe('Endpoint Allowlist', () => {
     it('rejects non-allowed endpoints with 403', async () => {
-      const blockedEndpoints = [
-        'users',
-        'user/1',
-        'clubs',
-        'manga',
-        'people',
-        'reviews',
-      ]
+      const blockedEndpoints = ['users', 'user/1', 'clubs', 'manga', 'people', 'reviews']
 
       for (const endpoint of blockedEndpoints) {
         try {

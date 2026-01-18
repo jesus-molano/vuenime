@@ -1,5 +1,8 @@
 <template>
-  <div class="flex flex-col" :class="containerClass">
+  <div
+    class="flex flex-col"
+    :class="containerClass"
+  >
     <h3
       :id="titleId"
       class="font-bold text-rp-text"

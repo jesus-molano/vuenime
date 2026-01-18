@@ -1,105 +1,165 @@
+/**
+ * Notification composable using Nuxt UI's toast system
+ *
+ * Works both in Vue components and Pinia stores by using:
+ * - runWithContext() for useToast() (needs inject context)
+ * - $i18n directly from nuxtApp for translations
+ */
+
+type ToastColor = 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'error' | 'neutral'
+
 interface ToastOptions {
-  id?: string
-  open?: boolean
   title: string
   description?: string
-  color?: 'success' | 'error' | 'info' | 'warning'
+  color?: ToastColor
   icon?: string
-  duration?: number
+  timeout?: number
 }
 
-// Direct toast function that works outside of component context
-// Uses Nuxt's useState which doesn't require inject()
-function addToast(options: ToastOptions) {
-  const toasts = useState<ToastOptions[]>('toasts', () => [])
-  const id = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
-  const toast: ToastOptions = {
-    id,
-    open: true,
-    ...options,
+/**
+ * Get translation using $i18n from nuxtApp (works outside component context)
+ */
+function t(key: string, params?: Record<string, unknown>): string {
+  try {
+    const nuxtApp = useNuxtApp()
+    // Access i18n directly from nuxtApp
+    const i18n = nuxtApp.$i18n
+    if (i18n && typeof i18n.t === 'function') {
+      return i18n.t(key, params ?? {}) as string
+    }
+    return key
+  } catch {
+    return key
   }
-  toasts.value = [...toasts.value, toast].slice(-5)
-  return toast
+}
+
+/**
+ * Show toast notification (works in stores via runWithContext)
+ */
+function showToast(options: ToastOptions) {
+  try {
+    const nuxtApp = useNuxtApp()
+    nuxtApp.runWithContext(() => {
+      const toast = useToast()
+      toast.add({
+        title: options.title,
+        description: options.description,
+        color: options.color ?? 'primary',
+        icon: options.icon,
+        timeout: options.timeout ?? 4000,
+      })
+    })
+  } catch (e) {
+    console.error('[useNotifications] Failed to show toast:', e)
+  }
 }
 
 export const useNotifications = () => {
-  // Get i18n - try to use the composable, fallback to nuxt app
-  const getTranslation = (key: string, params?: Record<string, string>) => {
-    try {
-      const { t } = useI18n()
-      return t(key, params ?? {})
-    } catch {
-      // Fallback: try to get from nuxt app
-      try {
-        const nuxtApp = useNuxtApp()
-        const i18n = nuxtApp.$i18n as { t: (key: string, params?: Record<string, string>) => string }
-        return i18n.t(key, params ?? {})
-      } catch {
-        // Last resort: return key
-        return key
-      }
-    }
-  }
+  // ============================================
+  // Generic notifications
+  // ============================================
 
   const success = (title: string, description?: string) => {
-    addToast({
+    showToast({
       title,
       description,
       color: 'success',
       icon: 'i-heroicons-check-circle',
-      duration: 4000,
+      timeout: 4000,
     })
   }
 
   const error = (title: string, description?: string) => {
-    addToast({
+    showToast({
       title,
       description,
       color: 'error',
       icon: 'i-heroicons-x-circle',
-      duration: 6000,
+      timeout: 6000,
     })
   }
 
   const info = (title: string, description?: string) => {
-    addToast({
+    showToast({
       title,
       description,
       color: 'info',
       icon: 'i-heroicons-information-circle',
-      duration: 4000,
+      timeout: 4000,
     })
   }
 
+  // ============================================
+  // Favorites notifications
+  // ============================================
+
   const favoriteAdded = (animeTitle: string) => {
-    success(
-      getTranslation('notifications.favoriteAdded'),
-      getTranslation('notifications.favoriteAddedDesc', { title: animeTitle })
-    )
+    success(t('notifications.favoriteAdded'), t('notifications.favoriteAddedDesc', { title: animeTitle }))
   }
 
   const favoriteRemoved = (animeTitle: string) => {
-    success(
-      getTranslation('notifications.favoriteRemoved'),
-      getTranslation('notifications.favoriteRemovedDesc', { title: animeTitle })
-    )
+    success(t('notifications.favoriteRemoved'), t('notifications.favoriteRemovedDesc', { title: animeTitle }))
   }
 
   const favoriteError = () => {
-    error(getTranslation('notifications.error'), getTranslation('notifications.favoriteErrorDesc'))
+    error(t('notifications.error'), t('notifications.favoriteErrorDesc'))
   }
 
   const clearFavoritesSuccess = () => {
-    success(getTranslation('notifications.clearFavorites'), getTranslation('notifications.clearFavoritesDesc'))
+    success(t('notifications.clearFavorites'), t('notifications.clearFavoritesDesc'))
+  }
+
+  // ============================================
+  // Watched episodes notifications
+  // ============================================
+
+  const episodeMarkedWatched = (animeTitle: string, episodeNumber: number) => {
+    success(
+      t('notifications.episodeWatched'),
+      t('notifications.episodeWatchedDesc', {
+        title: animeTitle,
+        episode: String(episodeNumber),
+      })
+    )
+  }
+
+  const episodeMarkedUnwatched = (animeTitle: string, episodeNumber: number) => {
+    info(
+      t('notifications.episodeUnwatched'),
+      t('notifications.episodeUnwatchedDesc', {
+        title: animeTitle,
+        episode: String(episodeNumber),
+      })
+    )
+  }
+
+  const allEpisodesMarkedWatched = (animeTitle: string) => {
+    success(t('notifications.allEpisodesWatched'), t('notifications.allEpisodesWatchedDesc', { title: animeTitle }))
+  }
+
+  const watchedCleared = (animeTitle: string) => {
+    info(t('notifications.watchedCleared'), t('notifications.watchedClearedDesc', { title: animeTitle }))
+  }
+
+  const watchedError = () => {
+    error(t('notifications.error'), t('notifications.watchedErrorDesc'))
   }
 
   return {
+    // Generic
     success,
     error,
     info,
+    // Favorites
     favoriteAdded,
     favoriteRemoved,
     favoriteError,
     clearFavoritesSuccess,
+    // Watched
+    episodeMarkedWatched,
+    episodeMarkedUnwatched,
+    allEpisodesMarkedWatched,
+    watchedCleared,
+    watchedError,
   }
 }

@@ -10,16 +10,10 @@ export const envSchema = z.object({
   SUPABASE_KEY: z.string().min(1, 'SUPABASE_KEY is required'),
 
   // Jikan API configuration (optional, has default)
-  NUXT_JIKAN_API_URL: z
-    .string()
-    .url('NUXT_JIKAN_API_URL must be a valid URL')
-    .default('https://api.jikan.moe/v4'),
+  NUXT_JIKAN_API_URL: z.string().url('NUXT_JIKAN_API_URL must be a valid URL').default('https://api.jikan.moe/v4'),
 
   // Public site URL (optional, has default)
-  NUXT_PUBLIC_SITE_URL: z
-    .string()
-    .url('NUXT_PUBLIC_SITE_URL must be a valid URL')
-    .default('http://localhost:3000'),
+  NUXT_PUBLIC_SITE_URL: z.string().url('NUXT_PUBLIC_SITE_URL must be a valid URL').default('http://localhost:3000'),
 })
 
 /**

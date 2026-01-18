@@ -16,6 +16,7 @@ export const useWatchedStore = defineStore(
   () => {
     const supabase = useSupabaseClient<Database>()
     const user = useSupabaseUser()
+    const notify = useNotifications()
 
     const watchedEpisodes = ref<WatchedEpisode[]>([])
     const isLoading = ref(false)
@@ -133,6 +134,7 @@ export const useWatchedStore = defineStore(
             (ep) => ep.mal_id === input.mal_id && ep.episode_number === input.episode_number
           )
           if (index !== -1) watchedEpisodes.value.splice(index, 1)
+          notify.watchedError()
         }
       }
     }
@@ -150,6 +152,7 @@ export const useWatchedStore = defineStore(
         if (!success) {
           // Rollback on error
           watchedEpisodes.value.splice(index, 0, removed)
+          notify.watchedError()
         }
       }
     }
@@ -162,7 +165,7 @@ export const useWatchedStore = defineStore(
       }
     }
 
-    async function markAllAsWatched(malId: number, totalEpisodes: number) {
+    async function markAllAsWatched(malId: number, totalEpisodes: number, animeTitle?: string) {
       const currentWatched = new Set(getWatchedForAnime(malId))
       const episodesToAdd: WatchedEpisode[] = []
 
@@ -189,11 +192,17 @@ export const useWatchedStore = defineStore(
           watchedEpisodes.value = watchedEpisodes.value.filter(
             (ep) => ep.mal_id !== malId || currentWatched.has(ep.episode_number)
           )
+          notify.watchedError()
+          return
         }
+      }
+
+      if (animeTitle) {
+        notify.allEpisodesMarkedWatched(animeTitle)
       }
     }
 
-    async function clearWatchedForAnime(malId: number) {
+    async function clearWatchedForAnime(malId: number, animeTitle?: string) {
       const backup = watchedEpisodes.value.filter((ep) => ep.mal_id === malId)
       watchedEpisodes.value = watchedEpisodes.value.filter((ep) => ep.mal_id !== malId)
 
@@ -202,7 +211,13 @@ export const useWatchedStore = defineStore(
         const { success } = await deleteAllWatchedForAnime(supabase, userId, malId)
         if (!success) {
           watchedEpisodes.value.push(...backup)
+          notify.watchedError()
+          return
         }
+      }
+
+      if (animeTitle) {
+        notify.watchedCleared(animeTitle)
       }
     }
 
@@ -215,6 +230,7 @@ export const useWatchedStore = defineStore(
         const { success } = await deleteAllWatched(supabase, userId)
         if (!success) {
           watchedEpisodes.value = backup
+          notify.watchedError()
         }
       }
     }

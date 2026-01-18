@@ -18,8 +18,8 @@ export const useFavoritesStore = defineStore(
     const supabase = useSupabaseClient<Database>()
     const user = useSupabaseUser()
 
-    // Notification helper - works in any context now
-    const notify = () => useNotifications()
+    // Notifications - now works in stores via runWithContext
+    const notify = useNotifications()
 
     const favorites = ref<FavoriteAnime[]>([])
     // Start with loading=true to show skeleton until we determine auth state
@@ -115,11 +115,11 @@ export const useFavoritesStore = defineStore(
           // Rollback on error
           const index = favorites.value.findIndex((f) => f.mal_id === anime.mal_id)
           if (index !== -1) favorites.value.splice(index, 1)
-          notify().favoriteError()
+          notify.favoriteError()
           return
         }
       }
-      notify().favoriteAdded(anime.title)
+      notify.favoriteAdded(anime.title)
     }
 
     async function removeFavorite(malId: number) {
@@ -135,11 +135,11 @@ export const useFavoritesStore = defineStore(
         if (!success) {
           // Rollback on error
           favorites.value.splice(index, 0, removed)
-          notify().favoriteError()
+          notify.favoriteError()
           return
         }
       }
-      notify().favoriteRemoved(removed.title)
+      notify.favoriteRemoved(removed.title)
     }
 
     async function toggleFavorite(anime: AddFavoriteInput) {
@@ -159,11 +159,11 @@ export const useFavoritesStore = defineStore(
         const { success } = await deleteAllFavorites(supabase, userId)
         if (!success) {
           favorites.value = backup
-          notify().favoriteError()
+          notify.favoriteError()
           return
         }
       }
-      notify().clearFavoritesSuccess()
+      notify.clearFavoritesSuccess()
     }
 
     // ============================================

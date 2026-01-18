@@ -328,6 +328,15 @@
     "error": "Error",
     "favoriteErrorDesc": "Could not update favorites. Please try again.",
     "clearFavorites": "Favorites cleared",
-    "clearFavoritesDesc": "All favorites have been removed"
+    "clearFavoritesDesc": "All favorites have been removed",
+    "episodeWatched": "Episode marked as watched",
+    "episodeWatchedDesc": "{title} - Episode {episode} marked as watched",
+    "episodeUnwatched": "Episode unmarked",
+    "episodeUnwatchedDesc": "{title} - Episode {episode} unmarked",
+    "allEpisodesWatched": "All episodes marked",
+    "allEpisodesWatchedDesc": "All episodes of {title} marked as watched",
+    "watchedCleared": "Watch progress cleared",
+    "watchedClearedDesc": "Watch progress for {title} has been cleared",
+    "watchedErrorDesc": "Could not update watch status. Please try again."
   }
 }

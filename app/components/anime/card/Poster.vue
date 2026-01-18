@@ -1,5 +1,8 @@
 <template>
-  <div class="relative overflow-hidden" :class="containerClass">
+  <div
+    class="relative overflow-hidden"
+    :class="containerClass"
+  >
     <NuxtImg
       :src="imageUrl"
       :alt="$t('anime.coverAlt', { title })"

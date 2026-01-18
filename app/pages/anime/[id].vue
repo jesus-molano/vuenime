@@ -39,6 +39,7 @@
           :synopsis="anime.synopsis"
           :anime-id="animeId"
           :total-episodes="anime.episodes"
+          :anime-title="anime.title"
         />
         <AnimeDetailTrailer
           :trailer="anime.trailer"

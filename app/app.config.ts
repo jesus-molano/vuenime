@@ -3,9 +3,10 @@ export default defineAppConfig({
     colors: {
       primary: 'fuchsia',
       secondary: 'pink',
-      success: 'cyan',
+      success: 'pink',
       warning: 'amber',
       error: 'rose',
+      info: 'fuchsia',
       neutral: 'slate',
     },
     modal: {
@@ -14,5 +15,7 @@ export default defineAppConfig({
         content: 'bg-rp-surface ring-1 ring-rp-overlay',
       },
     },
+    // Toast uses Nuxt UI's semantic colors which are overridden
+    // via CSS variables in main.css for Rose Pine theme
   },
 })
