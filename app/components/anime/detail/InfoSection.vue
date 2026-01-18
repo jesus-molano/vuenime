@@ -104,6 +104,4 @@ import type { Anime } from '~~/shared/types/anime'
 defineProps<{
   anime: Anime
 }>()
-
-const { formatNumber } = useFormatters()
 </script>

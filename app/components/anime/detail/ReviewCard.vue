@@ -88,7 +88,5 @@ const props = defineProps<{
 
 const isExpanded = ref(false)
 
-const { formatDate } = useFormatters()
-
 const formattedDate = computed(() => formatDate(props.review.date))
 </script>

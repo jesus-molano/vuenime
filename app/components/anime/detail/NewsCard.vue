@@ -71,7 +71,5 @@ const props = defineProps<{
   news: NewsItem
 }>()
 
-const { formatDate } = useFormatters()
-
 const formattedDate = computed(() => formatDate(props.news.date))
 </script>
