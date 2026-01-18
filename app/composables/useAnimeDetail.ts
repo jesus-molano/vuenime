@@ -1,16 +1,18 @@
-import type { AnimeDetailResponse } from '~~/shared/types'
+import type { AnimeDetailResponse, Anime } from '~~/shared/types'
 
 export const useAnimeDetail = (id: Ref<string> | string) => {
   const animeId = toRef(id)
-  const nuxtApp = useNuxtApp()
 
   const { data, status, error, refresh } = useFetch<AnimeDetailResponse>(() => `/api/jikan/anime/${animeId.value}`, {
-    key: () => `anime-detail-${animeId.value}`,
-    getCachedData: (key) => nuxtApp.payload.data[key] as AnimeDetailResponse | undefined,
-    watch: [animeId], // Re-fetch when animeId changes
+    key: computed(() => `anime-detail-${animeId.value}`),
+    lazy: true,
+    // Check prefetch cache first to avoid duplicate requests
+    getCachedData(key, nuxtApp) {
+      return nuxtApp.payload.data[key] ?? nuxtApp.static.data[key]
+    },
   })
 
-  const anime = computed(() => data.value?.data)
+  const anime = computed<Anime | null>(() => data.value?.data ?? null)
   const isLoading = computed(() => status.value === 'pending')
 
   return {

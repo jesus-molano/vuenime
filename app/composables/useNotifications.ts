@@ -54,6 +54,33 @@ function showToast(options: ToastOptions) {
   }
 }
 
+/**
+ * Show persistent toast that stays until manually dismissed
+ * Returns a function to dismiss the toast
+ */
+function showPersistentToast(options: Omit<ToastOptions, 'duration'>): () => void {
+  let dismissFn = () => {}
+
+  try {
+    const nuxtApp = useNuxtApp()
+    nuxtApp.runWithContext(() => {
+      const toast = useToast()
+      const toastInstance = toast.add({
+        title: options.title,
+        description: options.description,
+        color: options.color ?? 'primary',
+        icon: options.icon,
+        duration: 0, // 0 = persistent
+      })
+      dismissFn = () => toast.remove(toastInstance.id)
+    })
+  } catch (e) {
+    console.error('[useNotifications] Failed to show persistent toast:', e)
+  }
+
+  return dismissFn
+}
+
 export const useNotifications = () => {
   // ============================================
   // Generic notifications
@@ -86,6 +113,16 @@ export const useNotifications = () => {
       color: 'info',
       icon: 'i-heroicons-information-circle',
       duration: 4000,
+    })
+  }
+
+  const loading = (title: string, description?: string) => {
+    showToast({
+      title,
+      description,
+      color: 'warning',
+      icon: 'i-heroicons-sparkles',
+      duration: 5000,
     })
   }
 
@@ -145,11 +182,25 @@ export const useNotifications = () => {
     error(t('notifications.error'), t('notifications.watchedErrorDesc'))
   }
 
+  // ============================================
+  // Loading notifications
+  // ============================================
+
+  const loadingAnime = (): (() => void) => {
+    return showPersistentToast({
+      title: t('notifications.loading'),
+      description: t('notifications.loadingAnimeDesc'),
+      color: 'warning',
+      icon: 'i-heroicons-sparkles',
+    })
+  }
+
   return {
     // Generic
     success,
     error,
     info,
+    loading,
     // Favorites
     favoriteAdded,
     favoriteRemoved,
@@ -161,5 +212,7 @@ export const useNotifications = () => {
     allEpisodesMarkedWatched,
     watchedCleared,
     watchedError,
+    // Loading
+    loadingAnime,
   }
 }

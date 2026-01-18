@@ -331,6 +331,8 @@
     "allEpisodesWatchedDesc": "{title}のすべてのエピソードを視聴済みにしました",
     "watchedCleared": "視聴履歴をクリアしました",
     "watchedClearedDesc": "{title}の視聴履歴をクリアしました",
-    "watchedErrorDesc": "視聴状態を更新できませんでした。もう一度お試しください。"
+    "watchedErrorDesc": "視聴状態を更新できませんでした。もう一度お試しください。",
+    "loading": "干渉を検出...",
+    "loadingAnimeDesc": "マルチバースのデータベースが通常より時間がかかっています。落ち着いて、先輩！"
   }
 }

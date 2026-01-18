@@ -337,6 +337,8 @@
     "allEpisodesWatchedDesc": "Todos los episodios de {title} marcados como vistos",
     "watchedCleared": "Progreso de visualización limpiado",
     "watchedClearedDesc": "El progreso de visualización de {title} ha sido limpiado",
-    "watchedErrorDesc": "No se pudo actualizar el estado de visualización. Inténtalo de nuevo."
+    "watchedErrorDesc": "No se pudo actualizar el estado de visualización. Inténtalo de nuevo.",
+    "loading": "Interferencias detectadas...",
+    "loadingAnimeDesc": "La base de datos del multiverso está tardando más de lo normal. ¡Paciencia, nakama!"
   }
 }

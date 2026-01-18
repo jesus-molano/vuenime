@@ -1,12 +1,34 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
+import { mockNuxtImport } from '@nuxt/test-utils/runtime'
+import type { AddFavoriteInput } from '~/types/favorites'
 
-import { useFavoritesStore, type AddFavoriteInput } from '../../app/stores/favorites'
+// Mock Supabase client
+const mockSupabaseClient = {
+  from: vi.fn(() => ({
+    select: vi.fn().mockReturnThis(),
+    insert: vi.fn().mockReturnThis(),
+    delete: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    order: vi.fn().mockResolvedValue({ data: [], error: null }),
+  })),
+  auth: {
+    getUser: vi.fn().mockResolvedValue({ data: { user: null } }),
+  },
+}
 
-// Mock persistedState (Nuxt auto-import)
-vi.stubGlobal('persistedState', {
-  localStorage: typeof localStorage !== 'undefined' ? localStorage : undefined,
-})
+// Mock Supabase composables
+mockNuxtImport('useSupabaseClient', () => () => mockSupabaseClient)
+mockNuxtImport('useSupabaseUser', () => () => ref(null))
+
+// Mock notifications
+const mockNotify = {
+  favoriteAdded: vi.fn(),
+  favoriteRemoved: vi.fn(),
+  favoriteError: vi.fn(),
+  clearFavoritesSuccess: vi.fn(),
+}
+mockNuxtImport('useNotifications', () => () => mockNotify)
 
 // Mock anime data for testing
 const mockAnime: AddFavoriteInput = {
@@ -72,6 +94,7 @@ const mockAnime3: AddFavoriteInput = {
 describe('useFavoritesStore', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
+    vi.clearAllMocks()
   })
 
   describe('initial state', () => {
@@ -82,10 +105,10 @@ describe('useFavoritesStore', () => {
     })
   })
 
-  describe('addFavorite', () => {
-    it('should add an anime to favorites', () => {
+  describe('addFavorite (guest mode)', () => {
+    it('should add an anime to favorites', async () => {
       const store = useFavoritesStore()
-      store.addFavorite(mockAnime)
+      await store.addFavorite(mockAnime)
 
       expect(store.favorites).toHaveLength(1)
       expect(store.favorites[0].mal_id).toBe(mockAnime.mal_id)
@@ -93,50 +116,67 @@ describe('useFavoritesStore', () => {
       expect(store.favorites[0].addedAt).toBeDefined()
     })
 
-    it('should not add duplicate anime', () => {
+    it('should not add duplicate anime', async () => {
       const store = useFavoritesStore()
-      store.addFavorite(mockAnime)
-      store.addFavorite(mockAnime)
+      await store.addFavorite(mockAnime)
+      await store.addFavorite(mockAnime)
 
       expect(store.favorites).toHaveLength(1)
     })
 
-    it('should add multiple different anime', () => {
+    it('should add multiple different anime', async () => {
       const store = useFavoritesStore()
-      store.addFavorite(mockAnime)
-      store.addFavorite(mockAnime2)
+      await store.addFavorite(mockAnime)
+      await store.addFavorite(mockAnime2)
 
       expect(store.favorites).toHaveLength(2)
       expect(store.favoritesCount).toBe(2)
     })
+
+    it('should show notification when adding favorite', async () => {
+      const store = useFavoritesStore()
+      await store.addFavorite(mockAnime)
+
+      expect(mockNotify.favoriteAdded).toHaveBeenCalledWith(mockAnime.title)
+    })
   })
 
-  describe('removeFavorite', () => {
-    it('should remove an anime from favorites', () => {
+  describe('removeFavorite (guest mode)', () => {
+    it('should remove an anime from favorites', async () => {
       const store = useFavoritesStore()
-      store.addFavorite(mockAnime)
-      store.addFavorite(mockAnime2)
+      await store.addFavorite(mockAnime)
+      await store.addFavorite(mockAnime2)
 
-      store.removeFavorite(mockAnime.mal_id)
+      await store.removeFavorite(mockAnime.mal_id)
 
       expect(store.favorites).toHaveLength(1)
       expect(store.favorites[0].mal_id).toBe(mockAnime2.mal_id)
     })
 
-    it('should do nothing when removing non-existent anime', () => {
+    it('should do nothing when removing non-existent anime', async () => {
       const store = useFavoritesStore()
-      store.addFavorite(mockAnime)
+      await store.addFavorite(mockAnime)
 
-      store.removeFavorite(999)
+      await store.removeFavorite(999)
 
       expect(store.favorites).toHaveLength(1)
+    })
+
+    it('should show notification when removing favorite', async () => {
+      const store = useFavoritesStore()
+      await store.addFavorite(mockAnime)
+      vi.clearAllMocks()
+
+      await store.removeFavorite(mockAnime.mal_id)
+
+      expect(mockNotify.favoriteRemoved).toHaveBeenCalledWith(mockAnime.title)
     })
   })
 
   describe('isFavorite', () => {
-    it('should return true for favorited anime', () => {
+    it('should return true for favorited anime', async () => {
       const store = useFavoritesStore()
-      store.addFavorite(mockAnime)
+      await store.addFavorite(mockAnime)
 
       expect(store.isFavorite(mockAnime.mal_id)).toBe(true)
     })
@@ -149,61 +189,69 @@ describe('useFavoritesStore', () => {
   })
 
   describe('toggleFavorite', () => {
-    it('should add anime when not in favorites', () => {
+    it('should add anime when not in favorites', async () => {
       const store = useFavoritesStore()
-      store.toggleFavorite(mockAnime)
+      await store.toggleFavorite(mockAnime)
 
       expect(store.isFavorite(mockAnime.mal_id)).toBe(true)
     })
 
-    it('should remove anime when already in favorites', () => {
+    it('should remove anime when already in favorites', async () => {
       const store = useFavoritesStore()
-      store.addFavorite(mockAnime)
-      store.toggleFavorite(mockAnime)
+      await store.addFavorite(mockAnime)
+      await store.toggleFavorite(mockAnime)
 
       expect(store.isFavorite(mockAnime.mal_id)).toBe(false)
     })
   })
 
-  describe('clearFavorites', () => {
-    it('should remove all favorites', () => {
+  describe('clearFavorites (guest mode)', () => {
+    it('should remove all favorites', async () => {
       const store = useFavoritesStore()
-      store.addFavorite(mockAnime)
-      store.addFavorite(mockAnime2)
+      await store.addFavorite(mockAnime)
+      await store.addFavorite(mockAnime2)
 
-      store.clearFavorites()
+      await store.clearFavorites()
 
       expect(store.favorites).toEqual([])
       expect(store.favoritesCount).toBe(0)
+    })
+
+    it('should show notification when clearing favorites', async () => {
+      const store = useFavoritesStore()
+      await store.addFavorite(mockAnime)
+      vi.clearAllMocks()
+
+      await store.clearFavorites()
+
+      expect(mockNotify.clearFavoritesSuccess).toHaveBeenCalled()
     })
   })
 
   describe('sorting', () => {
     beforeEach(() => {
-      // Use a fresh pinia for each test
       setActivePinia(createPinia())
     })
 
     it('should sort by recent (newest first)', async () => {
       const store = useFavoritesStore()
 
-      store.addFavorite(mockAnime)
-      // Small delay to ensure different timestamps
+      await store.addFavorite(mockAnime)
       await new Promise((resolve) => setTimeout(resolve, 10))
-      store.addFavorite(mockAnime2)
+      await store.addFavorite(mockAnime2)
       await new Promise((resolve) => setTimeout(resolve, 10))
-      store.addFavorite(mockAnime3)
+      await store.addFavorite(mockAnime3)
 
       const sorted = store.sortedByRecent
       expect(sorted[0].mal_id).toBe(mockAnime3.mal_id)
       expect(sorted[2].mal_id).toBe(mockAnime.mal_id)
     })
 
-    it('should sort by score (highest first)', () => {
+    it('should sort by score (highest first)', async () => {
       const store = useFavoritesStore()
-      store.addFavorite(mockAnime) // score: 8.5
-      store.addFavorite(mockAnime2) // score: 9.0
-      store.addFavorite(mockAnime3) // score: 7.0
+      await store.addFavorite(mockAnime) // score: 8.5
+      await store.addFavorite(mockAnime2) // score: 9.0
+      await store.addFavorite(mockAnime3) // score: 7.0
 
       const sorted = store.sortedByScore
       expect(sorted[0].mal_id).toBe(mockAnime2.mal_id) // 9.0
@@ -211,11 +259,11 @@ describe('useFavoritesStore', () => {
       expect(sorted[2].mal_id).toBe(mockAnime3.mal_id) // 7.0
     })
 
-    it('should sort by title (alphabetically)', () => {
+    it('should sort by title (alphabetically)', async () => {
       const store = useFavoritesStore()
-      store.addFavorite(mockAnime3) // Zeta Anime
-      store.addFavorite(mockAnime) // Test Anime
-      store.addFavorite(mockAnime2) // Another Anime
+      await store.addFavorite(mockAnime3) // Zeta Anime
+      await store.addFavorite(mockAnime) // Test Anime
+      await store.addFavorite(mockAnime2) // Another Anime
 
       const sorted = store.sortedByTitle
       expect(sorted[0].title).toBe('Another Anime')

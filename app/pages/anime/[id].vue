@@ -61,9 +61,39 @@
 
 <script setup lang="ts">
 const route = useRoute()
+const { loadingAnime } = useNotifications()
 
 const animeId = computed(() => route.params.id as string)
 const { anime, isLoading, error, refresh } = useAnimeDetail(animeId)
+
+// Show loading toast only if it takes longer than 3 seconds
+let loadingTimeout: ReturnType<typeof setTimeout> | null = null
+let dismissToast: (() => void) | null = null
+
+watch(isLoading, (loading) => {
+  if (loading && !anime.value) {
+    loadingTimeout = setTimeout(() => {
+      if (isLoading.value) {
+        dismissToast = loadingAnime()
+      }
+    }, 3000)
+  } else {
+    // Loading finished - dismiss toast and clear timeout
+    if (loadingTimeout) {
+      clearTimeout(loadingTimeout)
+      loadingTimeout = null
+    }
+    if (dismissToast) {
+      dismissToast()
+      dismissToast = null
+    }
+  }
+})
+
+onUnmounted(() => {
+  if (loadingTimeout) clearTimeout(loadingTimeout)
+  if (dismissToast) dismissToast()
+})
 
 useSeoMeta({
   title: () => (anime.value ? `${anime.value.title} | VueNime` : 'Loading... | VueNime'),

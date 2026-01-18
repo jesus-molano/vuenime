@@ -1,52 +1,66 @@
-import type { AnimeEpisodesResponse, Episode } from '~~/shared/types'
+import type { AnimeEpisodesResponse, Episode, AnimePagination } from '~~/shared/types'
 
 export const useAnimeEpisodes = (id: Ref<string> | string) => {
   const animeId = toRef(id)
 
   const allEpisodes = ref<Episode[]>([])
+  const pagination = ref<AnimePagination | null>(null)
   const currentPage = ref(1)
-  const hasNextPage = ref(false)
   const isLoadingMore = ref(false)
 
-  const { data, status, error } = useFetch<AnimeEpisodesResponse>(
-    () => `/api/jikan/anime/${animeId.value}/episodes?page=${currentPage.value}`,
+  // Initial fetch with useFetch (page 1)
+  const { status, error, refresh } = useFetch<AnimeEpisodesResponse>(
+    () => `/api/jikan/anime/${animeId.value}/episodes?page=1`,
     {
-      key: () => `anime-episodes-${animeId.value}-page-${currentPage.value}`,
-      watch: [currentPage],
+      key: computed(() => `anime-episodes-${animeId.value}`),
+      lazy: true,
+      onResponse({ response }) {
+        if (response._data?.data) {
+          allEpisodes.value = response._data.data
+          pagination.value = response._data.pagination ?? null
+        }
+      },
     }
   )
 
-  // Update episodes when data changes
-  watch(
-    data,
-    (newData) => {
-      if (newData?.data) {
-        if (currentPage.value === 1) {
-          allEpisodes.value = newData.data
-        } else {
-          // Append new episodes, avoiding duplicates
-          const existingIds = new Set(allEpisodes.value.map((e) => e.mal_id))
-          const newEpisodes = newData.data.filter((e) => !existingIds.has(e.mal_id))
-          allEpisodes.value = [...allEpisodes.value, ...newEpisodes]
-        }
-        hasNextPage.value = newData.pagination?.has_next_page ?? false
-        isLoadingMore.value = false
-      }
-    },
-    { immediate: true }
-  )
+  // Reset when anime changes
+  watch(animeId, () => {
+    allEpisodes.value = []
+    currentPage.value = 1
+    pagination.value = null
+  })
 
-  const pagination = computed(() => data.value?.pagination)
-  const isLoading = computed(() => status.value === 'pending' && currentPage.value === 1)
-  const hasEpisodes = computed(() => allEpisodes.value.length > 0)
-  const totalEpisodes = computed(() => pagination.value?.items?.total ?? allEpisodes.value.length)
+  const isLoading = computed(() => status.value === 'pending')
+  const hasNextPage = computed(() => pagination.value?.has_next_page ?? false)
 
+  // loadMore uses $fetch (user-initiated action)
   const loadMore = async () => {
-    if (hasNextPage.value && !isLoadingMore.value) {
-      isLoadingMore.value = true
-      currentPage.value++
+    if (!hasNextPage.value || isLoadingMore.value) return
+
+    isLoadingMore.value = true
+    const nextPage = currentPage.value + 1
+
+    try {
+      const response = await $fetch<AnimeEpisodesResponse>(
+        `/api/jikan/anime/${animeId.value}/episodes?page=${nextPage}`
+      )
+
+      if (response?.data) {
+        const existingIds = new Set(allEpisodes.value.map((e) => e.mal_id))
+        const newEpisodes = response.data.filter((e) => !existingIds.has(e.mal_id))
+        allEpisodes.value = [...allEpisodes.value, ...newEpisodes]
+        pagination.value = response.pagination ?? null
+        currentPage.value = nextPage
+      }
+    } catch (e) {
+      console.error('Failed to load more episodes:', e)
+    } finally {
+      isLoadingMore.value = false
     }
   }
+
+  const hasEpisodes = computed(() => allEpisodes.value.length > 0)
+  const totalEpisodes = computed(() => pagination.value?.items?.total ?? allEpisodes.value.length)
 
   return {
     episodes: allEpisodes,
@@ -58,5 +72,6 @@ export const useAnimeEpisodes = (id: Ref<string> | string) => {
     totalEpisodes,
     loadMore,
     error,
+    refresh,
   }
 }
