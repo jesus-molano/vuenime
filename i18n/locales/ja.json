@@ -333,6 +333,12 @@
     "watchedClearedDesc": "{title}の視聴履歴をクリアしました",
     "watchedErrorDesc": "視聴状態を更新できませんでした。もう一度お試しください。",
     "loading": "干渉を検出...",
-    "loadingAnimeDesc": "マルチバースのデータベースが通常より時間がかかっています。落ち着いて、先輩！"
+    "loadingAnimeDesc": "マルチバースのデータベースが通常より時間がかかっています。落ち着いて、先輩！",
+    "rateLimited": "仲間が多すぎる！",
+    "rateLimitedDesc": "サーバーがフィラーアークに入っています。力を回復するまで数秒お待ちください。",
+    "serviceUnavailable": "サーバーが修行中",
+    "serviceUnavailableDesc": "主人公が修行編に入っています。数分後にパワーアップして戻ってきます。",
+    "notFound": "アニメが見つかりません",
+    "notFoundDesc": "このアニメはカタログにありません。失われたOVAではないですか？"
   }
 }

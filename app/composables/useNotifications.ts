@@ -195,6 +195,40 @@ export const useNotifications = () => {
     })
   }
 
+  // ============================================
+  // API Error notifications
+  // ============================================
+
+  const rateLimited = () => {
+    showToast({
+      title: t('notifications.rateLimited'),
+      description: t('notifications.rateLimitedDesc'),
+      color: 'warning',
+      icon: 'i-heroicons-clock',
+      duration: 6000,
+    })
+  }
+
+  const serviceUnavailable = () => {
+    showToast({
+      title: t('notifications.serviceUnavailable'),
+      description: t('notifications.serviceUnavailableDesc'),
+      color: 'error',
+      icon: 'i-heroicons-server-stack',
+      duration: 6000,
+    })
+  }
+
+  const animeNotFound = () => {
+    showToast({
+      title: t('notifications.notFound'),
+      description: t('notifications.notFoundDesc'),
+      color: 'info',
+      icon: 'i-heroicons-magnifying-glass',
+      duration: 5000,
+    })
+  }
+
   return {
     // Generic
     success,
@@ -214,5 +248,9 @@ export const useNotifications = () => {
     watchedError,
     // Loading
     loadingAnime,
+    // API Errors
+    rateLimited,
+    serviceUnavailable,
+    animeNotFound,
   }
 }

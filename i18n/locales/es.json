@@ -339,6 +339,12 @@
     "watchedClearedDesc": "El progreso de visualización de {title} ha sido limpiado",
     "watchedErrorDesc": "No se pudo actualizar el estado de visualización. Inténtalo de nuevo.",
     "loading": "Interferencias detectadas...",
-    "loadingAnimeDesc": "La base de datos del multiverso está tardando más de lo normal. ¡Paciencia, nakama!"
+    "loadingAnimeDesc": "La base de datos del multiverso está tardando más de lo normal. ¡Paciencia, nakama!",
+    "rateLimited": "¡Demasiados nakamas!",
+    "rateLimitedDesc": "El servidor está en un arco de relleno. Espera unos segundos mientras recupera su poder.",
+    "serviceUnavailable": "El servidor está entrenando",
+    "serviceUnavailableDesc": "Nuestro protagonista está en su arco de entrenamiento. Volverá más fuerte en unos minutos.",
+    "notFound": "Anime no encontrado",
+    "notFoundDesc": "Este anime no aparece en nuestro catálogo. ¿Seguro que no es un OVA perdido?"
   }
 }

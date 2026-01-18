@@ -61,7 +61,7 @@
 
 <script setup lang="ts">
 const route = useRoute()
-const { loadingAnime } = useNotifications()
+const { loadingAnime, rateLimited, serviceUnavailable, animeNotFound } = useNotifications()
 
 const animeId = computed(() => route.params.id as string)
 const { anime, isLoading, error, refresh } = useAnimeDetail(animeId)
@@ -87,6 +87,20 @@ watch(isLoading, (loading) => {
       dismissToast()
       dismissToast = null
     }
+  }
+})
+
+// Show themed error notifications
+watch(error, (err) => {
+  if (!err) return
+
+  const statusCode = (err as { statusCode?: number }).statusCode
+  if (statusCode === 429) {
+    rateLimited()
+  } else if (statusCode === 503 || statusCode === 502) {
+    serviceUnavailable()
+  } else if (statusCode === 404) {
+    animeNotFound()
   }
 })
 
