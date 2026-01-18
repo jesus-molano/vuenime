@@ -4,7 +4,7 @@
     class="group block overflow-hidden rounded-xl border border-white/8 bg-rp-surface/95 transition-all hover:border-white/15 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
   >
     <!-- Poster -->
-    <div class="relative aspect-[3/4] overflow-hidden">
+    <div class="relative aspect-3/4 overflow-hidden">
       <NuxtImg
         :src="anime.images.webp.large_image_url"
         :alt="$t('anime.coverAlt', { title: anime.title })"
@@ -14,7 +14,7 @@
       />
 
       <!-- Gradient overlay -->
-      <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+      <div class="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
 
       <!-- Score badge -->
       <UiScoreBadge
