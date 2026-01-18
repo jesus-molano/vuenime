@@ -260,6 +260,12 @@
     "prevPage": "Previous page",
     "nextPage": "Next page"
   },
+  "episodes": {
+    "filler": "Filler",
+    "hideFillers": "Hide filler episodes",
+    "showFillers": "Show filler episodes",
+    "fillerEpisode": "Filler episode"
+  },
   "watched": {
     "markAsWatched": "Mark as watched",
     "markAsUnwatched": "Mark as unwatched",
@@ -268,5 +274,12 @@
     "markAllWatched": "Mark all as watched",
     "clearAllWatched": "Clear watched",
     "progress": "{watched}/{total} episodes"
+  },
+  "error": {
+    "lostInSpace": "Lost in Space",
+    "pageNotFound": "The page you're looking for doesn't exist or has been moved to another dimension.",
+    "goHome": "Return Home",
+    "goBack": "Go Back",
+    "code": "Error Code"
   }
 }

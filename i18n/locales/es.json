@@ -260,6 +260,12 @@
     "prevPage": "Página anterior",
     "nextPage": "Página siguiente"
   },
+  "episodes": {
+    "filler": "Relleno",
+    "hideFillers": "Ocultar episodios de relleno",
+    "showFillers": "Mostrar episodios de relleno",
+    "fillerEpisode": "Episodio de relleno"
+  },
   "watched": {
     "markAsWatched": "Marcar como visto",
     "markAsUnwatched": "Marcar como no visto",
@@ -268,5 +274,12 @@
     "markAllWatched": "Marcar todos como vistos",
     "clearAllWatched": "Limpiar vistos",
     "progress": "{watched}/{total} episodios"
+  },
+  "error": {
+    "lostInSpace": "Perdido en el Espacio",
+    "pageNotFound": "La página que buscas no existe o ha sido transportada a otra dimensión.",
+    "goHome": "Volver al Inicio",
+    "goBack": "Regresar",
+    "code": "Código de Error"
   }
 }

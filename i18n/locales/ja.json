@@ -254,6 +254,12 @@
     "prevPage": "前のページ",
     "nextPage": "次のページ"
   },
+  "episodes": {
+    "filler": "フィラー",
+    "hideFillers": "フィラーを非表示",
+    "showFillers": "フィラーを表示",
+    "fillerEpisode": "フィラーエピソード"
+  },
   "watched": {
     "markAsWatched": "視聴済みにする",
     "markAsUnwatched": "未視聴にする",
@@ -262,5 +268,12 @@
     "markAllWatched": "すべて視聴済みにする",
     "clearAllWatched": "視聴履歴をクリア",
     "progress": "{watched}/{total}話"
+  },
+  "error": {
+    "lostInSpace": "宇宙で迷子",
+    "pageNotFound": "お探しのページは存在しないか、別の次元に移動しました。",
+    "goHome": "ホームに戻る",
+    "goBack": "戻る",
+    "code": "エラーコード"
   }
 }

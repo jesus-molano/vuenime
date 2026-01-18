@@ -74,122 +74,177 @@
       >
         <div
           v-if="showFilters"
-          class="relative z-20 mb-6 rounded-xl border border-rp-overlay/50 bg-rp-surface/50 p-4 backdrop-blur-sm"
+          class="relative z-20 mb-6 rounded-2xl border border-rp-overlay/30 bg-rp-surface/70 ring-1 ring-rp-iris/10 backdrop-blur-md"
         >
-          <div class="space-y-4">
-            <!-- Row 1: Type + Year (inline) -->
-            <div class="flex flex-wrap items-end gap-4">
-              <!-- Type -->
-              <div class="flex-1">
-                <h4 class="mb-2 text-xs font-semibold uppercase tracking-wider text-rp-subtle">
+          <div class="space-y-0">
+            <!-- Type Section -->
+            <div class="border-b border-rp-overlay/30 p-4 sm:p-5">
+              <div class="mb-3 flex items-center gap-2">
+                <UIcon
+                  name="i-heroicons-tv"
+                  class="size-4 text-rp-iris"
+                />
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-rp-subtle">
                   {{ $t('anime.type') }}
                 </h4>
-                <div class="flex flex-wrap gap-1.5">
-                  <button
-                    v-for="type in typeOptions"
-                    :key="type.value"
-                    type="button"
-                    class="rounded-lg px-2.5 py-1 text-xs font-medium transition-all"
-                    :class="
-                      selectedType === type.value
-                        ? 'bg-rp-iris text-white'
-                        : 'bg-rp-overlay/50 text-rp-text hover:bg-rp-overlay'
-                    "
-                    @click="toggleType(type.value)"
-                  >
-                    {{ type.label }}
-                  </button>
-                </div>
               </div>
-
-              <!-- Year Input (compact) -->
-              <div class="w-24 shrink-0">
-                <h4 class="mb-2 text-xs font-semibold uppercase tracking-wider text-rp-subtle">
-                  {{ $t('search.year') }}
-                </h4>
-                <input
-                  v-model="yearInput"
-                  type="number"
-                  :placeholder="currentYear.toString()"
-                  :min="1960"
-                  :max="currentYear + 1"
-                  class="w-full rounded-lg border bg-rp-base px-2.5 py-1.5 text-center text-sm text-rp-text outline-none transition-colors"
+              <div class="flex flex-wrap gap-2">
+                <button
+                  v-for="type in typeOptionsWithIcons"
+                  :key="type.value"
+                  type="button"
+                  class="group flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium transition-all"
                   :class="
-                    yearError ? 'border-rp-love focus:border-rp-love' : 'border-rp-overlay/50 focus:border-rp-iris'
+                    selectedType === type.value
+                      ? 'bg-linear-to-r from-rp-iris to-rp-love text-white shadow-lg shadow-rp-iris/25'
+                      : 'bg-rp-overlay/40 text-rp-text hover:scale-105 hover:bg-rp-overlay/60 hover:shadow-md'
                   "
-                  @keyup.enter="applyYearFilter"
-                  @blur="applyYearFilter"
-                  @input="validateYear"
-                />
-                <p
-                  v-if="yearError"
-                  class="mt-1 text-xs text-rp-love"
+                  @click="toggleType(type.value)"
                 >
-                  {{ yearError }}
-                </p>
+                  <UIcon
+                    :name="type.icon"
+                    class="size-4 transition-transform group-hover:scale-110"
+                    :class="selectedType === type.value ? 'text-white' : 'text-rp-subtle'"
+                  />
+                  {{ type.label }}
+                </button>
               </div>
             </div>
 
-            <!-- Row 2: Genres -->
-            <div>
-              <h4 class="mb-2 text-xs font-semibold uppercase tracking-wider text-rp-subtle">
-                {{ $t('anime.genres') }}
-              </h4>
-
-              <!-- Genre Search -->
-              <div class="relative mb-2">
-                <input
-                  v-model="genreSearch"
-                  type="text"
-                  :placeholder="$t('search.searchGenre')"
-                  class="w-full rounded-lg border border-rp-overlay/50 bg-rp-base px-3 py-2 text-sm text-rp-text outline-none transition-colors focus:border-rp-iris"
-                  @focus="showGenreDropdown = true"
-                  @blur="closeGenreDropdown"
+            <!-- Year Section -->
+            <div class="border-b border-rp-overlay/30 p-4 sm:p-5">
+              <div class="mb-3 flex items-center gap-2">
+                <UIcon
+                  name="i-heroicons-calendar"
+                  class="size-4 text-rp-gold"
                 />
-
-                <!-- Dropdown -->
-                <Transition
-                  enter-active-class="transition duration-100 ease-out"
-                  enter-from-class="opacity-0 scale-95"
-                  enter-to-class="opacity-100 scale-100"
-                  leave-active-class="transition duration-75 ease-in"
-                  leave-from-class="opacity-100 scale-100"
-                  leave-to-class="opacity-0 scale-95"
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-rp-subtle">
+                  {{ $t('search.year') }}
+                </h4>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <!-- Quick year buttons -->
+                <button
+                  v-for="year in quickYears"
+                  :key="year"
+                  type="button"
+                  class="rounded-xl px-3 py-2 text-sm font-medium transition-all"
+                  :class="
+                    selectedYear === year.toString()
+                      ? 'bg-rp-gold text-rp-base shadow-lg shadow-rp-gold/25'
+                      : 'bg-rp-overlay/40 text-rp-text hover:scale-105 hover:bg-rp-overlay/60'
+                  "
+                  @click="selectYear(year.toString())"
                 >
-                  <div
-                    v-if="showGenreDropdown && filteredGenres.length > 0"
-                    class="absolute z-100 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border border-rp-overlay/50 bg-rp-surface shadow-xl"
+                  {{ year }}
+                </button>
+                <!-- Custom year input -->
+                <div class="relative">
+                  <input
+                    v-model="yearInput"
+                    type="number"
+                    :placeholder="$t('search.year')"
+                    :min="1960"
+                    :max="currentYear + 1"
+                    class="w-20 rounded-xl border bg-rp-overlay/40 px-3 py-2 text-center text-sm text-rp-text outline-none transition-all placeholder:text-rp-muted focus:ring-2 focus:ring-rp-gold/50"
+                    :class="
+                      yearError ? 'border-rp-love focus:border-rp-love' : 'border-transparent focus:border-rp-gold'
+                    "
+                    @keyup.enter="applyYearFilter"
+                    @blur="applyYearFilter"
+                    @input="validateYear"
+                  />
+                </div>
+              </div>
+              <p
+                v-if="yearError"
+                class="mt-2 text-xs text-rp-love"
+              >
+                {{ yearError }}
+              </p>
+            </div>
+
+            <!-- Genres Section -->
+            <div class="p-4 sm:p-5">
+              <div class="mb-3 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <UIcon
+                    name="i-heroicons-tag"
+                    class="size-4 text-rp-foam"
+                  />
+                  <h4 class="text-xs font-semibold uppercase tracking-wider text-rp-subtle">
+                    {{ $t('anime.genres') }}
+                  </h4>
+                </div>
+                <!-- Genre Search Input -->
+                <div class="relative">
+                  <UIcon
+                    name="i-heroicons-magnifying-glass"
+                    class="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-rp-muted"
+                  />
+                  <input
+                    v-model="genreSearch"
+                    type="text"
+                    :placeholder="$t('search.searchGenre')"
+                    class="w-40 rounded-lg border border-rp-overlay/50 bg-rp-base/50 py-1.5 pl-8 pr-3 text-xs text-rp-text outline-none transition-all focus:border-rp-foam focus:ring-1 focus:ring-rp-foam/30"
+                    @focus="showGenreDropdown = true"
+                    @blur="closeGenreDropdown"
+                  />
+
+                  <!-- Dropdown -->
+                  <Transition
+                    enter-active-class="transition duration-100 ease-out"
+                    enter-from-class="opacity-0 scale-95"
+                    enter-to-class="opacity-100 scale-100"
+                    leave-active-class="transition duration-75 ease-in"
+                    leave-from-class="opacity-100 scale-100"
+                    leave-to-class="opacity-0 scale-95"
                   >
-                    <button
-                      v-for="genre in filteredGenres"
-                      :key="genre.value"
-                      type="button"
-                      class="flex w-full items-center px-3 py-2 text-left text-sm transition-colors hover:bg-rp-overlay/50"
-                      :class="selectedGenre === genre.value ? 'bg-rp-foam/20 text-rp-foam' : 'text-rp-text'"
-                      @click="selectGenre(genre.value)"
+                    <div
+                      v-if="showGenreDropdown && filteredGenres.length > 0"
+                      class="absolute right-0 z-100 mt-1 max-h-60 w-48 overflow-y-auto rounded-xl border border-rp-overlay/50 bg-rp-surface shadow-xl"
                     >
-                      {{ genre.label }}
-                    </button>
-                  </div>
-                </Transition>
+                      <button
+                        v-for="genre in filteredGenres"
+                        :key="genre.value"
+                        type="button"
+                        class="flex w-full items-center px-3 py-2 text-left text-sm transition-colors hover:bg-rp-overlay/50"
+                        :class="selectedGenre === genre.value ? 'bg-rp-foam/20 text-rp-foam' : 'text-rp-text'"
+                        @click="selectGenre(genre.value)"
+                      >
+                        {{ genre.label }}
+                      </button>
+                    </div>
+                  </Transition>
+                </div>
               </div>
 
-              <!-- Popular Genres Pills -->
-              <div class="flex flex-wrap gap-1.5">
-                <button
-                  v-for="genre in popularGenres"
-                  :key="genre.value"
-                  type="button"
-                  class="rounded-lg px-2.5 py-1 text-xs font-medium transition-all"
-                  :class="
-                    selectedGenre === genre.value
-                      ? 'bg-rp-foam text-rp-base'
-                      : 'bg-rp-overlay/50 text-rp-text hover:bg-rp-overlay'
-                  "
-                  @click="selectGenre(selectedGenre === genre.value ? '' : genre.value)"
+              <!-- Genre Chips with horizontal scroll -->
+              <div class="relative -mx-4 sm:-mx-5">
+                <div
+                  class="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-linear-to-r from-rp-surface/70 to-transparent"
+                />
+                <div
+                  class="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-linear-to-l from-rp-surface/70 to-transparent"
+                />
+                <div
+                  class="flex gap-2 overflow-x-auto px-4 py-1 scrollbar-none sm:flex-wrap sm:overflow-visible sm:px-5"
                 >
-                  {{ genre.label }}
-                </button>
+                  <button
+                    v-for="genre in popularGenres"
+                    :key="genre.value"
+                    type="button"
+                    class="shrink-0 rounded-xl px-3 py-2 text-sm font-medium transition-all"
+                    :class="
+                      selectedGenre === genre.value
+                        ? 'bg-rp-foam text-rp-base shadow-lg shadow-rp-foam/25'
+                        : 'bg-rp-overlay/40 text-rp-text hover:scale-105 hover:bg-rp-overlay/60'
+                    "
+                    @click="selectGenre(selectedGenre === genre.value ? '' : genre.value)"
+                  >
+                    {{ genre.label }}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -197,7 +252,7 @@
           <!-- Clear Button -->
           <div
             v-if="activeFiltersCount > 0"
-            class="mt-4 border-t border-rp-overlay/50 pt-4"
+            class="border-t border-rp-overlay/30 bg-rp-base/30 px-4 py-3 sm:px-5"
           >
             <button
               type="button"
@@ -356,7 +411,8 @@ const {
   yearInput,
   yearError,
   currentYear,
-  typeOptions,
+  typeOptionsWithIcons,
+  quickYears,
   popularGenres,
   filteredGenres,
   activeFiltersCount,
@@ -367,6 +423,7 @@ const {
   toggleType,
   applyYearFilter,
   validateYear,
+  selectYear,
   selectGenre,
   closeGenreDropdown,
   clearTypeFilter,

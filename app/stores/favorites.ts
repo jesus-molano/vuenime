@@ -19,7 +19,8 @@ export const useFavoritesStore = defineStore(
     const user = useSupabaseUser()
 
     const favorites = ref<FavoriteAnime[]>([])
-    const isLoading = ref(false)
+    // Start with loading=true to show skeleton until we determine auth state
+    const isLoading = ref(true)
     const hasSynced = ref(false)
 
     // Cached user ID - updated on auth state changes
@@ -189,13 +190,23 @@ export const useFavoritesStore = defineStore(
       const userId = await getCurrentUserId()
       if (userId && !hasSynced.value) {
         await fetchFromSupabase()
+      } else {
+        // No user logged in - use local storage data, stop loading
+        isLoading.value = false
+        hasSynced.value = true
       }
+    }
+
+    // Called by plugin to indicate sync is about to start
+    function markSyncing() {
+      isLoading.value = true
     }
 
     return {
       favorites,
       favoritesCount,
       isLoading,
+      hasSynced,
       sortedFavorites,
       sortedByRecent,
       sortedByScore,
@@ -207,15 +218,15 @@ export const useFavoritesStore = defineStore(
       clearFavorites,
       fetchFromSupabase,
       initialize,
+      markSyncing,
     }
   },
   {
     persist: {
-      storage: persistedState.cookiesWithOptions({
-        maxAge: 60 * 60 * 24 * 365, // 1 year
-        sameSite: 'lax',
-      }),
+      storage: persistedState.localStorage,
       pick: ['favorites'],
+      // Only persist for non-authenticated users (guest mode)
+      // For authenticated users, Supabase is the source of truth
     },
   }
 )

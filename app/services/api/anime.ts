@@ -27,6 +27,11 @@ export interface EpisodesParams {
   page?: number
 }
 
+export interface TopAnimeParams {
+  limit?: number
+  filter?: 'airing' | 'upcoming' | 'bypopularity' | 'favorite'
+}
+
 /**
  * Anime API Service
  * Centralized API calls for anime-related endpoints
@@ -72,5 +77,12 @@ export const animeApi = {
    */
   getGenres: () => {
     return $fetch<GenresResponse>(`${API_BASE}/genres/anime`)
+  },
+
+  /**
+   * Get top anime by score
+   */
+  getTopAnime: (params: TopAnimeParams = {}) => {
+    return $fetch<AnimeListResponse>(`${API_BASE}/top/anime`, { query: params })
   },
 }
