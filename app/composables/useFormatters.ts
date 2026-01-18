@@ -9,7 +9,20 @@ export const useFormatters = () => {
     return num.toString()
   }
 
+  const formatDate = (
+    date: string | null | undefined,
+    options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    }
+  ): string => {
+    if (!date) return ''
+    return new Date(date).toLocaleDateString(undefined, options)
+  }
+
   return {
     formatNumber,
+    formatDate,
   }
 }

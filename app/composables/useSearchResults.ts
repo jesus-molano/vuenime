@@ -78,17 +78,25 @@ export const useSearchResults = (params: Ref<SearchParams | null> | ComputedRef<
     { immediate: true }
   )
 
-  // Reset when params become null
+  // Reset when params change (including becoming null)
   watch(
     () => params.value,
     (newParams) => {
+      // Always reset additional results when params change
+      additionalResults.value = []
+      currentPage.value = 1
+
       if (!newParams) {
-        additionalResults.value = []
-        currentPage.value = 1
         hasNextPage.value = false
       }
     }
   )
+
+  // Also reset when fetchQuery changes (new search starting)
+  watch(fetchQuery, () => {
+    additionalResults.value = []
+    currentPage.value = 1
+  })
 
   // Load more (client-side only)
   const loadMore = async () => {
@@ -120,8 +128,8 @@ export const useSearchResults = (params: Ref<SearchParams | null> | ComputedRef<
   }
 
   // Computed states
-  const isLoading = computed(() => status.value === 'pending' && searchResults.value.length === 0)
-  const hasResults = computed(() => searchResults.value.length > 0)
+  const isLoading = computed(() => status.value === 'pending')
+  const hasResults = computed(() => !isLoading.value && searchResults.value.length > 0)
   const totalItems = computed(() => initialData.value?.pagination?.items?.total ?? 0)
 
   // Refresh function

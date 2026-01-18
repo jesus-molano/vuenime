@@ -4,9 +4,17 @@
     <div class="absolute inset-0 bg-linear-to-b from-rp-surface/30 to-transparent" />
 
     <UContainer class="relative overflow-hidden">
-      <div class="grid min-w-0 gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12">
+      <div
+        :class="[
+          'grid min-w-0 gap-6 sm:gap-8 lg:gap-12',
+          hasEpisodes || isLoading ? 'lg:grid-cols-2' : 'lg:grid-cols-1',
+        ]"
+      >
         <!-- Synopsis Column -->
-        <div class="min-w-0">
+        <div
+          v-scroll-reveal.fade-up
+          class="min-w-0"
+        >
           <!-- Header -->
           <div class="mb-3 flex items-center gap-2 sm:mb-4 sm:gap-3">
             <div class="flex size-8 items-center justify-center rounded-lg bg-rp-rose/10 sm:size-10 sm:rounded-xl">
@@ -31,6 +39,7 @@
         <ClientOnly>
           <div
             v-if="hasEpisodes || isLoading"
+            v-scroll-reveal.fade-up="100"
             class="min-w-0"
           >
             <!-- Header with count -->
@@ -64,6 +73,28 @@
 
               <!-- Controls -->
               <div class="flex items-center gap-1.5 sm:gap-2">
+                <!-- Skip fillers toggle -->
+                <UTooltip
+                  v-if="hasFillerEpisodes"
+                  :text="hideFiller ? $t('episodes.showFillers') : $t('episodes.hideFillers')"
+                  :delay-duration="300"
+                >
+                  <button
+                    type="button"
+                    class="flex h-6 items-center gap-1 rounded-md px-1.5 text-xs font-medium transition-all"
+                    :class="
+                      hideFiller ? 'bg-rp-gold/20 text-rp-gold' : 'bg-rp-surface text-rp-subtle hover:text-rp-text'
+                    "
+                    @click="hideFiller = !hideFiller"
+                  >
+                    <UIcon
+                      :name="hideFiller ? 'i-heroicons-funnel-solid' : 'i-heroicons-funnel'"
+                      class="size-3.5"
+                    />
+                    <span class="hidden sm:inline">{{ $t('episodes.filler') }}</span>
+                  </button>
+                </UTooltip>
+
                 <!-- Watched actions dropdown -->
                 <UDropdownMenu
                   v-if="episodes.length > 0"
@@ -170,19 +201,19 @@
             <div class="mt-4 flex flex-wrap items-center justify-center gap-2 sm:mt-6 sm:gap-3">
               <!-- Show all/less toggle for current loaded episodes -->
               <button
-                v-if="episodes.length > initialCount && !showAll"
+                v-if="filteredEpisodes.length > initialCount && !showAll"
                 type="button"
                 class="group flex items-center gap-1.5 rounded-full bg-rp-iris px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-rp-iris/25 transition-all hover:scale-105 hover:shadow-xl hover:shadow-rp-iris/30 sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm"
                 @click="showAll = true"
               >
-                {{ $t('anime.showAllEpisodes', { count: episodes.length }) }}
+                {{ $t('anime.showAllEpisodes', { count: filteredEpisodes.length }) }}
                 <UIcon
                   name="i-heroicons-chevron-down"
                   class="size-3.5 transition-transform group-hover:translate-y-0.5 sm:size-4"
                 />
               </button>
               <button
-                v-else-if="showAll && episodes.length > initialCount"
+                v-else-if="showAll && filteredEpisodes.length > initialCount"
                 type="button"
                 class="group flex items-center gap-1.5 rounded-full border border-rp-overlay bg-rp-surface px-4 py-2 text-xs font-semibold text-rp-text transition-all hover:border-rp-iris/50 hover:bg-rp-overlay sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm"
                 @click="showAll = false"
@@ -242,6 +273,16 @@ const { isEpisodeWatched, watchedCount, toggleWatched, markAllAsWatched, clearAl
 const initialCount = 10
 const showAll = ref(false)
 const viewMode = ref<'list' | 'grid'>('list')
+const hideFiller = ref(false)
+
+// Check if there are any filler episodes
+const hasFillerEpisodes = computed(() => episodes.value.some((ep) => ep.filler))
+
+// Filter episodes based on filler toggle
+const filteredEpisodes = computed(() => {
+  if (!hideFiller.value) return episodes.value
+  return episodes.value.filter((ep) => !ep.filler)
+})
 
 // Dropdown menu items for watched actions
 const watchedMenuItems = computed(() => [
@@ -264,8 +305,8 @@ const watchedMenuItems = computed(() => [
 ])
 
 const displayedEpisodes = computed(() => {
-  if (showAll.value) return episodes.value
-  return episodes.value.slice(0, initialCount)
+  if (showAll.value) return filteredEpisodes.value
+  return filteredEpisodes.value.slice(0, initialCount)
 })
 
 // Use prop totalEpisodes if available, otherwise show loaded count with + if there are more pages

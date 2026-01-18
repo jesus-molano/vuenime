@@ -65,6 +65,12 @@
           <span>{{ $t('nav.favorites') }}</span>
         </NuxtLink>
 
+        <UiRandomAnimeButton
+          variant="nav"
+          :show-label="true"
+          class="hidden md:flex"
+        />
+
         <AuthButton />
 
         <div

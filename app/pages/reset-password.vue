@@ -143,6 +143,10 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: 'auth',
+})
+
 const { updatePassword } = useAuth()
 const localePath = useLocalePath()
 const { t } = useI18n()

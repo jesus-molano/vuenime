@@ -17,7 +17,9 @@
     "home": "Go to home",
     "explore": "Explore",
     "favorites": "Favorites",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "randomAnime": "Random",
+    "discovering": "Discovering..."
   },
   "search": {
     "quickActions": "Quick Actions",
@@ -44,7 +46,8 @@
     "yearTooOld": "Year must be 1960 or later",
     "yearTooNew": "Year cannot be in the future",
     "useFilters": "Use filters to search",
-    "useFiltersDesc": "Select filters or enter a search term to find anime"
+    "useFiltersDesc": "Select filters or enter a search term to find anime",
+    "applyFilters": "Apply Filters"
   },
   "home": {
     "badge": "Powered by Jikan API",
@@ -61,7 +64,28 @@
     "stats": {
       "titles": "25,000+ Titles",
       "updated": "Updated daily"
-    }
+    },
+    "todaySchedule": "Airing Today",
+    "currentSeason": "Current Season",
+    "upcomingAnime": "Coming Soon",
+    "upcomingSubtitle": "New anime on the horizon",
+    "viewMore": "View more",
+    "noAiringToday": "No anime airing today"
+  },
+  "seasons": {
+    "winter": "Winter",
+    "spring": "Spring",
+    "summer": "Summer",
+    "fall": "Fall"
+  },
+  "days": {
+    "sunday": "Sunday",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday"
   },
   "anime": {
     "episodes": "Episodes",
@@ -102,6 +126,20 @@
     "episodeDuration": "Duration per episode",
     "rankTooltip": "Ranking based on score",
     "popularityTooltip": "Popularity ranking by members"
+  },
+  "detail": {
+    "tabs": "Content tabs",
+    "characters": "Characters",
+    "recommendations": "Similar",
+    "reviews": "Reviews",
+    "news": "News",
+    "mainRole": "Main",
+    "supportingRole": "Supporting",
+    "noCharacters": "No character info available",
+    "noRecommendations": "No recommendations yet",
+    "noReviews": "No reviews yet",
+    "noNews": "No news available",
+    "viewCharacter": "View {name}"
   },
   "footer": {
     "builtWith": "Built with Nuxt 4, Vue 3 & Nuxt UI",
@@ -260,6 +298,12 @@
     "prevPage": "Previous page",
     "nextPage": "Next page"
   },
+  "episodes": {
+    "filler": "Filler",
+    "hideFillers": "Hide filler episodes",
+    "showFillers": "Show filler episodes",
+    "fillerEpisode": "Filler episode"
+  },
   "watched": {
     "markAsWatched": "Mark as watched",
     "markAsUnwatched": "Mark as unwatched",
@@ -268,5 +312,12 @@
     "markAllWatched": "Mark all as watched",
     "clearAllWatched": "Clear watched",
     "progress": "{watched}/{total} episodes"
+  },
+  "error": {
+    "lostInSpace": "Lost in Space",
+    "pageNotFound": "The page you're looking for doesn't exist or has been moved to another dimension.",
+    "goHome": "Return Home",
+    "goBack": "Go Back",
+    "code": "Error Code"
   }
 }

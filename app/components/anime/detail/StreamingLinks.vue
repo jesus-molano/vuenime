@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="streamingLinks.length"
-    class="flex flex-wrap items-center gap-2"
+    class="flex flex-wrap items-center justify-center gap-2"
   >
     <a
       v-for="link in streamingLinks"

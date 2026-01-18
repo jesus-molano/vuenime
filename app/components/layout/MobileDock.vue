@@ -30,6 +30,8 @@
         </NuxtLink>
       </UTooltip>
 
+      <UiRandomAnimeButton variant="dock" />
+
       <UTooltip
         :text="$t('common.search')"
         side="top"
@@ -38,7 +40,7 @@
         <button
           type="button"
           :aria-label="$t('common.search')"
-          class="group flex items-center justify-center rounded-xl bg-linear-to-r from-rp-iris to-rp-love p-3 text-white shadow-lg shadow-rp-iris/30 transition-all hover:shadow-rp-iris/50 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
+          class="group flex items-center justify-center rounded-xl p-3 text-rp-subtle transition-all hover:bg-rp-iris/10 hover:text-rp-iris active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
           @click="$emit('toggleSearch')"
         >
           <UIcon

@@ -41,6 +41,33 @@ export function useSearchFilters() {
   const typeKeys = ANIME_TYPES
   const typeOptions = computed(() => typeKeys.map((key) => ({ value: key, label: translateType(key) })))
 
+  // Type options with icons for improved UX
+  const typeIcons: Record<string, string> = {
+    tv: 'i-heroicons-tv',
+    movie: 'i-heroicons-film',
+    ova: 'i-heroicons-video-camera',
+    ona: 'i-heroicons-globe-alt',
+    special: 'i-heroicons-sparkles',
+    music: 'i-heroicons-musical-note',
+  }
+
+  const typeOptionsWithIcons = computed(() =>
+    typeKeys.map((key) => ({
+      value: key,
+      label: translateType(key),
+      icon: typeIcons[key] || 'i-heroicons-play',
+    }))
+  )
+
+  // Quick year selection (last 5 years)
+  const quickYears = computed(() => {
+    const years = []
+    for (let i = 0; i < 5; i++) {
+      years.push(currentYear - i)
+    }
+    return years
+  })
+
   // Fetch genres from API
   const { data: genresData } = useFetch<{ data: { mal_id: number; name: string }[] }>('/api/jikan/genres/anime', {
     key: 'anime-genres',
@@ -117,6 +144,17 @@ export function useSearchFilters() {
     selectedGenre.value = value
     genreSearch.value = ''
     showGenreDropdown.value = false
+    updateUrl()
+  }
+
+  const selectYear = (value: string) => {
+    if (selectedYear.value === value) {
+      selectedYear.value = null
+      yearInput.value = ''
+    } else {
+      selectedYear.value = value
+      yearInput.value = value
+    }
     updateUrl()
   }
 
@@ -225,6 +263,8 @@ export function useSearchFilters() {
 
     // Options
     typeOptions,
+    typeOptionsWithIcons,
+    quickYears,
     genres,
     popularGenres,
     filteredGenres,
@@ -240,6 +280,7 @@ export function useSearchFilters() {
     toggleType,
     applyYearFilter,
     validateYear,
+    selectYear,
     selectGenre,
     closeGenreDropdown,
     clearTypeFilter,

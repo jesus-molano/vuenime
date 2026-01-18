@@ -7,7 +7,7 @@ interface I18nInstance {
 }
 
 export default defineNuxtPlugin((nuxtApp) => {
-  // Esperar a que la app esté lista para acceder a i18n
+  // Wait for the app to be mounted to access i18n
   nuxtApp.hook('app:mounted', () => {
     const preferencesStore = usePreferencesStore()
     const i18n = nuxtApp.$i18n as I18nInstance | undefined
@@ -16,11 +16,11 @@ export default defineNuxtPlugin((nuxtApp) => {
 
     const currentLocale = i18n.locale.value
 
-    // Sincronizar idioma del store con i18n una sola vez al inicio
+    // Sync the locale from the store with i18n only once at startup
     if (preferencesStore.locale && preferencesStore.locale !== currentLocale) {
       i18n.setLocale(preferencesStore.locale)
     } else {
-      // Si no hay preferencia guardada, guardar el idioma actual de i18n
+      // If no preference is saved, save the current locale of i18n
       preferencesStore.setLocale(currentLocale as LocaleCode)
     }
   })

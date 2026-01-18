@@ -40,8 +40,11 @@
           :anime-id="animeId"
           :total-episodes="anime.episodes"
         />
-        <AnimeDetailInfoSection :anime="anime" />
-        <AnimeDetailTrailer :trailer="anime.trailer" />
+        <AnimeDetailTrailer
+          :trailer="anime.trailer"
+          :anime="anime"
+        />
+        <AnimeDetailTabsSection :anime-id="animeId" />
       </div>
 
       <!-- Loading Skeleton -->

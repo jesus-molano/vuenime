@@ -17,7 +17,9 @@
     "home": "Ir al inicio",
     "explore": "Explorar",
     "favorites": "Favoritos",
-    "skipToContent": "Saltar al contenido"
+    "skipToContent": "Saltar al contenido",
+    "randomAnime": "Aleatorio",
+    "discovering": "Descubriendo..."
   },
   "search": {
     "quickActions": "Acciones Rápidas",
@@ -44,7 +46,8 @@
     "yearTooOld": "El año debe ser 1960 o posterior",
     "yearTooNew": "El año no puede ser futuro",
     "useFilters": "Usa los filtros para buscar",
-    "useFiltersDesc": "Selecciona filtros o ingresa un término para encontrar anime"
+    "useFiltersDesc": "Selecciona filtros o ingresa un término para encontrar anime",
+    "applyFilters": "Aplicar Filtros"
   },
   "home": {
     "badge": "Desarrollado con Jikan API",
@@ -61,7 +64,28 @@
     "stats": {
       "titles": "+25,000 Títulos",
       "updated": "Actualizado diariamente"
-    }
+    },
+    "todaySchedule": "Emisión de Hoy",
+    "currentSeason": "Temporada Actual",
+    "upcomingAnime": "Próximos Estrenos",
+    "upcomingSubtitle": "Nuevos anime en el horizonte",
+    "viewMore": "Ver más",
+    "noAiringToday": "No hay anime en emisión hoy"
+  },
+  "seasons": {
+    "winter": "Invierno",
+    "spring": "Primavera",
+    "summer": "Verano",
+    "fall": "Otoño"
+  },
+  "days": {
+    "sunday": "Domingo",
+    "monday": "Lunes",
+    "tuesday": "Martes",
+    "wednesday": "Miércoles",
+    "thursday": "Jueves",
+    "friday": "Viernes",
+    "saturday": "Sábado"
   },
   "anime": {
     "episodes": "Episodios",
@@ -102,6 +126,20 @@
     "episodeDuration": "Duración por episodio",
     "rankTooltip": "Ranking basado en puntuación",
     "popularityTooltip": "Ranking de popularidad por miembros"
+  },
+  "detail": {
+    "tabs": "Pestañas de contenido",
+    "characters": "Personajes",
+    "recommendations": "Similares",
+    "reviews": "Reseñas",
+    "news": "Noticias",
+    "mainRole": "Principal",
+    "supportingRole": "Secundario",
+    "noCharacters": "No hay información de personajes",
+    "noRecommendations": "Aún no hay recomendaciones",
+    "noReviews": "Aún no hay reseñas",
+    "noNews": "No hay noticias disponibles",
+    "viewCharacter": "Ver {name}"
   },
   "footer": {
     "builtWith": "Hecho con Nuxt 4, Vue 3 y Nuxt UI",
@@ -260,6 +298,12 @@
     "prevPage": "Página anterior",
     "nextPage": "Página siguiente"
   },
+  "episodes": {
+    "filler": "Relleno",
+    "hideFillers": "Ocultar episodios de relleno",
+    "showFillers": "Mostrar episodios de relleno",
+    "fillerEpisode": "Episodio de relleno"
+  },
   "watched": {
     "markAsWatched": "Marcar como visto",
     "markAsUnwatched": "Marcar como no visto",
@@ -268,5 +312,12 @@
     "markAllWatched": "Marcar todos como vistos",
     "clearAllWatched": "Limpiar vistos",
     "progress": "{watched}/{total} episodios"
+  },
+  "error": {
+    "lostInSpace": "Perdido en el Espacio",
+    "pageNotFound": "La página que buscas no existe o ha sido transportada a otra dimensión.",
+    "goHome": "Volver al Inicio",
+    "goBack": "Regresar",
+    "code": "Código de Error"
   }
 }

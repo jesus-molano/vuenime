@@ -366,3 +366,69 @@
   opacity: 0;
   transform: scale(0.95);
 }
+
+/* ===========================================
+   Hero Animations
+   =========================================== */
+
+@keyframes fade-in-hero {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-down-hero {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in-hero 0.5s ease-out forwards;
+}
+
+.animate-fade-in-down {
+  animation: fade-in-down-hero 0.5s ease-out forwards;
+}
+
+/* Animation delays */
+.animation-delay-100 {
+  animation-delay: 100ms;
+  opacity: 0;
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms;
+  opacity: 0;
+}
+
+.animation-delay-300 {
+  animation-delay: 300ms;
+  opacity: 0;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-fade-in-down {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .animation-delay-100,
+  .animation-delay-200,
+  .animation-delay-300 {
+    animation-delay: 0ms;
+    opacity: 1;
+  }
+}

@@ -17,7 +17,9 @@
     "home": "ホームへ",
     "explore": "探索",
     "favorites": "お気に入り",
-    "skipToContent": "コンテンツへスキップ"
+    "skipToContent": "コンテンツへスキップ",
+    "randomAnime": "ランダム",
+    "discovering": "探索中..."
   },
   "search": {
     "quickActions": "クイックアクション",
@@ -44,7 +46,8 @@
     "yearTooOld": "1960年以降を入力してください",
     "yearTooNew": "未来の年は入力できません",
     "useFilters": "フィルターで検索",
-    "useFiltersDesc": "フィルターを選択するか検索ワードを入力してください"
+    "useFiltersDesc": "フィルターを選択するか検索ワードを入力してください",
+    "applyFilters": "フィルターを適用"
   },
   "home": {
     "badge": "Jikan APIで開発",
@@ -61,7 +64,28 @@
     "stats": {
       "titles": "25,000作品以上",
       "updated": "毎日更新"
-    }
+    },
+    "todaySchedule": "今日の放送",
+    "currentSeason": "今期アニメ",
+    "upcomingAnime": "放送予定",
+    "upcomingSubtitle": "もうすぐ始まる新作アニメ",
+    "viewMore": "もっと見る",
+    "noAiringToday": "今日の放送はありません"
+  },
+  "seasons": {
+    "winter": "冬",
+    "spring": "春",
+    "summer": "夏",
+    "fall": "秋"
+  },
+  "days": {
+    "sunday": "日曜日",
+    "monday": "月曜日",
+    "tuesday": "火曜日",
+    "wednesday": "水曜日",
+    "thursday": "木曜日",
+    "friday": "金曜日",
+    "saturday": "土曜日"
   },
   "anime": {
     "episodes": "エピソード",
@@ -96,6 +120,20 @@
     "episodeDuration": "1話あたりの長さ",
     "rankTooltip": "スコアに基づくランキング",
     "popularityTooltip": "メンバー数による人気ランキング"
+  },
+  "detail": {
+    "tabs": "コンテンツタブ",
+    "characters": "キャラクター",
+    "recommendations": "おすすめ",
+    "reviews": "レビュー",
+    "news": "ニュース",
+    "mainRole": "メイン",
+    "supportingRole": "サブ",
+    "noCharacters": "キャラクター情報がありません",
+    "noRecommendations": "おすすめはまだありません",
+    "noReviews": "レビューはまだありません",
+    "noNews": "ニュースはありません",
+    "viewCharacter": "{name}を見る"
   },
   "footer": {
     "builtWith": "Nuxt 4、Vue 3、Nuxt UIで制作",
@@ -254,6 +292,12 @@
     "prevPage": "前のページ",
     "nextPage": "次のページ"
   },
+  "episodes": {
+    "filler": "フィラー",
+    "hideFillers": "フィラーを非表示",
+    "showFillers": "フィラーを表示",
+    "fillerEpisode": "フィラーエピソード"
+  },
   "watched": {
     "markAsWatched": "視聴済みにする",
     "markAsUnwatched": "未視聴にする",
@@ -262,5 +306,12 @@
     "markAllWatched": "すべて視聴済みにする",
     "clearAllWatched": "視聴履歴をクリア",
     "progress": "{watched}/{total}話"
+  },
+  "error": {
+    "lostInSpace": "宇宙で迷子",
+    "pageNotFound": "お探しのページは存在しないか、別の次元に移動しました。",
+    "goHome": "ホームに戻る",
+    "goBack": "戻る",
+    "code": "エラーコード"
   }
 }
