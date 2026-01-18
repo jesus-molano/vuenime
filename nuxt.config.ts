@@ -119,10 +119,25 @@ export default defineNuxtConfig({
   // Route rules for ISR (Vercel deployment)
   routeRules: {
     '/': { prerender: true },
-    '/anime/**': { isr: 3600 }, // Revalidate hourly
+    '/anime/**': {
+      isr: 3600, // Revalidate hourly
+      headers: {
+        'cache-control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+      },
+    },
     '/api/jikan/**': {
-      cache: { maxAge: 600 }, // 10 minute edge cache
-      headers: { 'cache-control': 's-maxage=600, stale-while-revalidate' },
+      cache: { maxAge: 600, staleMaxAge: 3600 },
+      headers: {
+        'cache-control': 's-maxage=600, stale-while-revalidate',
+        'x-content-type-options': 'nosniff',
+      },
+    },
+    '/**': {
+      headers: {
+        'x-content-type-options': 'nosniff',
+        'x-frame-options': 'SAMEORIGIN',
+        'referrer-policy': 'strict-origin-when-cross-origin',
+      },
     },
   },
 
