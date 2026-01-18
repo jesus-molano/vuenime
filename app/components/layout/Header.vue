@@ -17,7 +17,7 @@
         aria-hidden="true"
         width="22"
         height="22"
-        class="straw-hat -ml-5 -mr-1 rotate-18 -translate-x-3 -translate-y-1.5 drop-shadow-md"
+        class="straw-hat -ml-5 -mr-1 rotate-18 -translate-x-1 -translate-y-1.5 drop-shadow-md"
       />
     </NuxtLink>
 
