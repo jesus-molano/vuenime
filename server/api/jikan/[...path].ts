@@ -75,6 +75,39 @@ export default defineEventHandler(async (event) => {
       timeout: 10000,
     })
   } catch (error: unknown) {
+    // Handle FetchError from $fetch
+    if (error && typeof error === 'object' && 'response' in error) {
+      const fetchError = error as { response?: { status?: number }; message?: string }
+      const status = fetchError.response?.status
+
+      // 429 - Rate Limited by Jikan API
+      if (status === 429) {
+        logger.jikan.warn('Rate limited by Jikan API', { path: validation.data })
+        throw createError({
+          statusCode: 429,
+          statusMessage: 'Rate limited - please wait a moment and try again',
+        })
+      }
+
+      // 502/503/504 - Upstream issues (MAL down, Jikan overloaded)
+      if (status && status >= 502 && status <= 504) {
+        logger.jikan.warn('Upstream service unavailable', { path: validation.data, status })
+        throw createError({
+          statusCode: 503,
+          statusMessage: 'Anime database temporarily unavailable - please try again later',
+        })
+      }
+
+      // 404 - Not found
+      if (status === 404) {
+        logger.jikan.info('Resource not found', { path: validation.data })
+        throw createError({
+          statusCode: 404,
+          statusMessage: 'Anime not found',
+        })
+      }
+    }
+
     logger.jikan.error('Request failed', {
       path: validation.data,
       error: error instanceof Error ? error.message : String(error),
