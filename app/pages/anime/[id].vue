@@ -94,10 +94,13 @@ watch(isLoading, (loading) => {
 watch(error, (err) => {
   if (!err) return
 
-  const statusCode = (err as { statusCode?: number }).statusCode
+  // useFetch error can have statusCode at different levels
+  const fetchError = err as { statusCode?: number; data?: { statusCode?: number } }
+  const statusCode = fetchError.statusCode ?? fetchError.data?.statusCode
+
   if (statusCode === 429) {
     rateLimited()
-  } else if (statusCode === 503 || statusCode === 502) {
+  } else if (statusCode === 503 || statusCode === 502 || statusCode === 504) {
     serviceUnavailable()
   } else if (statusCode === 404) {
     animeNotFound()
