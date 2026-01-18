@@ -3,8 +3,20 @@
     <!-- Hero Section -->
     <HomeHero />
 
+    <!-- Today's Schedule Section -->
+    <HomeTodaySchedule />
+
+    <!-- Current Season Section -->
+    <HomeCurrentSeason />
+
+    <!-- Upcoming Anime Section -->
+    <HomeUpcomingAnime />
+
     <!-- Anime Grid Section -->
-    <section class="py-6 sm:py-8 md:py-12">
+    <section
+      v-scroll-reveal.fade-up
+      class="py-6 sm:py-8 md:py-12"
+    >
       <UContainer class="px-4 sm:px-6">
         <!-- Section header -->
         <div class="mb-4 flex items-center justify-between sm:mb-6 md:mb-8">

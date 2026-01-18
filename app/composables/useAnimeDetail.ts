@@ -7,6 +7,7 @@ export const useAnimeDetail = (id: Ref<string> | string) => {
   const { data, status, error, refresh } = useFetch<AnimeDetailResponse>(() => `/api/jikan/anime/${animeId.value}`, {
     key: () => `anime-detail-${animeId.value}`,
     getCachedData: (key) => nuxtApp.payload.data[key] as AnimeDetailResponse | undefined,
+    watch: [animeId], // Re-fetch when animeId changes
   })
 
   const anime = computed(() => data.value?.data)

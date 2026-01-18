@@ -103,29 +103,33 @@
           </button>
         </div>
         <div class="flex flex-wrap gap-2">
-          <button
+          <div
             v-for="term in history"
             :key="term"
-            type="button"
             class="group flex items-center gap-1.5 rounded-lg bg-rp-overlay/40 px-3 py-1.5 text-sm text-rp-text transition-all hover:bg-rp-iris/20 hover:text-rp-iris"
-            @click="searchTerm(term)"
           >
-            <UIcon
-              name="i-heroicons-clock"
-              class="size-3.5 text-rp-muted group-hover:text-rp-iris"
-            />
-            {{ term }}
+            <button
+              type="button"
+              class="flex items-center gap-1.5"
+              @click="searchTerm(term)"
+            >
+              <UIcon
+                name="i-heroicons-clock"
+                class="size-3.5 text-rp-muted group-hover:text-rp-iris"
+              />
+              {{ term }}
+            </button>
             <button
               type="button"
               class="ml-1 rounded p-0.5 text-rp-muted opacity-0 transition-all hover:bg-rp-love/20 hover:text-rp-love group-hover:opacity-100"
-              @click.stop="removeFromHistory(term)"
+              @click="removeFromHistory(term)"
             >
               <UIcon
                 name="i-heroicons-x-mark"
                 class="size-3"
               />
             </button>
-          </button>
+          </div>
         </div>
       </div>
 

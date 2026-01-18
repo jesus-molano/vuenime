@@ -4,7 +4,10 @@
     <FavoritesHero />
 
     <!-- Main Content -->
-    <section class="pb-16 md:pb-24">
+    <section
+      v-scroll-reveal.fade-up
+      class="pb-16 md:pb-24"
+    >
       <UContainer class="px-4 sm:px-6">
         <ClientOnly>
           <!-- Loading skeleton (while fetching from Supabase) -->

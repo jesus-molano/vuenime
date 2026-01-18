@@ -175,3 +175,96 @@ export interface ProducersResponse {
   data: ProducerItem[]
   pagination: AnimePagination
 }
+
+// Schedule types
+export type ScheduleDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
+
+export interface ScheduleResponse {
+  data: Anime[]
+  pagination: AnimePagination
+}
+
+// Seasons types
+export type Season = 'winter' | 'spring' | 'summer' | 'fall'
+
+export interface SeasonsResponse {
+  data: Anime[]
+  pagination: AnimePagination
+}
+
+// Characters types
+export interface VoiceActor {
+  person: {
+    mal_id: number
+    name: string
+    images: { jpg: { image_url: string } }
+  }
+  language: string
+}
+
+export interface Character {
+  character: {
+    mal_id: number
+    name: string
+    images: {
+      jpg: { image_url: string }
+      webp: { image_url: string }
+    }
+  }
+  role: 'Main' | 'Supporting'
+  voice_actors: VoiceActor[]
+}
+
+export interface CharactersResponse {
+  data: Character[]
+}
+
+// Recommendations types
+export interface Recommendation {
+  entry: {
+    mal_id: number
+    title: string
+    images: AnimeImages
+  }
+  votes: number
+}
+
+export interface RecommendationsResponse {
+  data: Recommendation[]
+}
+
+// Reviews types
+export interface Review {
+  mal_id: number
+  user: {
+    username: string
+    images: { jpg: { image_url: string } }
+  }
+  score: number
+  review: string
+  date: string
+  tags: string[]
+  reactions: { overall: number }
+}
+
+export interface ReviewsResponse {
+  data: Review[]
+  pagination: AnimePagination
+}
+
+// News types
+export interface NewsItem {
+  mal_id: number
+  url: string
+  title: string
+  date: string
+  author_username: string
+  excerpt: string
+  images: { jpg: { image_url: string } }
+  comments: number
+}
+
+export interface NewsResponse {
+  data: NewsItem[]
+  pagination: AnimePagination
+}

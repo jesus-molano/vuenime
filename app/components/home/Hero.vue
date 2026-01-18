@@ -6,7 +6,10 @@
     <UContainer class="relative z-10 px-4 sm:px-6">
       <div class="mx-auto max-w-3xl text-center">
         <!-- Title with gradient effect -->
-        <h1 class="mb-3 text-2xl font-black tracking-tight xs:text-3xl sm:text-4xl md:mb-6 md:text-5xl lg:text-7xl">
+        <h1
+          v-scroll-reveal.fade-up
+          class="mb-3 text-2xl font-black tracking-tight xs:text-3xl sm:text-4xl md:mb-6 md:text-5xl lg:text-7xl"
+        >
           <span class="text-rp-text">{{ $t('home.title') }}</span>
           <br />
           <span class="bg-linear-to-r from-[#c4a7e7] via-[#ebbcba] to-[#eb6f92] bg-clip-text text-transparent">
@@ -15,12 +18,16 @@
         </h1>
 
         <!-- Subtitle -->
-        <p class="mx-auto mb-5 max-w-xl text-xs text-rp-subtle sm:text-sm md:mb-10 md:text-lg">
+        <p
+          v-scroll-reveal.fade-up="100"
+          class="mx-auto mb-5 max-w-xl text-xs text-rp-subtle sm:text-sm md:mb-10 md:text-lg"
+        >
           {{ $t('home.subtitle') }}
         </p>
 
         <!-- Search Bar -->
         <form
+          v-scroll-reveal.fade-up="200"
           role="search"
           class="group relative mx-auto flex w-full max-w-md items-center gap-2 rounded-xl border border-rp-overlay/50 bg-rp-surface/50 px-4 py-2 backdrop-blur-sm transition-all focus-within:border-rp-iris/50 focus-within:bg-rp-surface/80 hover:border-rp-iris/30 sm:rounded-2xl sm:px-5 sm:py-3"
           @submit.prevent="handleSearch"
@@ -48,6 +55,7 @@
 
         <!-- Quick stats -->
         <div
+          v-scroll-reveal.fade-up="300"
           class="mt-5 flex items-center justify-center gap-3 text-[10px] sm:mt-8 sm:gap-4 sm:text-xs md:mt-12 md:gap-8 md:text-sm"
         >
           <div class="flex items-center gap-1 md:gap-2">

@@ -11,7 +11,10 @@
         ]"
       >
         <!-- Synopsis Column -->
-        <div class="min-w-0">
+        <div
+          v-scroll-reveal.fade-up
+          class="min-w-0"
+        >
           <!-- Header -->
           <div class="mb-3 flex items-center gap-2 sm:mb-4 sm:gap-3">
             <div class="flex size-8 items-center justify-center rounded-lg bg-rp-rose/10 sm:size-10 sm:rounded-xl">
@@ -36,6 +39,7 @@
         <ClientOnly>
           <div
             v-if="hasEpisodes || isLoading"
+            v-scroll-reveal.fade-up="100"
             class="min-w-0"
           >
             <!-- Header with count -->

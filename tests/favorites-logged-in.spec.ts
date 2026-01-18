@@ -1,7 +1,13 @@
 import { test } from '@nuxt/test-utils/playwright'
 
+// Increase timeout for this test since it involves authentication
+test.setTimeout(60000)
+
 test.describe('Favorites page with logged in user', () => {
   test('capture load with authentication', async ({ page }) => {
+    // Set larger viewport to ensure buttons are visible
+    await page.setViewportSize({ width: 1280, height: 800 })
+
     // First, go to home page and open auth modal
     console.log('🔐 Going to home page...')
     await page.goto('/es')
@@ -11,10 +17,10 @@ test.describe('Favorites page with logged in user', () => {
     await page.screenshot({ path: 'test-results/debug-home.png' })
     console.log('📸 Screenshot saved to debug-home.png')
 
-    // Click the Sign In button specifically (has "Sign In" text visible)
-    // The button has bg-rp-iris/10 styling and contains text "Sign In"
-    const signInButton = page.locator('button:has-text("Sign In")').first()
-    await signInButton.click()
+    // Click the Sign In button specifically (has "Sign In" or "Iniciar sesión" text)
+    // The button has bg-rp-iris/10 styling
+    const signInButton = page.locator('button[aria-label="Sign In"], button[aria-label="Iniciar sesión"]').first()
+    await signInButton.click({ timeout: 5000 })
     console.log('Clicked Sign In button')
 
     await page.waitForTimeout(500) // Wait for modal to open
