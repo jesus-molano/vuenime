@@ -7,15 +7,17 @@
       :class="isScrolled ? 'bg-rp-surface/95 shadow-lg shadow-rp-base/30' : 'bg-rp-surface/50'"
       :aria-label="$t('nav.home')"
     >
-      <span class="text-base font-bold md:text-lg">
+      <span class="text-base font-bold md:text-xl">
         <span class="text-rp-text">Vue</span>
         <span class="text-rp-iris">Nime</span>
       </span>
-      <img
-        src="~/assets/icons/straw-hat.svg"
-        alt=""
+      <NuxtImg
+        src="/images/straw-hat.webp"
+        alt="Straw Hat Icon"
         aria-hidden="true"
-        class="straw-hat w-5 -rotate-12 drop-shadow-md md:w-6"
+        width="22"
+        height="22"
+        class="straw-hat rotate-18 -translate-x-5 -translate-y-1.5 drop-shadow-md"
       />
     </NuxtLink>
 
