@@ -313,5 +313,15 @@
     "goHome": "ホームに戻る",
     "goBack": "戻る",
     "code": "エラーコード"
+  },
+  "notifications": {
+    "favoriteAdded": "お気に入りに追加しました",
+    "favoriteAddedDesc": "{title}をお気に入りに追加しました",
+    "favoriteRemoved": "お気に入りから削除しました",
+    "favoriteRemovedDesc": "{title}をお気に入りから削除しました",
+    "error": "エラー",
+    "favoriteErrorDesc": "お気に入りを更新できませんでした。もう一度お試しください。",
+    "clearFavorites": "お気に入りを削除しました",
+    "clearFavoritesDesc": "すべてのお気に入りが削除されました"
   }
 }

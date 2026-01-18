@@ -319,5 +319,15 @@
     "goHome": "Volver al Inicio",
     "goBack": "Regresar",
     "code": "Código de Error"
+  },
+  "notifications": {
+    "favoriteAdded": "Agregado a favoritos",
+    "favoriteAddedDesc": "{title} ha sido agregado a tus favoritos",
+    "favoriteRemoved": "Eliminado de favoritos",
+    "favoriteRemovedDesc": "{title} ha sido eliminado de tus favoritos",
+    "error": "Error",
+    "favoriteErrorDesc": "No se pudo actualizar favoritos. Inténtalo de nuevo.",
+    "clearFavorites": "Favoritos eliminados",
+    "clearFavoritesDesc": "Todos los favoritos han sido eliminados"
   }
 }

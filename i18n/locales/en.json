@@ -319,5 +319,15 @@
     "goHome": "Return Home",
     "goBack": "Go Back",
     "code": "Error Code"
+  },
+  "notifications": {
+    "favoriteAdded": "Added to favorites",
+    "favoriteAddedDesc": "{title} has been added to your favorites",
+    "favoriteRemoved": "Removed from favorites",
+    "favoriteRemovedDesc": "{title} has been removed from your favorites",
+    "error": "Error",
+    "favoriteErrorDesc": "Could not update favorites. Please try again.",
+    "clearFavorites": "Favorites cleared",
+    "clearFavoritesDesc": "All favorites have been removed"
   }
 }
