@@ -1,5 +1,6 @@
 import { RATE_LIMIT } from '~~/shared/constants/api'
 import { jikanPathSchema } from '~~/shared/schemas'
+import { logger } from '~~/server/utils/logger'
 
 const requestQueue: number[] = []
 const ONE_MINUTE_MS = 60 * 1000
@@ -45,7 +46,7 @@ export default defineEventHandler(async (event) => {
   // Validate path with Zod
   const validation = jikanPathSchema.safeParse(path)
   if (!validation.success) {
-    console.error('[Jikan API] Invalid path:', { path, error: validation.error })
+    logger.jikan.warn('Invalid path', { path, error: validation.error.message })
     throw createError({
       statusCode: 400,
       statusMessage: 'Invalid API path',
@@ -54,7 +55,7 @@ export default defineEventHandler(async (event) => {
 
   // Check if endpoint is allowed
   if (!isAllowedEndpoint(validation.data)) {
-    console.error('[Jikan API] Endpoint not allowed:', { path: validation.data })
+    logger.jikan.warn('Endpoint not allowed', { path: validation.data })
     throw createError({
       statusCode: 403,
       statusMessage: 'Endpoint not allowed',
@@ -74,9 +75,9 @@ export default defineEventHandler(async (event) => {
       timeout: 10000,
     })
   } catch (error: unknown) {
-    console.error('[Jikan API] Error:', {
+    logger.jikan.error('Request failed', {
       path: validation.data,
-      error: error instanceof Error ? error.message : error,
+      error: error instanceof Error ? error.message : String(error),
     })
 
     // Re-throw if it's already a createError
