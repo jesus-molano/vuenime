@@ -54,6 +54,7 @@
     "@vue/test-utils": "^2.4.6",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.1",
+    "nuxt-security": "^2.5.1",
     "playwright-core": "^1.57.0",
     "prettier": "^3.5.3",
     "typescript": "^5.9.3",

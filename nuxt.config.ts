@@ -26,7 +26,40 @@ export default defineNuxtConfig({
     '@nuxtjs/supabase',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
+    'nuxt-security',
   ],
+
+  // Security configuration
+  security: {
+    headers: {
+      // Allow embedding YouTube videos for trailers
+      crossOriginEmbedderPolicy: 'unsafe-none',
+      contentSecurityPolicy: {
+        'img-src': ["'self'", 'https:', 'data:', 'blob:'],
+        'media-src': ["'self'", 'https://www.youtube.com', 'https://youtube.com'],
+        'frame-src': ["'self'", 'https://www.youtube.com', 'https://youtube.com'],
+        'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https:'],
+        'style-src': ["'self'", "'unsafe-inline'"],
+        'font-src': ["'self'", 'https:', 'data:'],
+        'connect-src': ["'self'", 'https:'],
+      },
+      xFrameOptions: 'SAMEORIGIN',
+      xContentTypeOptions: 'nosniff',
+      referrerPolicy: 'strict-origin-when-cross-origin',
+      permissionsPolicy: {
+        camera: [],
+        microphone: [],
+        geolocation: [],
+      },
+    },
+    // Disable rate limiting (handled by Jikan API proxy)
+    rateLimiter: false,
+    // Allow requests to external APIs
+    requestSizeLimiter: {
+      maxRequestSizeInBytes: 2000000, // 2MB
+      maxUploadFileRequestInBytes: 8000000, // 8MB
+    },
+  },
 
   // Supabase configuration - auth is optional, no forced redirects
   supabase: {
@@ -117,6 +150,7 @@ export default defineNuxtConfig({
   },
 
   // Route rules for ISR (Vercel deployment)
+  // Security headers are handled by nuxt-security module
   routeRules: {
     '/': { prerender: true },
     '/anime/**': {
@@ -129,14 +163,6 @@ export default defineNuxtConfig({
       cache: { maxAge: 600, staleMaxAge: 3600 },
       headers: {
         'cache-control': 's-maxage=600, stale-while-revalidate',
-        'x-content-type-options': 'nosniff',
-      },
-    },
-    '/**': {
-      headers: {
-        'x-content-type-options': 'nosniff',
-        'x-frame-options': 'SAMEORIGIN',
-        'referrer-policy': 'strict-origin-when-cross-origin',
       },
     },
   },
