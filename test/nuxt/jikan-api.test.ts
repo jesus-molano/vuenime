@@ -1,10 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import { setup, $fetch as nuxtFetch } from '@nuxt/test-utils/runtime'
-
-// Setup Nuxt environment
-await setup({
-  server: true,
-})
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { $fetch } from '@nuxt/test-utils/e2e'
 
 describe('Jikan API Endpoint', () => {
   beforeEach(() => {
@@ -14,7 +9,7 @@ describe('Jikan API Endpoint', () => {
   describe('Path Validation', () => {
     it('rejects empty paths with 400', async () => {
       try {
-        await nuxtFetch('/api/jikan/')
+        await $fetch('/api/jikan/')
         expect.fail('Should have thrown an error')
       } catch (error: unknown) {
         const err = error as { statusCode?: number }
@@ -27,7 +22,7 @@ describe('Jikan API Endpoint', () => {
 
       for (const path of maliciousPaths) {
         try {
-          await nuxtFetch(`/api/jikan/${path}`)
+          await $fetch(`/api/jikan/${path}`)
           expect.fail(`Should have rejected: ${path}`)
         } catch (error: unknown) {
           const err = error as { statusCode?: number }
@@ -38,7 +33,7 @@ describe('Jikan API Endpoint', () => {
 
     it('rejects paths starting with slash with 400', async () => {
       try {
-        await nuxtFetch('/api/jikan//anime')
+        await $fetch('/api/jikan//anime')
         expect.fail('Should have thrown an error')
       } catch (error: unknown) {
         const err = error as { statusCode?: number }
@@ -52,7 +47,7 @@ describe('Jikan API Endpoint', () => {
 
       for (const path of invalidPaths) {
         try {
-          await nuxtFetch(`/api/jikan/${path}`)
+          await $fetch(`/api/jikan/${path}`)
           expect.fail(`Should have rejected: ${path}`)
         } catch (error: unknown) {
           const err = error as { statusCode?: number }
@@ -68,7 +63,7 @@ describe('Jikan API Endpoint', () => {
 
       for (const endpoint of blockedEndpoints) {
         try {
-          await nuxtFetch(`/api/jikan/${endpoint}`)
+          await $fetch(`/api/jikan/${endpoint}`)
           expect.fail(`Should have rejected: ${endpoint}`)
         } catch (error: unknown) {
           const err = error as { statusCode?: number }
@@ -95,7 +90,7 @@ describe('Jikan API Endpoint', () => {
 
       for (const endpoint of allowedEndpoints) {
         try {
-          await nuxtFetch(`/api/jikan/${endpoint}`)
+          await $fetch(`/api/jikan/${endpoint}`)
           // If it succeeds, that's fine
         } catch (error: unknown) {
           const err = error as { statusCode?: number }
@@ -112,7 +107,7 @@ describe('Jikan API Endpoint', () => {
       try {
         // This will either succeed or fail with 500 (external API)
         // But should not fail with 400 or 403
-        await nuxtFetch('/api/jikan/anime?q=naruto&limit=5')
+        await $fetch('/api/jikan/anime?q=naruto&limit=5')
       } catch (error: unknown) {
         const err = error as { statusCode?: number }
         expect([400, 403]).not.toContain(err.statusCode)

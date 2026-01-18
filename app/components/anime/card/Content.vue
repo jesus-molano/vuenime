@@ -15,14 +15,14 @@
       v-if="showInfo"
       :year="year"
       :episodes="episodes"
-      :size="size"
+      :size="infoSize"
       class="mt-1"
     />
 
     <AnimeCardGenres
       v-if="genres && genres.length > 0"
       :genres="genres"
-      :size="size"
+      :size="genresSize"
       class="mt-1"
     />
 
@@ -84,4 +84,8 @@ const lineClampClass = computed(() => {
       return 'line-clamp-2'
   }
 })
+
+// Map size to child component sizes (they don't support 'md')
+const infoSize = computed(() => (props.size === 'md' ? 'sm' : props.size) as 'xs' | 'sm')
+const genresSize = computed(() => (props.size === 'md' ? 'sm' : props.size) as 'xs' | 'sm')
 </script>

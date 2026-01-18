@@ -13,7 +13,7 @@ interface ToastOptions {
   description?: string
   color?: ToastColor
   icon?: string
-  timeout?: number
+  duration?: number
 }
 
 /**
@@ -46,7 +46,7 @@ function showToast(options: ToastOptions) {
         description: options.description,
         color: options.color ?? 'primary',
         icon: options.icon,
-        timeout: options.timeout ?? 4000,
+        duration: options.duration ?? 4000,
       })
     })
   } catch (e) {
@@ -65,7 +65,7 @@ export const useNotifications = () => {
       description,
       color: 'success',
       icon: 'i-heroicons-check-circle',
-      timeout: 4000,
+      duration: 4000,
     })
   }
 
@@ -75,7 +75,7 @@ export const useNotifications = () => {
       description,
       color: 'error',
       icon: 'i-heroicons-x-circle',
-      timeout: 6000,
+      duration: 6000,
     })
   }
 
@@ -85,7 +85,7 @@ export const useNotifications = () => {
       description,
       color: 'info',
       icon: 'i-heroicons-information-circle',
-      timeout: 4000,
+      duration: 4000,
     })
   }
 

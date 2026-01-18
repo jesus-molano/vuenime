@@ -49,9 +49,9 @@ interface Props {
   /** Loading strategy */
   loading?: 'lazy' | 'eager'
   /** Score badge position */
-  scorePosition?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
+  scorePosition?: 'top-right' | 'top-left' | 'static'
   /** Airing badge position */
-  airingPosition?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
+  airingPosition?: 'top-right' | 'top-left' | 'static'
 }
 
 const props = withDefaults(defineProps<Props>(), {
