@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import AnimeCard from '~/components/anime/AnimeCard.vue'
-import { mockAnime } from '../../fixtures/anime'
+import { mockAnime } from '../../../fixtures/anime'
 
 describe('AnimeCard', () => {
   beforeEach(() => {
