@@ -291,6 +291,10 @@ export const useWatchedStore = defineStore(
       isLoading,
       watchedAnimeIds,
 
+      // Sync state (for persistence - required for pick to work)
+      hasSynced,
+      syncedForUserId,
+
       // Checkers
       isWatched,
       getWatchedForAnime,

@@ -234,6 +234,10 @@ export const useFavoritesStore = defineStore(
       favoritesCount,
       isLoading,
 
+      // Sync state (for persistence - required for pick to work)
+      hasSynced,
+      syncedForUserId,
+
       // Sorted views
       sortedFavorites,
       sortedByRecent,
