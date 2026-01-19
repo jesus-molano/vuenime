@@ -20,7 +20,7 @@
         <NuxtLink
           v-if="anime.type"
           :to="typeSearchLink"
-          class="rounded-md bg-rp-iris px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-white shadow-sm transition-all hover:scale-105"
+          class="rounded-md bg-rp-iris px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-rp-base shadow-sm transition-all hover:scale-105"
         >
           {{ translatedType }}
         </NuxtLink>

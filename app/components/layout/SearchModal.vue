@@ -52,37 +52,42 @@
         >
           {{ $t('search.quickActions') }}
         </p>
-        <div
+        <ul
           class="grid grid-cols-2 gap-2"
           aria-labelledby="quick-actions-label"
+          role="group"
         >
-          <button
-            type="button"
-            role="menuitem"
-            class="flex items-center gap-3 rounded-xl bg-rp-overlay/30 px-4 py-3 text-left transition-all hover:bg-rp-overlay/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
-            @click="navigateTo('/')"
-          >
-            <UIcon
-              name="i-heroicons-fire"
-              class="size-5 text-rp-gold"
-              aria-hidden="true"
-            />
-            <span class="text-sm font-medium text-rp-text">{{ $t('nav.explore') }}</span>
-          </button>
-          <button
-            type="button"
-            role="menuitem"
-            class="flex items-center gap-3 rounded-xl bg-rp-overlay/30 px-4 py-3 text-left transition-all hover:bg-rp-overlay/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
-            @click="navigateTo('/favorites')"
-          >
-            <UIcon
-              name="i-heroicons-heart"
-              class="size-5 text-rp-love"
-              aria-hidden="true"
-            />
-            <span class="text-sm font-medium text-rp-text">{{ $t('nav.favorites') }}</span>
-          </button>
-        </div>
+          <li role="none">
+            <button
+              type="button"
+              role="menuitem"
+              class="flex w-full items-center gap-3 rounded-xl bg-rp-overlay/30 px-4 py-3 text-left transition-all hover:bg-rp-overlay/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
+              @click="navigateTo('/')"
+            >
+              <UIcon
+                name="i-heroicons-fire"
+                class="size-5 text-rp-gold"
+                aria-hidden="true"
+              />
+              <span class="text-sm font-medium text-rp-text">{{ $t('nav.explore') }}</span>
+            </button>
+          </li>
+          <li role="none">
+            <button
+              type="button"
+              role="menuitem"
+              class="flex w-full items-center gap-3 rounded-xl bg-rp-overlay/30 px-4 py-3 text-left transition-all hover:bg-rp-overlay/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
+              @click="navigateTo('/favorites')"
+            >
+              <UIcon
+                name="i-heroicons-heart"
+                class="size-5 text-rp-love"
+                aria-hidden="true"
+              />
+              <span class="text-sm font-medium text-rp-text">{{ $t('nav.favorites') }}</span>
+            </button>
+          </li>
+        </ul>
       </div>
 
       <!-- Recent Searches -->

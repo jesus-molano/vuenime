@@ -47,7 +47,7 @@
           />
           <button
             type="submit"
-            class="shrink-0 rounded-lg bg-rp-iris px-3 py-1.5 text-xs font-semibold text-white transition-all hover:bg-rp-iris/90 sm:px-4 sm:py-2 sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
+            class="shrink-0 rounded-lg bg-rp-iris px-3 py-1.5 text-xs font-semibold text-rp-base transition-all hover:bg-rp-iris/90 sm:px-4 sm:py-2 sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-surface"
           >
             {{ $t('common.search') }}
           </button>
@@ -63,7 +63,7 @@
               name="i-heroicons-film"
               class="size-3 text-rp-iris sm:size-4 md:size-5"
             />
-            <span class="text-rp-subtle">{{ $t('home.stats.titles') }}</span>
+            <span class="text-rp-text">{{ $t('home.stats.titles') }}</span>
           </div>
           <div class="h-3 w-px bg-rp-overlay sm:h-4" />
           <div class="flex items-center gap-1 md:gap-2">
@@ -71,7 +71,7 @@
               name="i-heroicons-arrow-path"
               class="size-3 text-rp-foam sm:size-4 md:size-5"
             />
-            <span class="text-rp-subtle">{{ $t('home.stats.updated') }}</span>
+            <span class="text-rp-text">{{ $t('home.stats.updated') }}</span>
           </div>
         </div>
       </div>

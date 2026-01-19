@@ -46,7 +46,7 @@ const sizeClasses = computed(() => {
 const variantClasses = computed(() => {
   switch (props.variant) {
     case 'iris':
-      return 'bg-rp-iris text-white shadow-md'
+      return 'bg-rp-iris text-rp-base shadow-md'
     case 'love':
       return 'bg-rp-love text-white shadow-md'
     case 'gold':

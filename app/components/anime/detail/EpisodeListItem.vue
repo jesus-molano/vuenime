@@ -123,6 +123,7 @@
       target="_blank"
       rel="noopener noreferrer"
       class="shrink-0"
+      :aria-label="$t('anime.watchOnMal', { id: episode.mal_id })"
     >
       <UIcon
         name="i-heroicons-arrow-top-right-on-square"
