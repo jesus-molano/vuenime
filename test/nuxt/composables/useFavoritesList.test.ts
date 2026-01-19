@@ -225,9 +225,9 @@ describe('useFavoritesList', () => {
       setupSortingData()
       const wrapper = await mountSuspended(TestComponent)
 
-      expect(wrapper.vm.displayedFavorites[0].mal_id).toBe(2) // addedAt: 3000
-      expect(wrapper.vm.displayedFavorites[1].mal_id).toBe(3) // addedAt: 2000
-      expect(wrapper.vm.displayedFavorites[2].mal_id).toBe(1) // addedAt: 1000
+      expect(wrapper.vm.displayedFavorites[0]?.mal_id).toBe(2) // addedAt: 3000
+      expect(wrapper.vm.displayedFavorites[1]?.mal_id).toBe(3) // addedAt: 2000
+      expect(wrapper.vm.displayedFavorites[2]?.mal_id).toBe(1) // addedAt: 1000
     })
 
     it('should sort by score (desc) when sortBy is score', async () => {
@@ -235,9 +235,9 @@ describe('useFavoritesList', () => {
       mockSortBy.value = 'score'
       const wrapper = await mountSuspended(TestComponent)
 
-      expect(wrapper.vm.displayedFavorites[0].score).toBe(9)
-      expect(wrapper.vm.displayedFavorites[1].score).toBe(7)
-      expect(wrapper.vm.displayedFavorites[2].score).toBe(5)
+      expect(wrapper.vm.displayedFavorites[0]?.score).toBe(9)
+      expect(wrapper.vm.displayedFavorites[1]?.score).toBe(7)
+      expect(wrapper.vm.displayedFavorites[2]?.score).toBe(5)
     })
 
     it('should sort by title (asc) when sortBy is title', async () => {
@@ -245,9 +245,9 @@ describe('useFavoritesList', () => {
       mockSortBy.value = 'title'
       const wrapper = await mountSuspended(TestComponent)
 
-      expect(wrapper.vm.displayedFavorites[0].title).toBe('Alpha Anime')
-      expect(wrapper.vm.displayedFavorites[1].title).toBe('Beta Anime')
-      expect(wrapper.vm.displayedFavorites[2].title).toBe('Zebra Anime')
+      expect(wrapper.vm.displayedFavorites[0]?.title).toBe('Alpha Anime')
+      expect(wrapper.vm.displayedFavorites[1]?.title).toBe('Beta Anime')
+      expect(wrapper.vm.displayedFavorites[2]?.title).toBe('Zebra Anime')
     })
 
     it('should handle null scores in score sorting', async () => {
@@ -260,7 +260,7 @@ describe('useFavoritesList', () => {
       const wrapper = await mountSuspended(TestComponent)
 
       // Items with score should come first, null/undefined treated as 0
-      expect(wrapper.vm.displayedFavorites[0].score).toBe(8)
+      expect(wrapper.vm.displayedFavorites[0]?.score).toBe(8)
     })
   })
 
@@ -328,7 +328,7 @@ describe('useFavoritesList', () => {
 
       // First page should have items sorted by recent (highest addedAt first)
       expect(wrapper.vm.displayedFavorites.length).toBe(24)
-      expect(wrapper.vm.displayedFavorites[0].mal_id).toBe(1) // addedAt: 50
+      expect(wrapper.vm.displayedFavorites[0]?.mal_id).toBe(1) // addedAt: 50
     })
 
     it('should slice correctly for middle page', async () => {
@@ -343,7 +343,7 @@ describe('useFavoritesList', () => {
 
       // Page 2: items 25-48 (indices 24-47)
       expect(wrapper.vm.displayedFavorites.length).toBe(24)
-      expect(wrapper.vm.displayedFavorites[0].mal_id).toBe(25)
+      expect(wrapper.vm.displayedFavorites[0]?.mal_id).toBe(25)
     })
 
     it('should slice correctly for last page', async () => {
@@ -358,7 +358,7 @@ describe('useFavoritesList', () => {
 
       // Page 3: items 49-50 (indices 48-49)
       expect(wrapper.vm.displayedFavorites.length).toBe(2)
-      expect(wrapper.vm.displayedFavorites[0].mal_id).toBe(49)
+      expect(wrapper.vm.displayedFavorites[0]?.mal_id).toBe(49)
     })
   })
 })
