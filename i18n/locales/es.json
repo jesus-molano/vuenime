@@ -7,7 +7,8 @@
     "noResults": "No se encontraron resultados",
     "cancel": "Cancelar",
     "readMore": "Leer más",
-    "back": "Volver"
+    "back": "Volver",
+    "backHome": "Volver al Inicio"
   },
   "lang": {
     "selector": "Seleccionar idioma"

@@ -7,7 +7,8 @@
     "noResults": "結果が見つかりませんでした",
     "cancel": "キャンセル",
     "readMore": "続きを読む",
-    "back": "戻る"
+    "back": "戻る",
+    "backHome": "ホームに戻る"
   },
   "lang": {
     "selector": "言語を選択"
