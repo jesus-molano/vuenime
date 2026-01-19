@@ -1,11 +1,12 @@
 import type { AnimeDetailResponse, Anime } from '~~/shared/types'
 import { createCachedData, markCacheFresh, CACHE_TTL } from '~/utils/cache'
+import { CACHE_KEYS } from '~/utils/cache-keys'
 
 export const useAnimeDetail = (id: Ref<string> | string) => {
   const animeId = toRef(id)
 
   const { data, status, error, refresh } = useFetch<AnimeDetailResponse>(() => `/api/jikan/anime/${animeId.value}`, {
-    key: computed(() => `anime-detail-${animeId.value}`),
+    key: computed(() => CACHE_KEYS.animeDetail(animeId.value)),
     lazy: true,
     // Cache for 1 hour - anime details rarely change
     getCachedData: createCachedData(CACHE_TTL.VERY_LONG),
@@ -29,7 +30,7 @@ const PREFETCH_DELAY = 400 // ms to wait before prefetching
 
 export const prefetchAnimeDetail = (id: string | number) => {
   const animeId = String(id)
-  const cacheKey = `anime-detail-${animeId}`
+  const cacheKey = CACHE_KEYS.animeDetail(animeId)
 
   // Skip if already prefetched
   if (prefetchCache.has(cacheKey)) return
@@ -52,9 +53,15 @@ export const prefetchAnimeDetail = (id: string | number) => {
       nuxtApp.payload.data[cacheKey] = data
       // Mark cache as fresh for TTL tracking
       markCacheFresh(cacheKey)
-    } catch {
-      // Silently fail - prefetch is best effort
+    } catch (error) {
+      // Prefetch is best effort - log in dev mode for debugging
       prefetchCache.delete(cacheKey)
+      if (import.meta.dev) {
+        console.debug('[prefetch] Failed:', {
+          animeId,
+          error: error instanceof Error ? error.message : 'Unknown',
+        })
+      }
     }
   }, PREFETCH_DELAY)
 
@@ -63,7 +70,7 @@ export const prefetchAnimeDetail = (id: string | number) => {
 
 // Cancel prefetch when mouse leaves card
 export const cancelPrefetchAnimeDetail = (id: string | number) => {
-  const cacheKey = `anime-detail-${String(id)}`
+  const cacheKey = CACHE_KEYS.animeDetail(id)
   const timeoutId = pendingPrefetch.get(cacheKey)
   if (timeoutId) {
     clearTimeout(timeoutId)

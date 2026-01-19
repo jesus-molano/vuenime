@@ -1,5 +1,6 @@
 import type { ScheduleDay, ScheduleResponse } from '~~/shared/types'
 import { createCachedData, CACHE_TTL } from '~/utils/cache'
+import { CACHE_KEYS } from '~/utils/cache-keys'
 
 const DAYS: ScheduleDay[] = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
 
@@ -11,7 +12,7 @@ export const useSchedule = () => {
   })
 
   const { data, status, error, refresh } = useFetch<ScheduleResponse>('/api/jikan/schedules', {
-    key: 'schedule-today',
+    key: CACHE_KEYS.SCHEDULE_TODAY,
     query: computed(() => ({
       filter: today.value,
       limit: 15,
