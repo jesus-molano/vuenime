@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import type { WatchedEpisode, MarkWatchedInput } from '~/types/watched'
 import type { Database } from '~~/shared/types/database'
+import { markWatchedInputSchema, markAllWatchedInputSchema, markUnwatchedInputSchema } from '~~/shared/schemas'
 import {
   fetchUserWatchedEpisodes,
   insertWatchedEpisode,
@@ -100,11 +101,19 @@ export const useWatchedStore = defineStore(
     // ============================================
 
     async function markAsWatched(input: MarkWatchedInput) {
-      if (isWatched(input.mal_id, input.episode_number)) return
+      // Validate input
+      const validation = markWatchedInputSchema.safeParse(input)
+      if (!validation.success) {
+        console.error('[WatchedStore] Invalid markAsWatched input:', validation.error.flatten())
+        return
+      }
+
+      const { mal_id, episode_number } = validation.data
+      if (isWatched(mal_id, episode_number)) return
 
       const episode: WatchedEpisode = {
-        mal_id: input.mal_id,
-        episode_number: input.episode_number,
+        mal_id,
+        episode_number,
         watched_at: Date.now(),
       }
 
@@ -116,7 +125,7 @@ export const useWatchedStore = defineStore(
         if (!success) {
           // Rollback on error
           const index = watchedEpisodes.value.findIndex(
-            (ep) => ep.mal_id === input.mal_id && ep.episode_number === input.episode_number
+            (ep) => ep.mal_id === mal_id && ep.episode_number === episode_number
           )
           if (index !== -1) watchedEpisodes.value.splice(index, 1)
           notify.watchedError()
@@ -125,6 +134,13 @@ export const useWatchedStore = defineStore(
     }
 
     async function markAsUnwatched(malId: number, episodeNumber: number) {
+      // Validate input
+      const validation = markUnwatchedInputSchema.safeParse({ malId, episodeNumber })
+      if (!validation.success) {
+        console.error('[WatchedStore] Invalid markAsUnwatched input:', validation.error.flatten())
+        return
+      }
+
       const index = watchedEpisodes.value.findIndex((ep) => ep.mal_id === malId && ep.episode_number === episodeNumber)
       if (index === -1) return
 
@@ -150,13 +166,22 @@ export const useWatchedStore = defineStore(
     }
 
     async function markAllAsWatched(malId: number, totalEpisodes: number, animeTitle?: string) {
-      const currentWatched = new Set(getWatchedForAnime(malId))
+      // Validate input - CRITICAL: prevents abuse with large totalEpisodes
+      const validation = markAllWatchedInputSchema.safeParse({ malId, totalEpisodes, animeTitle })
+      if (!validation.success) {
+        console.error('[WatchedStore] Invalid markAllAsWatched input:', validation.error.flatten())
+        notify.watchedError()
+        return
+      }
+
+      const { malId: validMalId, totalEpisodes: validTotalEpisodes } = validation.data
+      const currentWatched = new Set(getWatchedForAnime(validMalId))
       const episodesToAdd: WatchedEpisode[] = []
 
-      for (let i = 1; i <= totalEpisodes; i++) {
+      for (let i = 1; i <= validTotalEpisodes; i++) {
         if (!currentWatched.has(i)) {
           episodesToAdd.push({
-            mal_id: malId,
+            mal_id: validMalId,
             episode_number: i,
             watched_at: Date.now(),
           })
@@ -173,7 +198,7 @@ export const useWatchedStore = defineStore(
         if (!success) {
           // Rollback on error
           watchedEpisodes.value = watchedEpisodes.value.filter(
-            (ep) => ep.mal_id !== malId || currentWatched.has(ep.episode_number)
+            (ep) => ep.mal_id !== validMalId || currentWatched.has(ep.episode_number)
           )
           notify.watchedError()
           return

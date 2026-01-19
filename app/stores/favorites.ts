@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
+import { z } from 'zod'
 import type { FavoriteAnime, AddFavoriteInput } from '~/types/favorites'
 import type { Database } from '~~/shared/types/database'
+import { addFavoriteInputSchema } from '~~/shared/schemas'
 import {
   fetchUserFavorites,
   insertFavorite,
@@ -10,6 +12,11 @@ import {
 } from '~/services/supabase/favorites'
 
 export type { FavoriteAnime, AddFavoriteInput } from '~/types/favorites'
+
+// Schema for removeFavorite input
+const removeFavoriteInputSchema = z.object({
+  malId: z.number().int().positive(),
+})
 
 export const useFavoritesStore = defineStore(
   'favorites',
@@ -73,6 +80,16 @@ export const useFavoritesStore = defineStore(
     // ============================================
 
     async function addFavorite(anime: AddFavoriteInput) {
+      // Validate input
+      const validation = addFavoriteInputSchema.safeParse(anime)
+      if (!validation.success) {
+        console.error('[FavoritesStore] Invalid addFavorite input:', validation.error.flatten())
+        notify.favoriteError()
+        return
+      }
+
+      // Use original anime object after validation passes
+      // This preserves full type information (e.g., genres include type/url)
       if (isFavorite(anime.mal_id)) return
 
       const favorite: FavoriteAnime = {
@@ -106,6 +123,13 @@ export const useFavoritesStore = defineStore(
     }
 
     async function removeFavorite(malId: number) {
+      // Validate input
+      const validation = removeFavoriteInputSchema.safeParse({ malId })
+      if (!validation.success) {
+        console.error('[FavoritesStore] Invalid removeFavorite input:', validation.error.flatten())
+        return
+      }
+
       const index = favorites.value.findIndex((fav) => fav.mal_id === malId)
       if (index === -1) return
 

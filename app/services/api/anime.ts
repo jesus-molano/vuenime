@@ -12,6 +12,8 @@ import type {
   ReviewsResponse,
   NewsResponse,
 } from '~~/shared/types'
+import { animeListResponseSchema, animeDetailResponseSchema } from '~~/shared/schemas'
+import { validatedFetch } from '~/utils/validated-fetch'
 
 const API_BASE = '/api/jikan'
 
@@ -42,27 +44,31 @@ export interface TopAnimeParams {
 /**
  * Anime API Service
  * Centralized API calls for anime-related endpoints
+ * Uses validatedFetch for critical endpoints to validate API responses
  */
 export const animeApi = {
   /**
    * Search/list anime with filters
+   * Validated against animeListResponseSchema
    */
   search: (params: AnimeSearchParams) => {
-    return $fetch<AnimeListResponse>(`${API_BASE}/anime`, { query: params })
+    return validatedFetch<AnimeListResponse>(`${API_BASE}/anime`, animeListResponseSchema, { query: params })
   },
 
   /**
    * Get anime list (trending/popular)
+   * Validated against animeListResponseSchema
    */
   list: (params: AnimeListParams = {}) => {
-    return $fetch<AnimeListResponse>(`${API_BASE}/anime`, { query: params })
+    return validatedFetch<AnimeListResponse>(`${API_BASE}/anime`, animeListResponseSchema, { query: params })
   },
 
   /**
    * Get anime by ID
+   * Validated against animeDetailResponseSchema
    */
   getById: (id: string | number) => {
-    return $fetch<AnimeDetailResponse>(`${API_BASE}/anime/${id}`)
+    return validatedFetch<AnimeDetailResponse>(`${API_BASE}/anime/${id}`, animeDetailResponseSchema)
   },
 
   /**

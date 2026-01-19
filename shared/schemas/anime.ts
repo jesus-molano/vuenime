@@ -53,40 +53,43 @@ const animeStudioSchema = z.object({
 })
 
 // Main Anime schema
-export const animeSchema = z.object({
-  mal_id: z.number().int().positive(),
-  url: z.string().url(),
-  images: animeImagesSchema,
-  trailer: animeTrailerSchema,
-  approved: z.boolean(),
-  titles: z.array(animeTitleSchema),
-  title: z.string(),
-  title_english: z.string().nullable(),
-  title_japanese: z.string().nullable(),
-  title_synonyms: z.array(z.string()),
-  type: z.string().nullable(),
-  source: z.string().nullable(),
-  episodes: z.number().int().positive().nullable(),
-  status: z.string().nullable(),
-  airing: z.boolean(),
-  aired: animeAiredSchema,
-  duration: z.string().nullable(),
-  rating: z.string().nullable(),
-  score: z.number().min(0).max(10).nullable(),
-  scored_by: z.number().int().nonnegative().nullable(),
-  rank: z.number().int().positive().nullable(),
-  popularity: z.number().int().positive().nullable(),
-  members: z.number().int().nonnegative().nullable(),
-  favorites: z.number().int().nonnegative().nullable(),
-  synopsis: z.string().nullable(),
-  background: z.string().nullable(),
-  season: z.string().nullable(),
-  year: z.number().int().positive().nullable(),
-  genres: z.array(animeGenreSchema),
-  themes: z.array(animeGenreSchema),
-  demographics: z.array(animeGenreSchema),
-  studios: z.array(animeStudioSchema),
-})
+// Using .passthrough() to allow new fields from API without breaking validation
+export const animeSchema = z
+  .object({
+    mal_id: z.number().int().positive(),
+    url: z.string().url(),
+    images: animeImagesSchema,
+    trailer: animeTrailerSchema,
+    approved: z.boolean(),
+    titles: z.array(animeTitleSchema),
+    title: z.string(),
+    title_english: z.string().nullable(),
+    title_japanese: z.string().nullable(),
+    title_synonyms: z.array(z.string()),
+    type: z.string().nullable(),
+    source: z.string().nullable(),
+    episodes: z.number().int().positive().nullable(),
+    status: z.string().nullable(),
+    airing: z.boolean(),
+    aired: animeAiredSchema,
+    duration: z.string().nullable(),
+    rating: z.string().nullable(),
+    score: z.number().min(0).max(10).nullable(),
+    scored_by: z.number().int().nonnegative().nullable(),
+    rank: z.number().int().positive().nullable(),
+    popularity: z.number().int().positive().nullable(),
+    members: z.number().int().nonnegative().nullable(),
+    favorites: z.number().int().nonnegative().nullable(),
+    synopsis: z.string().nullable(),
+    background: z.string().nullable(),
+    season: z.string().nullable(),
+    year: z.number().int().positive().nullable(),
+    genres: z.array(animeGenreSchema),
+    themes: z.array(animeGenreSchema),
+    demographics: z.array(animeGenreSchema),
+    studios: z.array(animeStudioSchema),
+  })
+  .passthrough()
 
 // Pagination schema
 export const animePaginationSchema = z.object({
@@ -100,15 +103,19 @@ export const animePaginationSchema = z.object({
   }),
 })
 
-// Response schemas
-export const animeListResponseSchema = z.object({
-  data: z.array(animeSchema),
-  pagination: animePaginationSchema,
-})
+// Response schemas - using .passthrough() to allow new fields from API
+export const animeListResponseSchema = z
+  .object({
+    data: z.array(animeSchema),
+    pagination: animePaginationSchema,
+  })
+  .passthrough()
 
-export const animeDetailResponseSchema = z.object({
-  data: animeSchema,
-})
+export const animeDetailResponseSchema = z
+  .object({
+    data: animeSchema,
+  })
+  .passthrough()
 
 // Streaming
 const streamingLinkSchema = z.object({
