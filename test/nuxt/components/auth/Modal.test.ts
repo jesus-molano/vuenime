@@ -188,9 +188,78 @@ describe('AuthModal', () => {
     })
   })
 
-  // Note: Password reset tests removed - they require complex v-if template switching
-  // which doesn't work reliably with mountSuspended. The reset functionality is tested
-  // indirectly through the useAuth composable tests.
+  describe('password reset', () => {
+    it('should switch to forgot password mode', async () => {
+      const wrapper = await mountModal(true)
+
+      // Find trigger button and click
+      const forgotBtn = wrapper.findAll('button').find((btn) => btn.text().includes('Forgot password?'))
+      await forgotBtn?.trigger('click')
+      await nextTick()
+
+      expect(wrapper.text()).toContain('Reset password')
+      expect(wrapper.find('input[type="email"]').exists()).toBe(true)
+    })
+
+    it('should call resetPassword on submit', async () => {
+      const wrapper = await mountModal(true)
+
+      // Switch to forgot password
+      const forgotBtn = wrapper.findAll('button').find((btn) => btn.text().includes('Forgot password?'))
+      await forgotBtn?.trigger('click')
+      await nextTick()
+
+      // Fill form and submit
+      await wrapper.find('#reset-email').setValue('test@example.com')
+      // Note: The form inside v-else-if="isForgotPassword" is what we are targeting
+      await wrapper.find('form').trigger('submit')
+
+      expect(resetPasswordMock).toHaveBeenCalledWith('test@example.com')
+    })
+
+    it('should show success state after reset email sent', async () => {
+      const wrapper = await mountModal(true)
+
+      // Switch to forgot password
+      const forgotBtn = wrapper.findAll('button').find((btn) => btn.text().includes('Forgot password?'))
+      await forgotBtn?.trigger('click')
+      await nextTick()
+
+      // Fill form and submit
+      await wrapper.find('#reset-email').setValue('test@example.com')
+      await wrapper.find('form').trigger('submit')
+      // wait for async handleResetPassword
+      await new Promise(resolve => setTimeout(resolve, 0))
+      await nextTick()
+
+      // Success state should be visible (resetEmailSent = true)
+      // "Check your email" title or similar text from template
+      expect(wrapper.text()).toContain('test@example.com')
+      // Should have back to sign in button
+      expect(wrapper.text()).toContain('Back to sign in')
+    })
+    
+    it('should show error on reset failure', async () => {
+      resetPasswordMock.mockRejectedValueOnce(new Error('User not found'))
+      const wrapper = await mountModal(true)
+
+      // Switch to forgot password
+      const forgotBtn = wrapper.findAll('button').find((btn) => btn.text().includes('Forgot password?'))
+      await forgotBtn?.trigger('click')
+      await nextTick()
+
+      // Fill form and submit
+      await wrapper.find('#reset-email').setValue('wrong@example.com')
+      await wrapper.find('form').trigger('submit')
+      // wait for async handleResetPassword
+      await new Promise(resolve => setTimeout(resolve, 0))
+      await nextTick()
+      await nextTick()
+
+      expect(wrapper.find('[role="alert"]').exists()).toBe(true)
+      expect(wrapper.text()).toContain('User not found')
+    })
+  })
 
   describe('password visibility toggle', () => {
     it('should toggle password visibility', async () => {
