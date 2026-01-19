@@ -234,4 +234,21 @@ describe('Watched Store', () => {
       expect(store.hasSynced).toBe(true)
     })
   })
+  describe('Lifecycle', () => {
+    it('handleSignOut should clear all data', () => {
+      const store = useWatchedStore()
+      store.syncedForUserId = 'user-123'
+      store.watchedEpisodes = [
+        { mal_id: 1, episode_number: 1, watched_at: Date.now() }
+      ]
+      store.hasSynced = true
+      
+      store.handleSignOut()
+      
+      expect(store.syncedForUserId).toBeNull()
+      expect(store.watchedEpisodes).toEqual([])
+      expect(store.hasSynced).toBe(false)
+      expect(store.isLoading).toBe(false)
+    })
+  })
 })
