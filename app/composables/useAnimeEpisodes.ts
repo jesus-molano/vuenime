@@ -14,6 +14,15 @@ export const useAnimeEpisodes = (id: Ref<string> | string) => {
     {
       key: computed(() => `anime-episodes-${animeId.value}`),
       lazy: true,
+      // Use cached data on client navigation to avoid refetching
+      getCachedData(key, nuxtApp) {
+        const cached = nuxtApp.payload.data[key] ?? nuxtApp.static.data[key]
+        if (cached?.data) {
+          allEpisodes.value = cached.data
+          pagination.value = cached.pagination ?? null
+        }
+        return cached
+      },
       onResponse({ response }) {
         if (response._data?.data) {
           allEpisodes.value = response._data.data

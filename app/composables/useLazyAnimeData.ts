@@ -17,6 +17,8 @@ export function useLazyAnimeData<T, R = T[]>(
       key: computed(() => `anime-${endpoint}-${unref(animeId)}`),
       watch: false,
       lazy: true,
+      // Use cached data on client navigation to avoid refetching
+      getCachedData: (key, nuxtApp) => nuxtApp.payload.data[key] ?? nuxtApp.static.data[key],
     }
   )
 

@@ -5,6 +5,8 @@ export const useCurrentSeason = () => {
     key: 'current-season',
     query: { limit: 15 },
     watch: false,
+    // Use cached data on client navigation to avoid refetching
+    getCachedData: (key, nuxtApp) => nuxtApp.payload.data[key] ?? nuxtApp.static.data[key],
   })
 
   const animeList = computed(() => data.value?.data ?? [])
@@ -38,6 +40,8 @@ export const useUpcomingSeason = () => {
     key: 'upcoming-season',
     query: { limit: 15 },
     watch: false,
+    // Use cached data on client navigation to avoid refetching
+    getCachedData: (key, nuxtApp) => nuxtApp.payload.data[key] ?? nuxtApp.static.data[key],
   })
 
   const animeList = computed(() => data.value?.data ?? [])

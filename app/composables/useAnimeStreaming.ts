@@ -8,6 +8,8 @@ export const useAnimeStreaming = (id: Ref<string> | string) => {
     {
       key: computed(() => `anime-streaming-${animeId.value}`),
       lazy: true,
+      // Use cached data on client navigation to avoid refetching
+      getCachedData: (key, nuxtApp) => nuxtApp.payload.data[key] ?? nuxtApp.static.data[key],
     }
   )
 

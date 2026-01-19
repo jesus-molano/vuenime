@@ -16,6 +16,8 @@ export const useSchedule = () => {
       limit: 15,
     })),
     watch: false,
+    // Use cached data on client navigation to avoid refetching
+    getCachedData: (key, nuxtApp) => nuxtApp.payload.data[key] ?? nuxtApp.static.data[key],
   })
 
   const animeList = computed(() => data.value?.data ?? [])

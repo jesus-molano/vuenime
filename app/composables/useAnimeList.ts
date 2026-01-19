@@ -23,6 +23,8 @@ export const useAnimeList = () => {
     key: 'anime-list-home',
     query: { page: PAGINATION.DEFAULT_PAGE, limit: PAGINATION.DEFAULT_LIMIT },
     watch: false,
+    // Use cached data on client navigation to avoid refetching
+    getCachedData: (key, nuxtApp) => nuxtApp.payload.data[key] ?? nuxtApp.static.data[key],
   })
 
   // Computed anime list - combines SSR data with additional loaded data
