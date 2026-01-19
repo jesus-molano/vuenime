@@ -3,10 +3,10 @@
     :to="localePath(`/anime/${anime.mal_id}`)"
     class="group block overflow-hidden rounded-xl border border-white/8 bg-rp-surface/95 transition-all hover:border-white/15 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
   >
-    <!-- Poster -->
+    <!-- Poster - uses medium image for carousels (smaller file size, sufficient quality) -->
     <div class="relative aspect-3/4 overflow-hidden">
       <NuxtImg
-        :src="anime.images.webp.large_image_url"
+        :src="imageUrl"
         :alt="$t('anime.coverAlt', { title: anime.title })"
         class="size-full object-cover transition-transform duration-500 group-hover:scale-105"
         loading="lazy"
@@ -50,10 +50,15 @@
 
 <script setup lang="ts">
 import type { Anime } from '~~/shared/types'
+import { getResponsiveImageUrl } from '~/utils/responsive-image'
 
-defineProps<{
+const props = defineProps<{
   anime: Anime
 }>()
 
 const localePath = useLocalePath()
+
+// Use medium-sized image for carousel cards (smaller file size, sufficient for card dimensions)
+// Carousel cards are max w-44 (176px), so medium (~100x141px) scales up nicely
+const imageUrl = computed(() => getResponsiveImageUrl(props.anime.images, 'medium'))
 </script>

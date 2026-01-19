@@ -5,8 +5,9 @@
     class="flex sm:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-inset"
     :aria-labelledby="`anime-title-mobile-${anime.mal_id}`"
   >
+    <!-- Mobile poster uses medium image (w-24 = 96px, so ~100px image is sufficient) -->
     <AnimeCardPoster
-      :image-url="anime.images.webp.large_image_url"
+      :image-url="mobileImageUrl"
       :title="anime.title"
       :score="anime.score"
       size="sm"
@@ -52,6 +53,7 @@
 <script setup lang="ts">
 import type { Anime } from '~~/shared/types/anime'
 import type { FavoriteAnime } from '~/types/favorites'
+import { getResponsiveImageUrl } from '~/utils/responsive-image'
 
 interface Props {
   anime: Anime | FavoriteAnime
@@ -60,8 +62,11 @@ interface Props {
   isAnimating: boolean
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 defineEmits<{
   'toggle-favorite': []
 }>()
+
+// Mobile card uses medium image (w-24 = 96px, so ~100px image is optimal)
+const mobileImageUrl = computed(() => getResponsiveImageUrl(props.anime.images, 'medium'))
 </script>
