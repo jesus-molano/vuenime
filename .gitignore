@@ -31,7 +31,6 @@ playwright-report/
 test-results/
 
 # AI
-docs/
 .mcp.json
 .claude/
 CLAUDE.md

@@ -99,7 +99,7 @@
         >
           <div
             v-if="showFilters && isMobile"
-            class="fixed inset-x-0 bottom-0 z-[60] max-h-[85svh] overflow-y-auto rounded-t-3xl border-t border-rp-overlay/30 bg-rp-surface shadow-2xl"
+            class="fixed inset-x-0 bottom-0 z-60 max-h-[85svh] overflow-y-auto rounded-t-3xl border-t border-rp-overlay/30 bg-rp-surface shadow-2xl"
           >
             <!-- Mobile header with drag handle -->
             <div class="sticky top-0 z-10 border-b border-rp-overlay/30 bg-rp-surface pb-3 pt-2">
