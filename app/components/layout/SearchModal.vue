@@ -252,6 +252,17 @@
 import type { Anime } from '~~/shared/types'
 import { animeApi } from '~/services/api/anime'
 
+/**
+ * SearchModal component for quick anime search and navigation
+ *
+ * Features:
+ * - Quick actions for navigation (Explore, Favorites)
+ * - Recent search history with persistence
+ * - Top anime suggestions
+ * - Genre-based search shortcuts
+ *
+ * @model modelValue - Controls modal visibility (v-model)
+ */
 const modelValue = defineModel<boolean>({ default: false })
 
 const router = useRouter()

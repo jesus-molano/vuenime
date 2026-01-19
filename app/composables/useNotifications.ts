@@ -17,7 +17,12 @@ interface ToastOptions {
 }
 
 /**
- * Get translation using $i18n from nuxtApp (works outside component context)
+ * Get translation using $i18n from nuxtApp
+ *
+ * **Design Decision**: Uses `$i18n` directly instead of `useI18n()` composable.
+ * This is intentional because `useI18n()` requires Vue's inject context which
+ * is not available when called from Pinia stores. By accessing `nuxtApp.$i18n`
+ * directly, this function works both in components and stores.
  */
 function t(key: string, params?: Record<string, unknown>): string {
   try {
