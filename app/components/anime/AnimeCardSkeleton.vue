@@ -9,10 +9,16 @@
       <div class="h-32 w-24 shrink-0 bg-rp-overlay" />
 
       <!-- Contenido placeholder -->
-      <div class="flex flex-1 flex-col justify-center gap-2 p-3">
-        <!-- Título -->
-        <div class="h-4 w-3/4 rounded bg-rp-overlay" />
-        <div class="h-4 w-1/2 rounded bg-rp-overlay" />
+      <div class="flex flex-1 flex-col justify-center gap-1.5 p-3">
+        <!-- Título con botón favorito -->
+        <div class="flex items-start justify-between gap-2">
+          <div class="flex-1 space-y-1">
+            <div class="h-4 w-3/4 rounded bg-rp-overlay" />
+            <div class="h-4 w-1/2 rounded bg-rp-overlay" />
+          </div>
+          <!-- Favorite button placeholder -->
+          <div class="size-7 shrink-0 rounded-full bg-rp-overlay" />
+        </div>
 
         <!-- Info -->
         <div class="flex items-center gap-2">
@@ -29,7 +35,7 @@
     </div>
 
     <!-- Desktop: Vertical layout -->
-    <div class="relative hidden aspect-3/4 overflow-hidden sm:block">
+    <div class="relative hidden aspect-[3/4.2] overflow-hidden sm:block">
       <!-- Imagen placeholder -->
       <div class="size-full bg-rp-overlay" />
 
@@ -37,7 +43,7 @@
       <div class="absolute right-2 top-2 h-5 w-12 rounded-full bg-rp-muted/50 md:right-3 md:top-3 md:h-6 md:w-14" />
 
       <!-- Contenido placeholder -->
-      <div class="absolute inset-x-0 bottom-0 p-2 md:p-4">
+      <div class="absolute inset-x-0 bottom-0 p-3 md:p-4">
         <!-- Título -->
         <div class="h-4 w-3/4 rounded bg-rp-muted/50 md:h-5" />
         <div class="mt-1 h-4 w-1/2 rounded bg-rp-muted/50 md:h-5" />
