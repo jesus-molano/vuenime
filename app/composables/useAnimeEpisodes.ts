@@ -1,4 +1,5 @@
 import type { AnimeEpisodesResponse, Episode, AnimePagination } from '~~/shared/types'
+import { createCachedData, CACHE_TTL } from '~/utils/cache'
 
 export const useAnimeEpisodes = (id: Ref<string> | string) => {
   const animeId = toRef(id)
@@ -8,15 +9,18 @@ export const useAnimeEpisodes = (id: Ref<string> | string) => {
   const currentPage = ref(1)
   const isLoadingMore = ref(false)
 
+  // Create TTL-based cache checker (1 hour for episodes)
+  const checkCache = createCachedData<AnimeEpisodesResponse>(CACHE_TTL.VERY_LONG)
+
   // Initial fetch with useFetch (page 1)
   const { status, error, refresh } = useFetch<AnimeEpisodesResponse>(
     () => `/api/jikan/anime/${animeId.value}/episodes?page=1`,
     {
       key: computed(() => `anime-episodes-${animeId.value}`),
       lazy: true,
-      // Use cached data on client navigation to avoid refetching
+      // Cache for 1 hour - episode lists rarely change
       getCachedData(key, nuxtApp) {
-        const cached = nuxtApp.payload.data[key] ?? nuxtApp.static.data[key]
+        const cached = checkCache(key, nuxtApp)
         if (cached?.data) {
           allEpisodes.value = cached.data
           pagination.value = cached.pagination ?? null

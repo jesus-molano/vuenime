@@ -1,4 +1,5 @@
 import type { ScheduleDay, ScheduleResponse } from '~~/shared/types'
+import { createCachedData, CACHE_TTL } from '~/utils/cache'
 
 const DAYS: ScheduleDay[] = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
 
@@ -16,8 +17,8 @@ export const useSchedule = () => {
       limit: 15,
     })),
     watch: false,
-    // Use cached data on client navigation to avoid refetching
-    getCachedData: (key, nuxtApp) => nuxtApp.payload.data[key] ?? nuxtApp.static.data[key],
+    // Cache for 5 minutes - schedules change throughout the day
+    getCachedData: createCachedData(CACHE_TTL.SHORT),
   })
 
   const animeList = computed(() => data.value?.data ?? [])

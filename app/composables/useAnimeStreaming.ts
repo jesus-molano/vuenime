@@ -1,4 +1,5 @@
 import type { AnimeStreamingResponse, StreamingLink } from '~~/shared/types'
+import { createCachedData, CACHE_TTL } from '~/utils/cache'
 
 export const useAnimeStreaming = (id: Ref<string> | string) => {
   const animeId = toRef(id)
@@ -8,8 +9,8 @@ export const useAnimeStreaming = (id: Ref<string> | string) => {
     {
       key: computed(() => `anime-streaming-${animeId.value}`),
       lazy: true,
-      // Use cached data on client navigation to avoid refetching
-      getCachedData: (key, nuxtApp) => nuxtApp.payload.data[key] ?? nuxtApp.static.data[key],
+      // Cache for 1 hour - streaming links rarely change
+      getCachedData: createCachedData(CACHE_TTL.VERY_LONG),
     }
   )
 
