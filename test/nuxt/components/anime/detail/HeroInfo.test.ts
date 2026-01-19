@@ -108,7 +108,21 @@ describe('HeroInfo', () => {
   })
 
   it('should not show trailer button when no trailer', async () => {
-    const animeWithoutTrailer = createMockAnime({ trailer: null })
+    // Test edge case where trailer might be undefined at runtime
+    const animeWithoutTrailer = createMockAnime({
+      trailer: {
+        youtube_id: null,
+        url: null,
+        embed_url: null,
+        images: {
+          image_url: null,
+          small_image_url: null,
+          medium_image_url: null,
+          large_image_url: null,
+          maximum_image_url: null,
+        },
+      },
+    })
 
     const wrapper = await mountSuspended(HeroInfo, {
       props: { anime: animeWithoutTrailer },

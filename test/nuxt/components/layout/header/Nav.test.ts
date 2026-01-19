@@ -104,7 +104,7 @@ describe('Nav', () => {
 
       const icons = wrapper.findAllComponents({ name: 'UIcon' })
       if (icons.length > 0) {
-        expect(icons[0].attributes('aria-hidden')).toBe('true')
+        expect(icons.at(0)!.attributes('aria-hidden')).toBe('true')
       }
     })
   })

@@ -1,25 +1,24 @@
 import { describe, it, expect } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import CharacterCard from '~/components/anime/detail/CharacterCard.vue'
+import type { Character } from '~~/shared/types/anime'
 
-const mockCharacter = {
+const mockCharacter: Character = {
   character: {
     mal_id: 1,
-    url: 'https://myanimelist.net/character/1',
+    name: 'Edward Elric',
     images: {
       jpg: { image_url: 'https://example.com/char.jpg' },
       webp: { image_url: 'https://example.com/char.webp' },
     },
-    name: 'Edward Elric',
   },
   role: 'Main',
   voice_actors: [
     {
       person: {
         mal_id: 1,
-        url: 'https://myanimelist.net/people/1',
-        images: { jpg: { image_url: 'https://example.com/va.jpg' } },
         name: 'Romi Park',
+        images: { jpg: { image_url: 'https://example.com/va.jpg' } },
       },
       language: 'Japanese',
     },
@@ -46,7 +45,7 @@ describe('CharacterCard', () => {
   })
 
   it('should handle character without voice actors', async () => {
-    const charWithoutVA = { ...mockCharacter, voice_actors: [] }
+    const charWithoutVA: Character = { ...mockCharacter, voice_actors: [] }
     const wrapper = await mountSuspended(CharacterCard, {
       props: { character: charWithoutVA },
     })
@@ -75,13 +74,14 @@ describe('CharacterCard', () => {
   })
 
   it('should fallback to jpg if webp not available', async () => {
+    // Use type assertion to test edge case where webp might be missing at runtime
     const charWithoutWebp = {
       ...mockCharacter,
       character: {
         ...mockCharacter.character,
         images: { jpg: { image_url: 'https://example.com/char.jpg' } },
       },
-    }
+    } as unknown as Character
     const wrapper = await mountSuspended(CharacterCard, {
       props: { character: charWithoutWebp },
     })

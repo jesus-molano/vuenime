@@ -38,7 +38,7 @@ describe('AnimeCardInfo', () => {
 
       const icons = wrapper.findAllComponents({ name: 'UIcon' })
       expect(icons.length).toBe(1)
-      expect(icons[0].props('name')).toBe('i-heroicons-play')
+      expect(icons.at(0)!.props('name')).toBe('i-heroicons-play')
     })
 
     it('should not render episodes icon when episodes is null', async () => {
@@ -48,7 +48,7 @@ describe('AnimeCardInfo', () => {
 
       const icons = wrapper.findAllComponents({ name: 'UIcon' })
       expect(icons.length).toBe(1)
-      expect(icons[0].props('name')).toBe('i-heroicons-calendar')
+      expect(icons.at(0)!.props('name')).toBe('i-heroicons-calendar')
     })
 
     it('should render empty container when both are null', async () => {
@@ -69,8 +69,8 @@ describe('AnimeCardInfo', () => {
 
       const icons = wrapper.findAllComponents({ name: 'UIcon' })
       expect(icons.length).toBe(2)
-      expect(icons[0].props('name')).toBe('i-heroicons-calendar')
-      expect(icons[1].props('name')).toBe('i-heroicons-play')
+      expect(icons.at(0)!.props('name')).toBe('i-heroicons-calendar')
+      expect(icons.at(1)!.props('name')).toBe('i-heroicons-play')
     })
   })
 })

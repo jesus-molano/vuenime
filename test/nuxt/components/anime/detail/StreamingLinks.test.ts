@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { computed } from 'vue'
 import StreamingLinks from '~/components/anime/detail/StreamingLinks.vue'
 
 import { useAnimeStreaming } from '~/composables/useAnimeStreaming'
@@ -29,9 +30,9 @@ describe('StreamingLinks', () => {
     vi.clearAllMocks()
 
     vi.mocked(useAnimeStreaming).mockReturnValue({
-      streamingLinks: ref([]),
-      isLoading: ref(false),
-    })
+      streamingLinks: computed(() => []),
+      isLoading: computed(() => false),
+    } as unknown as ReturnType<typeof useAnimeStreaming>)
   })
 
   describe('conditional rendering', () => {
@@ -45,9 +46,9 @@ describe('StreamingLinks', () => {
 
     it('should render links when available', async () => {
       vi.mocked(useAnimeStreaming).mockReturnValue({
-        streamingLinks: ref(mockStreamingLinks),
-        isLoading: ref(false),
-      })
+        streamingLinks: computed(() => mockStreamingLinks),
+        isLoading: computed(() => false),
+      } as unknown as ReturnType<typeof useAnimeStreaming>)
 
       const wrapper = await mountSuspended(StreamingLinks, {
         props: { animeId: 1 },
@@ -60,27 +61,27 @@ describe('StreamingLinks', () => {
   describe('link attributes', () => {
     it('should have correct href and security attributes', async () => {
       vi.mocked(useAnimeStreaming).mockReturnValue({
-        streamingLinks: ref(mockStreamingLinks),
-        isLoading: ref(false),
-      })
+        streamingLinks: computed(() => mockStreamingLinks),
+        isLoading: computed(() => false),
+      } as unknown as ReturnType<typeof useAnimeStreaming>)
 
       const wrapper = await mountSuspended(StreamingLinks, {
         props: { animeId: 1 },
       })
 
       const links = wrapper.findAll('a')
-      expect(links[0].attributes('href')).toBe('https://crunchyroll.com/anime/123')
-      expect(links[0].attributes('target')).toBe('_blank')
-      expect(links[0].attributes('rel')).toContain('noopener')
+      expect(links.at(0)!.attributes('href')).toBe('https://crunchyroll.com/anime/123')
+      expect(links.at(0)!.attributes('target')).toBe('_blank')
+      expect(links.at(0)!.attributes('rel')).toContain('noopener')
     })
   })
 
   describe('platform names', () => {
     it('should display platform names', async () => {
       vi.mocked(useAnimeStreaming).mockReturnValue({
-        streamingLinks: ref(mockStreamingLinks),
-        isLoading: ref(false),
-      })
+        streamingLinks: computed(() => mockStreamingLinks),
+        isLoading: computed(() => false),
+      } as unknown as ReturnType<typeof useAnimeStreaming>)
 
       const wrapper = await mountSuspended(StreamingLinks, {
         props: { animeId: 1 },

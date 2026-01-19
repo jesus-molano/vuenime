@@ -31,7 +31,7 @@ const TestComponent = defineComponent({
   },
   render() {
     return h('div', { class: 'test-component' }, [
-      h('div', { ref: (el: HTMLElement | null) => { this.triggerRef = el }, class: 'trigger' }, 'Trigger'),
+      h('div', { ref: 'triggerRef', class: 'trigger' }, 'Trigger'),
       h('span', { id: 'load-more-count' }, String(this.loadMoreCalled)),
     ])
   },

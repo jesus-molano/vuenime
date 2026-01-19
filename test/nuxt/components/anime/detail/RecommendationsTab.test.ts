@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { computed } from 'vue'
 import RecommendationsTab from '~/components/anime/detail/RecommendationsTab.vue'
 
 import { useAnimeRecommendations } from '~/composables/useAnimeRecommendations'
@@ -32,14 +33,14 @@ describe('RecommendationsTab', () => {
     vi.clearAllMocks()
 
     vi.mocked(useAnimeRecommendations).mockReturnValue({
-      recommendations: ref([]),
-      isLoading: ref(false),
-    })
+      recommendations: computed(() => []),
+      isLoading: computed(() => false),
+    } as unknown as ReturnType<typeof useAnimeRecommendations>)
 
     vi.mocked(useShowMore).mockReturnValue({
-      displayedItems: ref([]),
-      hasMore: ref(false),
-      remainingCount: ref(0),
+      displayedItems: computed(() => []),
+      hasMore: computed(() => false),
+      remainingCount: computed(() => 0),
       loadMore: vi.fn(),
       reset: vi.fn(),
     })
@@ -61,9 +62,9 @@ describe('RecommendationsTab', () => {
   describe('loading state', () => {
     it('should show skeleton grid when loading', async () => {
       vi.mocked(useAnimeRecommendations).mockReturnValue({
-        recommendations: ref([]),
-        isLoading: ref(true),
-      })
+        recommendations: computed(() => []),
+        isLoading: computed(() => true),
+      } as unknown as ReturnType<typeof useAnimeRecommendations>)
 
       const wrapper = await mountSuspended(RecommendationsTab, {
         props: { animeId: 1 },
@@ -86,9 +87,9 @@ describe('RecommendationsTab', () => {
   describe('recommendations grid', () => {
     it('should render grid when data is available', async () => {
       vi.mocked(useAnimeRecommendations).mockReturnValue({
-        recommendations: ref(mockRecommendations),
-        isLoading: ref(false),
-      })
+        recommendations: computed(() => mockRecommendations),
+        isLoading: computed(() => false),
+      } as unknown as ReturnType<typeof useAnimeRecommendations>)
 
       const mappedAnime = mockRecommendations.map((rec) => ({
         mal_id: rec.entry.mal_id,
@@ -97,9 +98,9 @@ describe('RecommendationsTab', () => {
       }))
 
       vi.mocked(useShowMore).mockReturnValue({
-        displayedItems: ref(mappedAnime),
-        hasMore: ref(false),
-        remainingCount: ref(0),
+        displayedItems: computed(() => mappedAnime),
+        hasMore: computed(() => false),
+        remainingCount: computed(() => 0),
         loadMore: vi.fn(),
         reset: vi.fn(),
       })

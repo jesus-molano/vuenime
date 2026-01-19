@@ -37,7 +37,7 @@ describe('Controls', () => {
 
       const buttons = wrapper.findAll('button')
       expect(buttons.length).toBeGreaterThan(0)
-      expect(buttons[0].attributes('type')).toBe('button')
+      expect(buttons.at(0)!.attributes('type')).toBe('button')
     })
 
     it('should have sort container', async () => {
@@ -52,7 +52,7 @@ describe('Controls', () => {
     it('should emit clear event on click', async () => {
       const wrapper = await mountControls()
 
-      const clearButton = wrapper.findAll('button')[0]
+      const clearButton = wrapper.findAll('button').at(0)!
       await clearButton.trigger('click')
 
       expect(wrapper.emitted('clear')).toBeTruthy()
@@ -62,7 +62,7 @@ describe('Controls', () => {
     it('should have love background styling', async () => {
       const wrapper = await mountControls()
 
-      const clearButton = wrapper.findAll('button')[0]
+      const clearButton = wrapper.findAll('button').at(0)!
       expect(clearButton.classes().join(' ')).toContain('bg-rp-love')
     })
   })

@@ -41,7 +41,7 @@ describe('Pagination', () => {
       })
 
       const buttons = wrapper.findAll('button')
-      const prevButton = buttons[0]
+      const prevButton = buttons.at(0)!
       expect(prevButton.attributes('disabled')).toBeDefined()
     })
 
@@ -54,7 +54,7 @@ describe('Pagination', () => {
       })
 
       const buttons = wrapper.findAll('button')
-      const prevButton = buttons[0]
+      const prevButton = buttons.at(0)!
       expect(prevButton.attributes('disabled')).toBeUndefined()
     })
 
@@ -67,7 +67,7 @@ describe('Pagination', () => {
       })
 
       const buttons = wrapper.findAll('button')
-      await buttons[0].trigger('click')
+      await buttons.at(0)!.trigger('click')
 
       expect(wrapper.emitted('update:currentPage')).toBeTruthy()
       expect(wrapper.emitted('update:currentPage')![0]).toEqual([2])
@@ -84,7 +84,7 @@ describe('Pagination', () => {
       })
 
       const buttons = wrapper.findAll('button')
-      const nextButton = buttons[buttons.length - 1]
+      const nextButton = buttons.at(-1)!
       expect(nextButton.attributes('disabled')).toBeDefined()
     })
 
@@ -97,7 +97,7 @@ describe('Pagination', () => {
       })
 
       const buttons = wrapper.findAll('button')
-      const nextButton = buttons[buttons.length - 1]
+      const nextButton = buttons.at(-1)!
       expect(nextButton.attributes('disabled')).toBeUndefined()
     })
 
@@ -110,7 +110,7 @@ describe('Pagination', () => {
       })
 
       const buttons = wrapper.findAll('button')
-      await buttons[buttons.length - 1].trigger('click')
+      await buttons.at(-1)!.trigger('click')
 
       expect(wrapper.emitted('update:currentPage')).toBeTruthy()
       expect(wrapper.emitted('update:currentPage')![0]).toEqual([4])
@@ -228,8 +228,8 @@ describe('Pagination', () => {
       })
 
       const buttons = wrapper.findAll('button')
-      expect(buttons[0].attributes('aria-label')).toBeDefined() // Previous
-      expect(buttons[buttons.length - 1].attributes('aria-label')).toBeDefined() // Next
+      expect(buttons.at(0)!.attributes('aria-label')).toBeDefined() // Previous
+      expect(buttons.at(-1)!.attributes('aria-label')).toBeDefined() // Next
     })
   })
 })

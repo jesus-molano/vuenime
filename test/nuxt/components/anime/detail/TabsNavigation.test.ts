@@ -57,8 +57,8 @@ describe('TabsNavigation', () => {
       })
 
       const buttons = wrapper.findAll('button')
-      expect(buttons[0].attributes('aria-selected')).toBe('true')
-      expect(buttons[1].attributes('aria-selected')).toBe('false')
+      expect(buttons.at(0)!.attributes('aria-selected')).toBe('true')
+      expect(buttons.at(1)!.attributes('aria-selected')).toBe('false')
     })
 
     it('should have aria-controls pointing to tabpanel', async () => {
@@ -67,8 +67,8 @@ describe('TabsNavigation', () => {
       })
 
       const buttons = wrapper.findAll('button')
-      expect(buttons[0].attributes('aria-controls')).toBe('tabpanel-characters')
-      expect(buttons[1].attributes('aria-controls')).toBe('tabpanel-reviews')
+      expect(buttons.at(0)!.attributes('aria-controls')).toBe('tabpanel-characters')
+      expect(buttons.at(1)!.attributes('aria-controls')).toBe('tabpanel-reviews')
     })
 
     it('should have aria-hidden on icons', async () => {
@@ -86,7 +86,7 @@ describe('TabsNavigation', () => {
         props: { tabs: mockTabs, modelValue: 'characters' },
       })
 
-      await wrapper.findAll('button')[1].trigger('click')
+      await wrapper.findAll('button').at(1)!.trigger('click')
 
       expect(wrapper.emitted('update:modelValue')).toBeTruthy()
       expect(wrapper.emitted('update:modelValue')![0]).toEqual(['reviews'])

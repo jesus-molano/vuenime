@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { computed } from 'vue'
 import NewsTab from '~/components/anime/detail/NewsTab.vue'
 
 import { useAnimeNews } from '~/composables/useAnimeNews'
@@ -31,14 +32,14 @@ describe('NewsTab', () => {
     vi.clearAllMocks()
 
     vi.mocked(useAnimeNews).mockReturnValue({
-      news: ref([]),
-      isLoading: ref(false),
-    })
+      news: computed(() => []),
+      isLoading: computed(() => false),
+    } as unknown as ReturnType<typeof useAnimeNews>)
 
     vi.mocked(useShowMore).mockReturnValue({
-      displayedItems: ref([]),
-      hasMore: ref(false),
-      remainingCount: ref(0),
+      displayedItems: computed(() => []),
+      hasMore: computed(() => false),
+      remainingCount: computed(() => 0),
       loadMore: vi.fn(),
       reset: vi.fn(),
     })
@@ -60,9 +61,9 @@ describe('NewsTab', () => {
   describe('loading state', () => {
     it('should show loading skeleton when isLoading is true', async () => {
       vi.mocked(useAnimeNews).mockReturnValue({
-        news: ref([]),
-        isLoading: ref(true),
-      })
+        news: computed(() => []),
+        isLoading: computed(() => true),
+      } as unknown as ReturnType<typeof useAnimeNews>)
 
       const wrapper = await mountSuspended(NewsTab, {
         props: { animeId: 1 },
@@ -85,14 +86,14 @@ describe('NewsTab', () => {
   describe('news list', () => {
     it('should render news cards when available', async () => {
       vi.mocked(useAnimeNews).mockReturnValue({
-        news: ref(mockNews),
-        isLoading: ref(false),
-      })
+        news: computed(() => mockNews),
+        isLoading: computed(() => false),
+      } as unknown as ReturnType<typeof useAnimeNews>)
 
       vi.mocked(useShowMore).mockReturnValue({
-        displayedItems: ref(mockNews),
-        hasMore: ref(false),
-        remainingCount: ref(0),
+        displayedItems: computed(() => mockNews),
+        hasMore: computed(() => false),
+        remainingCount: computed(() => 0),
         loadMore: vi.fn(),
         reset: vi.fn(),
       })

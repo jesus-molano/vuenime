@@ -2,6 +2,21 @@ import { describe, it, expect } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import Trailer from '~/components/anime/detail/Trailer.vue'
 import { mockAnime, createMockAnime } from '../../../../fixtures/anime'
+import type { AnimeTrailer } from '~~/shared/types/anime'
+
+const createMockTrailer = (overrides: Partial<AnimeTrailer> = {}): AnimeTrailer => ({
+  youtube_id: 'abc123',
+  url: 'https://www.youtube.com/watch?v=abc123',
+  embed_url: 'https://www.youtube.com/embed/abc123',
+  images: {
+    image_url: null,
+    small_image_url: null,
+    medium_image_url: null,
+    large_image_url: null,
+    maximum_image_url: null,
+  },
+  ...overrides,
+})
 
 describe('Trailer', () => {
   describe('with trailer', () => {
@@ -9,11 +24,7 @@ describe('Trailer', () => {
       const wrapper = await mountSuspended(Trailer, {
         props: {
           anime: mockAnime,
-          trailer: {
-            youtube_id: 'abc123',
-            url: 'https://www.youtube.com/watch?v=abc123',
-            embed_url: 'https://www.youtube.com/embed/abc123',
-          },
+          trailer: createMockTrailer(),
         },
       })
 
@@ -24,11 +35,9 @@ describe('Trailer', () => {
       const wrapper = await mountSuspended(Trailer, {
         props: {
           anime: mockAnime,
-          trailer: {
-            youtube_id: 'abc123',
+          trailer: createMockTrailer({
             url: '',
-            embed_url: 'https://www.youtube.com/embed/abc123',
-          },
+          }),
         },
       })
 
@@ -41,7 +50,7 @@ describe('Trailer', () => {
       const wrapper = await mountSuspended(Trailer, {
         props: {
           anime: mockAnime,
-          trailer: { youtube_id: 'abc123', url: '', embed_url: '' },
+          trailer: createMockTrailer({ url: '', embed_url: '' }),
         },
       })
 

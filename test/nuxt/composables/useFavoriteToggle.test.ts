@@ -5,6 +5,7 @@ import { createPinia, setActivePinia } from 'pinia'
 import { useFavoriteToggle } from '~/composables/useFavoriteToggle'
 import { createMockFavoritesStore } from '../../mocks/stores'
 import { createMockAnimation, createControllableAnimation } from '../../mocks/browser-apis'
+import { createMockAnime } from '../../fixtures/anime'
 
 // Mock the favorites store
 const mockFavoritesStore = createMockFavoritesStore()
@@ -22,19 +23,7 @@ const TestComponentBasic = defineComponent({
     },
   },
   setup(props) {
-    const anime = computed(() => ({
-      mal_id: props.animeId,
-      title: 'Test Anime',
-      images: {
-        jpg: { image_url: '', small_image_url: '', large_image_url: '' },
-        webp: { image_url: '', small_image_url: '', large_image_url: '' },
-      },
-      score: 8.5,
-      year: 2024,
-      episodes: 12,
-      genres: [],
-      airing: false,
-    }))
+    const anime = computed(() => createMockAnime({ mal_id: props.animeId }))
 
     const { isFavorite, isAnimating, isRemoving, toggleFavorite } = useFavoriteToggle(anime)
 
@@ -59,19 +48,7 @@ const TestComponentWithCard = defineComponent({
     },
   },
   setup(props) {
-    const anime = computed(() => ({
-      mal_id: props.animeId,
-      title: 'Test Anime',
-      images: {
-        jpg: { image_url: '', small_image_url: '', large_image_url: '' },
-        webp: { image_url: '', small_image_url: '', large_image_url: '' },
-      },
-      score: 8.5,
-      year: 2024,
-      episodes: 12,
-      genres: [],
-      airing: false,
-    }))
+    const anime = computed(() => createMockAnime({ mal_id: props.animeId }))
 
     const cardRef = ref<HTMLElement | null>(null)
     const { isFavorite, isAnimating, isRemoving, toggleFavorite } = useFavoriteToggle(anime, cardRef)
@@ -80,7 +57,7 @@ const TestComponentWithCard = defineComponent({
   },
   render() {
     return h('div', { class: 'test-component' }, [
-      h('div', { ref: (el: HTMLElement | null) => { this.cardRef = el }, class: 'card' }, 'Card'),
+      h('div', { ref: 'cardRef', class: 'card' }, 'Card'),
       h('span', { id: 'is-favorite' }, this.isFavorite ? 'true' : 'false'),
       h('span', { id: 'is-animating' }, this.isAnimating ? 'true' : 'false'),
       h('span', { id: 'is-removing' }, this.isRemoving ? 'true' : 'false'),

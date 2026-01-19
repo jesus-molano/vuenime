@@ -57,7 +57,7 @@ describe('ClearModal', () => {
     it('should emit update:open false when cancel is clicked', async () => {
       const wrapper = await mountModal(true)
 
-      const cancelButton = wrapper.findAll('button')[0]
+      const cancelButton = wrapper.findAll('button').at(0)!
       await cancelButton.trigger('click')
 
       expect(wrapper.emitted('update:open')).toBeTruthy()
@@ -67,7 +67,7 @@ describe('ClearModal', () => {
     it('should emit confirm and update:open when confirm is clicked', async () => {
       const wrapper = await mountModal(true)
 
-      const confirmButton = wrapper.findAll('button')[1]
+      const confirmButton = wrapper.findAll('button').at(1)!
       await confirmButton.trigger('click')
 
       expect(wrapper.emitted('confirm')).toBeTruthy()

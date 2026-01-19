@@ -21,7 +21,7 @@ const TestComponent = defineComponent({
   },
   render() {
     return h('div', { class: 'test-component' }, [
-      h('div', { ref: (el: HTMLElement | null) => { this.cardRef = el }, class: 'card' }, 'Card'),
+      h('div', { ref: 'cardRef', class: 'card' }, 'Card'),
       h('span', { id: 'is-hovering' }, this.isHovering ? 'true' : 'false'),
       h('span', { id: 'is-touching' }, this.isTouching ? 'true' : 'false'),
       h('span', { id: 'show-shine' }, this.showShine ? 'true' : 'false'),
