@@ -9,6 +9,7 @@
 
     <LayoutMobileDock
       :footer-height="footerHeight"
+      :visible="isDockVisible"
       @toggle-search="toggleSearch"
     />
 
@@ -26,8 +27,17 @@ const { isSearchOpen, toggleSearch } = useSearch()
 const isScrolled = ref(false)
 const footerHeight = ref(0)
 
+// Dock visibility - Safari-style hide on scroll down, show on scroll up
+const lastScrollY = ref(0)
+const isDockVisible = ref(true)
+
 const handleScroll = () => {
-  isScrolled.value = window.scrollY > 100
+  const currentScrollY = window.scrollY
+  isScrolled.value = currentScrollY > 100
+
+  // Show dock when scrolling up or near top of page
+  isDockVisible.value = currentScrollY < lastScrollY.value || currentScrollY < 100
+  lastScrollY.value = currentScrollY
 }
 
 const handleKeydown = (e: KeyboardEvent) => {

@@ -3,6 +3,7 @@
     id="tabpanel-news"
     role="tabpanel"
     aria-labelledby="tab-news"
+    class="pb-20 sm:pb-0"
   >
     <!-- Loading State -->
     <div
