@@ -392,7 +392,7 @@ describe('useCard3DTilt', () => {
 
       await wrapper.vm.enableGyroscopeListener()
 
-      expect(addEventListenerSpy).toHaveBeenCalledWith('deviceorientation', expect.any(Function))
+      expect(addEventListenerSpy).toHaveBeenCalledWith('deviceorientation', expect.any(Function), { passive: true })
     })
 
     it('should remove event listener when disabled', async () => {

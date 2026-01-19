@@ -22,6 +22,7 @@ describe('MobileDock', () => {
       const wrapper = await mountSuspended(MobileDock, {
         props: {
           footerHeight: 0,
+          visible: true,
         },
         global: {
           stubs,
@@ -35,6 +36,7 @@ describe('MobileDock', () => {
       const wrapper = await mountSuspended(MobileDock, {
         props: {
           footerHeight: 0,
+          visible: true,
         },
         global: {
           stubs,
@@ -49,6 +51,7 @@ describe('MobileDock', () => {
       const wrapper = await mountSuspended(MobileDock, {
         props: {
           footerHeight: 0,
+          visible: true,
         },
         global: {
           stubs,
@@ -65,6 +68,7 @@ describe('MobileDock', () => {
       const wrapper = await mountSuspended(MobileDock, {
         props: {
           footerHeight: 100,
+          visible: true,
         },
         global: {
           stubs,
@@ -78,6 +82,7 @@ describe('MobileDock', () => {
       const wrapper = await mountSuspended(MobileDock, {
         props: {
           footerHeight: 50,
+          visible: true,
         },
         global: {
           stubs,
@@ -95,6 +100,7 @@ describe('MobileDock', () => {
       const wrapper = await mountSuspended(MobileDock, {
         props: {
           footerHeight: 0,
+          visible: true,
         },
         global: {
           stubs,
@@ -109,6 +115,7 @@ describe('MobileDock', () => {
       const wrapper = await mountSuspended(MobileDock, {
         props: {
           footerHeight: 0,
+          visible: true,
         },
         global: {
           stubs,
@@ -125,6 +132,7 @@ describe('MobileDock', () => {
       const wrapper = await mountSuspended(MobileDock, {
         props: {
           footerHeight: 0,
+          visible: true,
         },
         global: {
           stubs,
