@@ -10,13 +10,17 @@ const ALLOWED_ENDPOINTS = ['anime', 'top/anime', 'seasons', 'schedules', 'genres
 /**
  * Remove duplicate anime entries from API responses (Jikan sometimes returns duplicates)
  */
-function deduplicateAnimeData<T extends { data?: Array<{ mal_id: number }> }>(response: T): T {
+function deduplicateAnimeData<T extends { data?: Array<{ mal_id?: number }> }>(response: T): T {
   if (!response.data || !Array.isArray(response.data)) {
     return response
   }
 
   const seen = new Set<number>()
   const uniqueData = response.data.filter((item) => {
+    // Only deduplicate if item has mal_id directly (anime lists, not characters/recommendations)
+    if (typeof item.mal_id !== 'number') {
+      return true
+    }
     if (seen.has(item.mal_id)) {
       return false
     }
