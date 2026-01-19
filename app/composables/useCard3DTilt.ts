@@ -100,7 +100,11 @@ export function useCard3DTilt(
     resetTilt()
   }
 
-  // Gyroscope handler
+  // Gyroscope handler with smoothing for better UX
+  const lastBeta = ref(0)
+  const lastGamma = ref(0)
+  const smoothingFactor = 0.15 // Lower = smoother but less responsive
+
   const handleDeviceOrientation = (e: DeviceOrientationEvent) => {
     if (isTouching.value) return
 
@@ -108,43 +112,70 @@ export function useCard3DTilt(
     const beta = e.beta ?? 0
     const gamma = e.gamma ?? 0
 
-    // Normalize and limit rotation
-    rotateX.value = Math.max(-15, Math.min(15, beta * 0.3))
-    rotateY.value = Math.max(-15, Math.min(15, gamma * 0.4))
+    // Ignore if values are null/undefined (some devices send empty events)
+    if (e.beta === null && e.gamma === null) return
+
+    // Apply smoothing for more natural movement
+    lastBeta.value = lastBeta.value + (beta - lastBeta.value) * smoothingFactor
+    lastGamma.value = lastGamma.value + (gamma - lastGamma.value) * smoothingFactor
+
+    // Normalize and limit rotation with reduced sensitivity
+    rotateX.value = Math.max(-maxRotation, Math.min(maxRotation, lastBeta.value * 0.2))
+    rotateY.value = Math.max(-maxRotation, Math.min(maxRotation, lastGamma.value * 0.25))
 
     // Update glare based on orientation
-    glareX.value = 50 + gamma
-    glareY.value = 50 + beta * 0.5
+    glareX.value = Math.max(0, Math.min(100, 50 + lastGamma.value * 0.8))
+    glareY.value = Math.max(0, Math.min(100, 50 + lastBeta.value * 0.4))
 
     isHovering.value = true
   }
 
   const enableGyroscopeListener = async () => {
-    if (!enableGyroscope || typeof DeviceOrientationEvent === 'undefined') return false
+    if (!enableGyroscope) return false
+
+    // Check if DeviceOrientationEvent is available
+    if (typeof DeviceOrientationEvent === 'undefined') {
+      if (import.meta.dev) console.warn('[useCard3DTilt] DeviceOrientationEvent not available')
+      return false
+    }
 
     // iOS 13+ requires permission
     const DeviceOrientationEventTyped = DeviceOrientationEvent as typeof DeviceOrientationEvent & {
       requestPermission?: () => Promise<'granted' | 'denied'>
     }
+
     if (typeof DeviceOrientationEventTyped.requestPermission === 'function') {
       try {
         const permission = await DeviceOrientationEventTyped.requestPermission()
         if (permission === 'granted') {
           useGyroscopeActive.value = true
-          window.addEventListener('deviceorientation', handleDeviceOrientation)
+          window.addEventListener('deviceorientation', handleDeviceOrientation, { passive: true })
+          if (import.meta.dev) console.log('[useCard3DTilt] Gyroscope enabled (iOS permission granted)')
           return true
+        } else {
+          if (import.meta.dev) console.warn('[useCard3DTilt] Gyroscope permission denied')
+          return false
         }
-      } catch {
-        // Permission denied, fall back to touch only
+      } catch (error) {
+        if (import.meta.dev) console.warn('[useCard3DTilt] Failed to request gyroscope permission:', error)
         return false
       }
     } else {
-      // Android and older iOS - no permission needed
+      // Android and older iOS - no permission needed, but check if events are actually firing
       useGyroscopeActive.value = true
-      window.addEventListener('deviceorientation', handleDeviceOrientation)
-      return true
+      window.addEventListener('deviceorientation', handleDeviceOrientation, { passive: true })
+
+      // Fallback: disable after timeout if no events received
+      const timeout = setTimeout(() => {
+        if (lastBeta.value === 0 && lastGamma.value === 0) {
+          if (import.meta.dev) console.warn('[useCard3DTilt] No gyroscope events received, disabling')
+          disableGyroscopeListener()
+        }
+      }, 1000)
+
+      if (import.meta.dev) console.log('[useCard3DTilt] Gyroscope listener enabled (no permission required)')
+      return () => clearTimeout(timeout)
     }
-    return false
   }
 
   const disableGyroscopeListener = () => {
