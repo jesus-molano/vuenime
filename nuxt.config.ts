@@ -29,6 +29,25 @@ export default defineNuxtConfig({
     'nuxt-security',
   ],
 
+  // Fonts configuration - Outfit for headings, M PLUS 1 for body
+  fonts: {
+    families: [
+      {
+        name: 'Outfit',
+        provider: 'google',
+        weights: [600, 700, 800],
+      },
+      {
+        name: 'M PLUS 1',
+        provider: 'google',
+        weights: [400, 500, 600],
+      },
+    ],
+    defaults: {
+      weights: [400, 500, 600, 700, 800],
+    },
+  },
+
   // Security configuration
   security: {
     headers: {
