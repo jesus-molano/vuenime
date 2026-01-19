@@ -13,13 +13,13 @@
           <!-- Naruto sitting just above the title -->
           <div
             v-scroll-reveal.fade-up
-            class="absolute z-20 -right-8 -top-11 sm:-right-12 sm:-top-18 md:-right-12 md:-top-21 lg:-right-14 lg:-top-25"
+            class="naruto-position absolute z-20 right-0 -top-12 sm:-right-1 sm:-top-19 md:-right-2 md:-top-20 lg:-right-2 lg:-top-23"
           >
             <NuxtImg
               src="/images/fav.webp"
               alt=""
               aria-hidden="true"
-              class="h-16 w-auto object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)] sm:h-24 md:h-28 lg:h-34"
+              class="h-16 w-auto object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)] sm:h-24 md:h-26 lg:h-30"
               loading="eager"
             />
           </div>
@@ -120,3 +120,11 @@ const topGenre = computed(() => {
   return entries[0]?.[0] || null
 })
 </script>
+
+<style scoped>
+@media (max-width: 216px) {
+  .naruto-position {
+    display: none;
+  }
+}
+</style>
