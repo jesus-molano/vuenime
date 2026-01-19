@@ -33,7 +33,7 @@
       </div>
 
       <!-- 404 Illustration -->
-      <div class="mx-auto mb-6 animate-float">
+      <div class="mx-auto mb-6 w-fit animate-float">
         <div class="relative">
           <!-- Gradient glow behind image -->
           <div class="absolute inset-0 blur-3xl">
