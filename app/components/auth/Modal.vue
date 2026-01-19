@@ -360,6 +360,8 @@ const isOpen = defineModel<boolean>({ default: false })
 
 const { signInWithGoogle, signInWithGitHub, signInWithEmail, signUpWithEmail, resetPassword } = useAuth()
 const { t } = useI18n()
+const route = useRoute()
+const router = useRouter()
 
 const email = ref('')
 const password = ref('')
@@ -439,6 +441,12 @@ async function handleEmailAuth() {
       await signInWithEmail(email.value, password.value)
     }
     isOpen.value = false
+
+    // Redirect to preserved path if exists (from auth middleware)
+    const redirectPath = route.query.redirect as string | undefined
+    if (redirectPath) {
+      router.replace(redirectPath)
+    }
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : 'An error occurred'
   } finally {

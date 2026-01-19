@@ -15,9 +15,7 @@ const TestComponent = defineComponent({
     return { posterStyle }
   },
   render() {
-    return h('div', { class: 'test-component' }, [
-      h('div', { id: 'poster', style: this.posterStyle }, 'Poster'),
-    ])
+    return h('div', { class: 'test-component' }, [h('div', { id: 'poster', style: this.posterStyle }, 'Poster')])
   },
 })
 

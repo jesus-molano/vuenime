@@ -7,7 +7,8 @@
     "noResults": "No results found",
     "cancel": "Cancel",
     "readMore": "Read more",
-    "back": "Back"
+    "back": "Back",
+    "backHome": "Back to Home"
   },
   "lang": {
     "selector": "Select language"

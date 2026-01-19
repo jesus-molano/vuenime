@@ -152,10 +152,7 @@ describe('useFavoriteToggle (Nuxt)', () => {
 
       // Should call animate on the card element
       expect(animateSpy).toHaveBeenCalledWith(
-        expect.arrayContaining([
-          expect.objectContaining({ opacity: 1 }),
-          expect.objectContaining({ opacity: 0 }),
-        ]),
+        expect.arrayContaining([expect.objectContaining({ opacity: 1 }), expect.objectContaining({ opacity: 0 })]),
         expect.objectContaining({
           duration: 300,
           easing: 'cubic-bezier(0.4, 0, 0.2, 1)',

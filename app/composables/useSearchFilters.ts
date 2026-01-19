@@ -1,4 +1,6 @@
 import { ANIME_TYPES } from '~~/shared/constants/translations'
+import { CACHE_KEYS } from '~/utils/cache-keys'
+
 /**
  * Composable for search page filter logic
  * Manages type, year, and genre filters with URL sync
@@ -70,7 +72,7 @@ export function useSearchFilters() {
 
   // Fetch genres from API
   const { data: genresData } = useFetch<{ data: { mal_id: number; name: string }[] }>('/api/jikan/genres/anime', {
-    key: 'anime-genres',
+    key: CACHE_KEYS.ANIME_GENRES,
     default: () => ({ data: [] }),
   })
 

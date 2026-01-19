@@ -46,9 +46,7 @@ const TestComponentWithNumber = defineComponent({
     return { ...result }
   },
   render() {
-    return h('div', { class: 'test-component' }, [
-      h('span', { id: 'watched-count' }, String(this.watchedCount)),
-    ])
+    return h('div', { class: 'test-component' }, [h('span', { id: 'watched-count' }, String(this.watchedCount))])
   },
 })
 

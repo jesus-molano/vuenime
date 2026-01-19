@@ -2,6 +2,7 @@ import type { Anime, AnimeListResponse } from '~~/shared/types'
 import { PAGINATION } from '~~/shared/constants/api'
 import { animeApi } from '~/services/api'
 import { createCachedData, CACHE_TTL } from '~/utils/cache'
+import { CACHE_KEYS } from '~/utils/cache-keys'
 
 export const useAnimeList = () => {
   // Additional anime loaded via "load more" (client-side only)
@@ -21,7 +22,7 @@ export const useAnimeList = () => {
     error,
     refresh: refetch,
   } = useFetch<AnimeListResponse>('/api/jikan/anime', {
-    key: 'anime-list-home',
+    key: CACHE_KEYS.ANIME_LIST_HOME,
     query: { page: PAGINATION.DEFAULT_PAGE, limit: PAGINATION.DEFAULT_LIMIT },
     watch: false,
     // Cache for 10 minutes on client navigation

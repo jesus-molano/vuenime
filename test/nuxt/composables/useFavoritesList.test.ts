@@ -29,9 +29,15 @@ vi.mock('~/stores/favorites', () => ({
     favorites: mockFavorites,
     isLoading: mockIsLoading,
     clearFavorites: mockClearFavorites,
-    get sortedByRecent() { return getSortedByRecent() },
-    get sortedByScore() { return getSortedByScore() },
-    get sortedByTitle() { return getSortedByTitle() },
+    get sortedByRecent() {
+      return getSortedByRecent()
+    },
+    get sortedByScore() {
+      return getSortedByScore()
+    },
+    get sortedByTitle() {
+      return getSortedByTitle()
+    },
   }),
 }))
 
@@ -182,7 +188,7 @@ describe('useFavoritesList', () => {
 
     it('should display correct items for first page', async () => {
       mockFavorites.value = Array.from({ length: 30 }, (_, i) =>
-        createMockFavorite({ mal_id: i + 1, addedAt: Date.now() - i }),
+        createMockFavorite({ mal_id: i + 1, addedAt: Date.now() - i })
       )
       const wrapper = await mountSuspended(TestComponent)
 
@@ -192,7 +198,7 @@ describe('useFavoritesList', () => {
 
     it('should display correct items for second page', async () => {
       mockFavorites.value = Array.from({ length: 30 }, (_, i) =>
-        createMockFavorite({ mal_id: i + 1, addedAt: Date.now() - i }),
+        createMockFavorite({ mal_id: i + 1, addedAt: Date.now() - i })
       )
       const wrapper = await mountSuspended(TestComponent)
 
@@ -320,9 +326,7 @@ describe('useFavoritesList', () => {
 
   describe('displayedFavorites slicing', () => {
     it('should slice correctly for first page', async () => {
-      mockFavorites.value = Array.from({ length: 50 }, (_, i) =>
-        createMockFavorite({ mal_id: i + 1, addedAt: 50 - i }),
-      )
+      mockFavorites.value = Array.from({ length: 50 }, (_, i) => createMockFavorite({ mal_id: i + 1, addedAt: 50 - i }))
       mockSortBy.value = 'recent'
       const wrapper = await mountSuspended(TestComponent)
 
@@ -332,9 +336,7 @@ describe('useFavoritesList', () => {
     })
 
     it('should slice correctly for middle page', async () => {
-      mockFavorites.value = Array.from({ length: 72 }, (_, i) =>
-        createMockFavorite({ mal_id: i + 1, addedAt: 72 - i }),
-      )
+      mockFavorites.value = Array.from({ length: 72 }, (_, i) => createMockFavorite({ mal_id: i + 1, addedAt: 72 - i }))
       mockSortBy.value = 'recent'
       const wrapper = await mountSuspended(TestComponent)
 
@@ -347,9 +349,7 @@ describe('useFavoritesList', () => {
     })
 
     it('should slice correctly for last page', async () => {
-      mockFavorites.value = Array.from({ length: 50 }, (_, i) =>
-        createMockFavorite({ mal_id: i + 1, addedAt: 50 - i }),
-      )
+      mockFavorites.value = Array.from({ length: 50 }, (_, i) => createMockFavorite({ mal_id: i + 1, addedAt: 50 - i }))
       mockSortBy.value = 'recent'
       const wrapper = await mountSuspended(TestComponent)
 

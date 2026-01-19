@@ -1,6 +1,32 @@
 @import 'tailwindcss' theme(static);
 @import '@nuxt/ui';
 
+/* ===========================================
+   Typography - Font Families
+   Outfit: Headings (bold, modern geometric)
+   M PLUS 1: Body text (clean, readable)
+   =========================================== */
+
+@theme {
+  --font-sans: 'M PLUS 1', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Apply heading font to all headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+}
+
+/* Utility class for heading font */
+.font-heading {
+  font-family: var(--font-heading);
+}
+
 /* Streaming platform colors */
 .bg-crunchyroll {
   background-color: #a84200;

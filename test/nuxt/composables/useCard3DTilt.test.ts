@@ -411,8 +411,9 @@ describe('useCard3DTilt', () => {
     it('should request permission on iOS when requestPermission is available', async () => {
       const mockRequestPermission = vi.fn().mockResolvedValue('granted')
       const DeviceOrientationEventMock = function () {} as unknown as typeof DeviceOrientationEvent
-      ;(DeviceOrientationEventMock as unknown as { requestPermission: typeof mockRequestPermission }).requestPermission =
-        mockRequestPermission
+      ;(
+        DeviceOrientationEventMock as unknown as { requestPermission: typeof mockRequestPermission }
+      ).requestPermission = mockRequestPermission
 
       vi.stubGlobal('DeviceOrientationEvent', DeviceOrientationEventMock)
 
@@ -428,8 +429,9 @@ describe('useCard3DTilt', () => {
     it('should return false when permission is denied', async () => {
       const mockRequestPermission = vi.fn().mockResolvedValue('denied')
       const DeviceOrientationEventMock = function () {} as unknown as typeof DeviceOrientationEvent
-      ;(DeviceOrientationEventMock as unknown as { requestPermission: typeof mockRequestPermission }).requestPermission =
-        mockRequestPermission
+      ;(
+        DeviceOrientationEventMock as unknown as { requestPermission: typeof mockRequestPermission }
+      ).requestPermission = mockRequestPermission
 
       vi.stubGlobal('DeviceOrientationEvent', DeviceOrientationEventMock)
 
@@ -444,8 +446,9 @@ describe('useCard3DTilt', () => {
     it('should return false when requestPermission throws', async () => {
       const mockRequestPermission = vi.fn().mockRejectedValue(new Error('Permission error'))
       const DeviceOrientationEventMock = function () {} as unknown as typeof DeviceOrientationEvent
-      ;(DeviceOrientationEventMock as unknown as { requestPermission: typeof mockRequestPermission }).requestPermission =
-        mockRequestPermission
+      ;(
+        DeviceOrientationEventMock as unknown as { requestPermission: typeof mockRequestPermission }
+      ).requestPermission = mockRequestPermission
 
       vi.stubGlobal('DeviceOrientationEvent', DeviceOrientationEventMock)
 

@@ -2,7 +2,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { defineComponent, h, ref, nextTick } from 'vue'
 import { useInfiniteScroll } from '~/composables/useInfiniteScroll'
-import { installMockIntersectionObserver, cleanupBrowserMocks, type MockIntersectionObserver } from '../../mocks/browser-apis'
+import {
+  installMockIntersectionObserver,
+  cleanupBrowserMocks,
+  type MockIntersectionObserver,
+} from '../../mocks/browser-apis'
 
 const TestComponent = defineComponent({
   props: {

@@ -1,9 +1,10 @@
 import type { SeasonsResponse, Season } from '~~/shared/types'
 import { createCachedData, CACHE_TTL } from '~/utils/cache'
+import { CACHE_KEYS } from '~/utils/cache-keys'
 
 export const useCurrentSeason = () => {
   const { data, status, error, refresh } = useFetch<SeasonsResponse>('/api/jikan/seasons/now', {
-    key: 'current-season',
+    key: CACHE_KEYS.CURRENT_SEASON,
     query: { limit: 15 },
     watch: false,
     // Cache for 10 minutes - season data changes rarely
@@ -38,7 +39,7 @@ export const useCurrentSeason = () => {
 
 export const useUpcomingSeason = () => {
   const { data, status, error, refresh } = useFetch<SeasonsResponse>('/api/jikan/seasons/upcoming', {
-    key: 'upcoming-season',
+    key: CACHE_KEYS.UPCOMING_SEASON,
     query: { limit: 15 },
     watch: false,
     // Cache for 10 minutes - upcoming anime changes rarely

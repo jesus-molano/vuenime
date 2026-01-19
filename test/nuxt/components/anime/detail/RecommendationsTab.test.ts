@@ -20,8 +20,16 @@ const createMockRecommendation = (overrides = {}) => ({
     mal_id: 100,
     title: 'Recommended Anime',
     images: {
-      jpg: { image_url: 'https://example.com/jpg.jpg', small_image_url: 'https://example.com/small.jpg', large_image_url: 'https://example.com/large.jpg' },
-      webp: { image_url: 'https://example.com/webp.webp', small_image_url: 'https://example.com/small.webp', large_image_url: 'https://example.com/large.webp' },
+      jpg: {
+        image_url: 'https://example.com/jpg.jpg',
+        small_image_url: 'https://example.com/small.jpg',
+        large_image_url: 'https://example.com/large.jpg',
+      },
+      webp: {
+        image_url: 'https://example.com/webp.webp',
+        small_image_url: 'https://example.com/small.webp',
+        large_image_url: 'https://example.com/large.webp',
+      },
     },
   },
   votes: 150,
@@ -29,9 +37,39 @@ const createMockRecommendation = (overrides = {}) => ({
 })
 
 const mockRecommendations = [
-  createMockRecommendation({ entry: { mal_id: 100, title: 'Recommended Anime 1', images: { jpg: { image_url: 'https://example.com/1.jpg', small_image_url: '', large_image_url: '' }, webp: { image_url: '', small_image_url: '', large_image_url: '' } } }, votes: 150 }),
-  createMockRecommendation({ entry: { mal_id: 101, title: 'Recommended Anime 2', images: { jpg: { image_url: 'https://example.com/2.jpg', small_image_url: '', large_image_url: '' }, webp: { image_url: '', small_image_url: '', large_image_url: '' } } }, votes: 120 }),
-  createMockRecommendation({ entry: { mal_id: 102, title: 'Recommended Anime 3', images: { jpg: { image_url: 'https://example.com/3.jpg', small_image_url: '', large_image_url: '' }, webp: { image_url: '', small_image_url: '', large_image_url: '' } } }, votes: 100 }),
+  createMockRecommendation({
+    entry: {
+      mal_id: 100,
+      title: 'Recommended Anime 1',
+      images: {
+        jpg: { image_url: 'https://example.com/1.jpg', small_image_url: '', large_image_url: '' },
+        webp: { image_url: '', small_image_url: '', large_image_url: '' },
+      },
+    },
+    votes: 150,
+  }),
+  createMockRecommendation({
+    entry: {
+      mal_id: 101,
+      title: 'Recommended Anime 2',
+      images: {
+        jpg: { image_url: 'https://example.com/2.jpg', small_image_url: '', large_image_url: '' },
+        webp: { image_url: '', small_image_url: '', large_image_url: '' },
+      },
+    },
+    votes: 120,
+  }),
+  createMockRecommendation({
+    entry: {
+      mal_id: 102,
+      title: 'Recommended Anime 3',
+      images: {
+        jpg: { image_url: 'https://example.com/3.jpg', small_image_url: '', large_image_url: '' },
+        webp: { image_url: '', small_image_url: '', large_image_url: '' },
+      },
+    },
+    votes: 100,
+  }),
 ]
 
 describe('RecommendationsTab', () => {
@@ -187,7 +225,18 @@ describe('RecommendationsTab', () => {
         title: rec?.entry?.title,
         images: rec?.entry?.images,
         url: '',
-        trailer: { youtube_id: null, url: null, embed_url: null, images: { image_url: null, small_image_url: null, medium_image_url: null, large_image_url: null, maximum_image_url: null } },
+        trailer: {
+          youtube_id: null,
+          url: null,
+          embed_url: null,
+          images: {
+            image_url: null,
+            small_image_url: null,
+            medium_image_url: null,
+            large_image_url: null,
+            maximum_image_url: null,
+          },
+        },
         approved: true,
         titles: [],
         title_english: null,
@@ -266,7 +315,11 @@ describe('RecommendationsTab', () => {
             mal_id: 200,
             title: 'No Webp',
             images: {
-              jpg: { image_url: 'https://example.com/jpg.jpg', small_image_url: 'https://example.com/small.jpg', large_image_url: 'https://example.com/large.jpg' },
+              jpg: {
+                image_url: 'https://example.com/jpg.jpg',
+                small_image_url: 'https://example.com/small.jpg',
+                large_image_url: 'https://example.com/large.jpg',
+              },
               webp: { image_url: '', small_image_url: '', large_image_url: '' },
             },
           },

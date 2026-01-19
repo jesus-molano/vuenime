@@ -58,48 +58,12 @@
       </p>
 
       <!-- Actions -->
-      <div class="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-        <button
-          type="button"
-          class="group flex items-center gap-2 rounded-xl bg-rp-iris px-6 py-3 font-medium text-white shadow-lg shadow-rp-iris/25 transition-all hover:scale-105 hover:shadow-xl hover:shadow-rp-iris/30"
-          @click="handleGoHome"
-        >
-          <svg
-            class="size-5 transition-transform group-hover:-translate-x-1"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-          {{ $t('error.goHome') }}
-        </button>
-        <button
-          type="button"
-          class="flex items-center gap-2 rounded-xl border border-rp-overlay bg-rp-surface/50 px-6 py-3 font-medium text-rp-text backdrop-blur-sm transition-all hover:border-rp-iris/50 hover:bg-rp-surface"
-          @click="handleGoBack"
-        >
-          <svg
-            class="size-5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              d="M19 12H5M12 19l-7-7 7-7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-          {{ $t('error.goBack') }}
-        </button>
-      </div>
+      <UiErrorActions
+        show-back
+        use-events
+        @go-home="handleGoHome"
+        @go-back="handleGoBack"
+      />
 
       <!-- Error details for non-404 -->
       <div

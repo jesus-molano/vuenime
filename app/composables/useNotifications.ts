@@ -17,7 +17,12 @@ interface ToastOptions {
 }
 
 /**
- * Get translation using $i18n from nuxtApp (works outside component context)
+ * Get translation using $i18n from nuxtApp
+ *
+ * **Design Decision**: Uses `$i18n` directly instead of `useI18n()` composable.
+ * This is intentional because `useI18n()` requires Vue's inject context which
+ * is not available when called from Pinia stores. By accessing `nuxtApp.$i18n`
+ * directly, this function works both in components and stores.
  */
 function t(key: string, params?: Record<string, unknown>): string {
   try {
@@ -159,17 +164,11 @@ export const useNotifications = () => {
   // ============================================
 
   const favoriteAdded = (animeTitle: string) => {
-    success(
-      t('notifications.favoriteAdded'),
-      t('notifications.favoriteAddedDesc', { title: animeTitle })
-    )
+    success(t('notifications.favoriteAdded'), t('notifications.favoriteAddedDesc', { title: animeTitle }))
   }
 
   const favoriteRemoved = (animeTitle: string) => {
-    success(
-      t('notifications.favoriteRemoved'),
-      t('notifications.favoriteRemovedDesc', { title: animeTitle })
-    )
+    success(t('notifications.favoriteRemoved'), t('notifications.favoriteRemovedDesc', { title: animeTitle }))
   }
 
   const favoriteError = () => {
@@ -205,17 +204,11 @@ export const useNotifications = () => {
   }
 
   const allEpisodesMarkedWatched = (animeTitle: string) => {
-    success(
-      t('notifications.allEpisodesWatched'),
-      t('notifications.allEpisodesWatchedDesc', { title: animeTitle })
-    )
+    success(t('notifications.allEpisodesWatched'), t('notifications.allEpisodesWatchedDesc', { title: animeTitle }))
   }
 
   const watchedCleared = (animeTitle: string) => {
-    info(
-      t('notifications.watchedCleared'),
-      t('notifications.watchedClearedDesc', { title: animeTitle })
-    )
+    info(t('notifications.watchedCleared'), t('notifications.watchedClearedDesc', { title: animeTitle }))
   }
 
   const watchedError = () => {

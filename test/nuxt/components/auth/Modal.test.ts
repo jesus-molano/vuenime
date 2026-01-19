@@ -229,7 +229,7 @@ describe('AuthModal', () => {
       await wrapper.find('#reset-email').setValue('test@example.com')
       await wrapper.find('form').trigger('submit')
       // wait for async handleResetPassword
-      await new Promise(resolve => setTimeout(resolve, 0))
+      await new Promise((resolve) => setTimeout(resolve, 0))
       await nextTick()
 
       // Success state should be visible (resetEmailSent = true)
@@ -238,7 +238,7 @@ describe('AuthModal', () => {
       // Should have back to sign in button
       expect(wrapper.text()).toContain('Back to sign in')
     })
-    
+
     it('should show error on reset failure', async () => {
       resetPasswordMock.mockRejectedValueOnce(new Error('User not found'))
       const wrapper = await mountModal(true)
@@ -252,7 +252,7 @@ describe('AuthModal', () => {
       await wrapper.find('#reset-email').setValue('wrong@example.com')
       await wrapper.find('form').trigger('submit')
       // wait for async handleResetPassword
-      await new Promise(resolve => setTimeout(resolve, 0))
+      await new Promise((resolve) => setTimeout(resolve, 0))
       await nextTick()
       await nextTick()
 

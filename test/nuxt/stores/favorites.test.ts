@@ -280,7 +280,7 @@ describe('useFavoritesStore', () => {
       const store = useFavoritesStore()
       // Local favorite
       await store.addFavorite(mockAnime)
-      
+
       // Remote favorite
       const remoteFav = { ...mockAnime2, addedAt: Date.now() }
       // Configure mock to return remote data
@@ -289,7 +289,7 @@ describe('useFavoritesStore', () => {
         insert: vi.fn().mockReturnThis(),
         delete: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
-        order: vi.fn().mockResolvedValue({ data: [remoteFav], error: null })
+        order: vi.fn().mockResolvedValue({ data: [remoteFav], error: null }),
       }
       mockSupabaseClient.from.mockReturnValue(mockChain)
 
@@ -306,9 +306,9 @@ describe('useFavoritesStore', () => {
     it('should validation error when adding invalid anime favorite', async () => {
       const store = useFavoritesStore()
       const invalidAnime = { ...mockAnime, mal_id: 'invalid' } as unknown as AddFavoriteInput
-      
+
       await store.addFavorite(invalidAnime)
-      
+
       expect(mockNotify.favoriteError).toHaveBeenCalled()
       expect(store.favorites).toHaveLength(0)
     })
@@ -316,14 +316,14 @@ describe('useFavoritesStore', () => {
     it('should handle supabase insert error by rolling back', async () => {
       const store = useFavoritesStore()
       store.syncedForUserId = 'user-123'
-      
+
       // Mock insert failure
       mockSupabaseClient.from.mockImplementation(() => ({
         select: vi.fn().mockReturnThis(),
         insert: vi.fn().mockResolvedValue({ error: new Error('DB Error') }),
         delete: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
-        order: vi.fn().mockResolvedValue({ data: [], error: null })
+        order: vi.fn().mockResolvedValue({ data: [], error: null }),
       }))
 
       await store.addFavorite(mockAnime)
@@ -334,9 +334,9 @@ describe('useFavoritesStore', () => {
 
     it('should handle supabase delete error by rolling back', async () => {
       const store = useFavoritesStore()
-      store.favorites = [{...mockAnime, addedAt: Date.now()}]
+      store.favorites = [{ ...mockAnime, addedAt: Date.now() }]
       store.syncedForUserId = 'user-123'
-      
+
       // Mock delete failure
       // Redefine mock for this test
       const mockChainDelete = {
@@ -344,13 +344,13 @@ describe('useFavoritesStore', () => {
         insert: vi.fn().mockReturnThis(),
         delete: vi.fn().mockReturnThis(),
         // Support chained .eq().eq() by returning self
-        eq: vi.fn(), 
+        eq: vi.fn(),
         order: vi.fn().mockResolvedValue({ data: [], error: null }),
         // Make the object itself thenable so await works on the chain
-        then: (resolve: (value: unknown) => void) => resolve({ error: new Error('Delete failed') }) 
+        then: (resolve: (value: unknown) => void) => resolve({ error: new Error('Delete failed') }),
       }
       mockChainDelete.eq.mockReturnValue(mockChainDelete)
-      
+
       mockSupabaseClient.from.mockReturnValue(mockChainDelete)
 
       await store.removeFavorite(mockAnime.mal_id)

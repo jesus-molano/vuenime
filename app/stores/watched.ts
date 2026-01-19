@@ -130,7 +130,7 @@ export const useWatchedStore = defineStore(
             (ep) => ep.mal_id === mal_id && ep.episode_number === episode_number
           )
           if (index !== -1) watchedEpisodes.value.splice(index, 1)
-          
+
           const friendlyError = getFriendlyError(error, 'markAsWatched')
           notify.error(friendlyError.message)
         }

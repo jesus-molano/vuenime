@@ -121,7 +121,9 @@
                     :key="mode.value"
                     type="button"
                     class="flex size-5 items-center justify-center rounded transition-colors"
-                    :class="viewMode === mode.value ? 'bg-rp-overlay text-rp-text' : 'text-rp-subtle hover:text-rp-text'"
+                    :class="
+                      viewMode === mode.value ? 'bg-rp-overlay text-rp-text' : 'text-rp-subtle hover:text-rp-text'
+                    "
                     :title="mode.label"
                     :aria-label="mode.label"
                     @click="viewMode = mode.value"

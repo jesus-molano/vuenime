@@ -2,7 +2,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { defineComponent, h, nextTick } from 'vue'
 import { useScrollReveal } from '~/composables/useScrollReveal'
-import { createMockIntersectionObserver, cleanupBrowserMocks, type IntersectionObserverMock } from '../../mocks/browser-apis'
+import {
+  createMockIntersectionObserver,
+  cleanupBrowserMocks,
+  type IntersectionObserverMock,
+} from '../../mocks/browser-apis'
 
 // Test component that uses the composable
 const TestComponent = defineComponent({
@@ -51,7 +55,10 @@ describe('useScrollReveal (Nuxt)', () => {
     it('should use default threshold of 0.1', async () => {
       await mountSuspended(TestComponent)
 
-      expect(IntersectionObserver).toHaveBeenCalledWith(expect.any(Function), expect.objectContaining({ threshold: 0.1 }))
+      expect(IntersectionObserver).toHaveBeenCalledWith(
+        expect.any(Function),
+        expect.objectContaining({ threshold: 0.1 })
+      )
     })
 
     it('should use default rootMargin', async () => {
@@ -70,7 +77,10 @@ describe('useScrollReveal (Nuxt)', () => {
         props: { threshold: 0.5 },
       })
 
-      expect(IntersectionObserver).toHaveBeenCalledWith(expect.any(Function), expect.objectContaining({ threshold: 0.5 }))
+      expect(IntersectionObserver).toHaveBeenCalledWith(
+        expect.any(Function),
+        expect.objectContaining({ threshold: 0.5 })
+      )
     })
 
     it('should use custom rootMargin', async () => {
@@ -78,7 +88,10 @@ describe('useScrollReveal (Nuxt)', () => {
         props: { rootMargin: '100px' },
       })
 
-      expect(IntersectionObserver).toHaveBeenCalledWith(expect.any(Function), expect.objectContaining({ rootMargin: '100px' }))
+      expect(IntersectionObserver).toHaveBeenCalledWith(
+        expect.any(Function),
+        expect.objectContaining({ rootMargin: '100px' })
+      )
     })
   })
 

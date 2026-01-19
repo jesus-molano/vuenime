@@ -22,32 +22,30 @@
     "prepush": "npm run lint && npm run typecheck && npm run build"
   },
   "dependencies": {
-    "@nuxt/eslint": "1.12.1",
     "@nuxt/fonts": "0.12.1",
     "@nuxt/icon": "2.2.0",
     "@nuxt/image": "^2.0.0",
-    "@nuxt/test-utils": "^3.23.0",
     "@nuxt/ui": "^4.3.0",
     "@nuxtjs/i18n": "^10.2.1",
     "@nuxtjs/supabase": "^2.0.3",
     "@pinia-plugin-persistedstate/nuxt": "^1.2.1",
     "@pinia/nuxt": "^0.11.3",
-    "eslint": "^9.0.0",
     "nuxt": "^4.2.2",
     "pinia": "^3.0.4",
     "vue": "^3.5.26",
     "vue-router": "^4.6.4",
-    "vue-view-transitions": "^1.2.1",
     "zod": "^4.3.5"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.0",
+    "@nuxt/eslint": "1.12.1",
+    "@nuxt/test-utils": "^3.23.0",
+    "eslint": "^9.0.0",
     "@iconify-json/heroicons": "^1.2.3",
     "@iconify-json/logos": "^1.2.10",
     "@iconify-json/mdi": "^1.2.3",
     "@iconify-json/simple-icons": "^1.2.66",
     "@playwright/test": "^1.57.0",
-    "@tiptap/extension-collaboration": "^3.15.3",
     "@types/node": "^25.0.9",
     "@vitest/coverage-v8": "^3.2.0",
     "@vue/test-utils": "^2.4.6",
@@ -69,8 +67,5 @@
     "*.{json,css,md}": [
       "prettier --write"
     ]
-  },
-  "overrides": {
-    "@tiptap/extension-drag-handle": "3.13.0"
   }
 }

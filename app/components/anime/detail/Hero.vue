@@ -21,7 +21,14 @@
 <script setup lang="ts">
 import type { Anime } from '~~/shared/types/anime'
 
-defineProps<{
+/**
+ * Props for AnimeDetailHero component
+ * @property anime - Full anime detail object from Jikan API.
+ *   Must include images for background and all metadata for display.
+ */
+interface AnimeDetailHeroProps {
   anime: Anime
-}>()
+}
+
+defineProps<AnimeDetailHeroProps>()
 </script>

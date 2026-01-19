@@ -2,26 +2,38 @@
   <div class="min-h-screen bg-rp-base">
     <!-- Error State -->
     <div
-      v-if="error && !anime"
+      v-if="error && !anime && errorInfo"
       class="flex min-h-screen items-center justify-center"
       role="alert"
     >
-      <div class="text-center">
-        <div class="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-rp-love/10">
+      <div class="max-w-md px-4 text-center">
+        <!-- Image for 404 -->
+        <NuxtImg
+          v-if="errorInfo.image"
+          :src="errorInfo.image"
+          alt=""
+          class="mx-auto mb-6 h-48 w-auto object-contain sm:h-56"
+          loading="eager"
+        />
+        <!-- Icon for other errors -->
+        <div
+          v-else
+          class="mx-auto mb-4 flex size-16 items-center justify-center rounded-full"
+          :class="errorInfo.color"
+        >
           <UIcon
-            name="i-heroicons-exclamation-triangle"
-            class="size-8 text-rp-love"
+            :name="errorInfo.icon"
+            class="size-8"
+            :class="errorInfo.iconColor"
             aria-hidden="true"
           />
         </div>
-        <p class="mb-4 text-rp-subtle">{{ $t('common.error') }}</p>
-        <button
-          type="button"
-          class="rounded-xl bg-rp-surface px-6 py-3 font-medium text-rp-text transition-all hover:bg-rp-overlay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2 focus-visible:ring-offset-rp-base"
-          @click="refresh()"
-        >
-          {{ $t('common.retry') }}
-        </button>
+        <h1 class="mb-2 text-xl font-bold text-rp-text">{{ errorInfo.title }}</h1>
+        <p class="mb-6 text-sm text-rp-subtle">{{ errorInfo.description }}</p>
+        <UiErrorActions
+          show-retry
+          @retry="refresh()"
+        />
       </div>
     </div>
 
@@ -61,10 +73,59 @@
 
 <script setup lang="ts">
 const route = useRoute()
+const { t } = useI18n()
 const { loadingAnime, rateLimited, serviceUnavailable, animeNotFound } = useNotifications()
 
 const animeId = computed(() => route.params.id as string)
 const { anime, isLoading, error, refresh } = useAnimeDetail(animeId)
+
+// Determine error type for specific messaging
+const errorInfo = computed(() => {
+  if (!error.value) return null
+
+  const fetchError = error.value as { statusCode?: number; data?: { statusCode?: number } }
+  const statusCode = fetchError.statusCode ?? fetchError.data?.statusCode
+
+  if (statusCode === 404) {
+    return {
+      image: '/images/fail.webp',
+      icon: 'i-heroicons-magnifying-glass',
+      title: t('notifications.notFound'),
+      description: t('notifications.notFoundDesc'),
+      color: 'bg-rp-iris/10',
+      iconColor: 'text-rp-iris',
+    }
+  }
+
+  if (statusCode === 429) {
+    return {
+      icon: 'i-heroicons-clock',
+      title: t('notifications.rateLimited'),
+      description: t('notifications.rateLimitedDesc'),
+      color: 'bg-rp-gold/10',
+      iconColor: 'text-rp-gold',
+    }
+  }
+
+  if (statusCode && statusCode >= 502 && statusCode <= 504) {
+    return {
+      icon: 'i-heroicons-server-stack',
+      title: t('notifications.serviceUnavailable'),
+      description: t('notifications.serviceUnavailableDesc'),
+      color: 'bg-rp-love/10',
+      iconColor: 'text-rp-love',
+    }
+  }
+
+  // Generic error
+  return {
+    icon: 'i-heroicons-exclamation-triangle',
+    title: t('common.error'),
+    description: t('error.pageNotFound'),
+    color: 'bg-rp-love/10',
+    iconColor: 'text-rp-love',
+  }
+})
 
 // Show loading toast only if it takes longer than 3 seconds
 let loadingTimeout: ReturnType<typeof setTimeout> | null = null
@@ -88,7 +149,7 @@ watch(isLoading, (loading) => {
       dismissToast = null
     }
   }
-})
+}, { immediate: true })
 
 // Show themed error notifications
 watch(error, (err) => {

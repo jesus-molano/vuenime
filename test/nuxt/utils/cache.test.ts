@@ -1,11 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import {
-  createCachedData,
-  markCacheFresh,
-  invalidateCache,
-  clearAllCacheTimestamps,
-  CACHE_TTL,
-} from '~/utils/cache'
+import { createCachedData, markCacheFresh, invalidateCache, clearAllCacheTimestamps, CACHE_TTL } from '~/utils/cache'
 import type { NuxtApp } from '#app'
 
 describe('cache utilities', () => {
@@ -133,7 +127,7 @@ describe('cache utilities', () => {
       const data1 = { test: 'data1' }
       const data2 = { test: 'data2' }
       const getCachedData = createCachedData<typeof data1>(CACHE_TTL.SHORT)
-      const nuxtApp = createMockNuxtApp({ 'key1': data1, 'key2': data2 })
+      const nuxtApp = createMockNuxtApp({ key1: data1, key2: data2 })
 
       // Access both keys
       getCachedData('key1', nuxtApp)
@@ -214,7 +208,7 @@ describe('cache utilities', () => {
     it('should not affect other keys', () => {
       const testData = { test: 'value' }
       const getCachedData = createCachedData<typeof testData>(CACHE_TTL.SHORT)
-      const nuxtApp = createMockNuxtApp({ 'key1': testData, 'key2': testData })
+      const nuxtApp = createMockNuxtApp({ key1: testData, key2: testData })
 
       // Access both keys
       getCachedData('key1', nuxtApp)
@@ -253,9 +247,9 @@ describe('cache utilities', () => {
       const testData = { test: 'value' }
       const getCachedData = createCachedData<typeof testData>(CACHE_TTL.SHORT)
       const nuxtApp = createMockNuxtApp({
-        'key1': testData,
-        'key2': testData,
-        'key3': testData,
+        key1: testData,
+        key2: testData,
+        key3: testData,
       })
 
       // Access all keys

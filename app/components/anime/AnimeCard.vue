@@ -56,14 +56,20 @@
 import type { Anime } from '~~/shared/types/anime'
 import type { FavoriteAnime } from '~/types/favorites'
 
-const props = withDefaults(
-  defineProps<{
-    anime: Anime | FavoriteAnime
-    /** Animate card out when removing from favorites (only use in favorites page) */
-    animateOnRemove?: boolean
-  }>(),
-  { animateOnRemove: false }
-)
+/**
+ * Props for AnimeCard component
+ * @property anime - The anime data to display (from API or favorites store)
+ * @property animateOnRemove - When true, animates the card out when removed from favorites.
+ *   Only enable this on the favorites page to avoid layout shifts on other pages.
+ */
+interface AnimeCardProps {
+  anime: Anime | FavoriteAnime
+  animateOnRemove?: boolean
+}
+
+const props = withDefaults(defineProps<AnimeCardProps>(), {
+  animateOnRemove: false,
+})
 
 const wrapperRef = ref<HTMLElement | null>(null)
 
