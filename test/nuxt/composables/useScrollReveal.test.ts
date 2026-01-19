@@ -2,14 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { defineComponent, h, nextTick } from 'vue'
 import { useScrollReveal } from '~/composables/useScrollReveal'
-
-// Mock IntersectionObserver callback storage
-let observerCallback: IntersectionObserverCallback
-let observerInstance: {
-  observe: ReturnType<typeof vi.fn>
-  unobserve: ReturnType<typeof vi.fn>
-  disconnect: ReturnType<typeof vi.fn>
-}
+import { createMockIntersectionObserver, cleanupBrowserMocks, type IntersectionObserverMock } from '../../mocks/browser-apis'
 
 // Test component that uses the composable
 const TestComponent = defineComponent({
@@ -43,47 +36,16 @@ const TestComponent = defineComponent({
 })
 
 describe('useScrollReveal (Nuxt)', () => {
+  let observerMock: IntersectionObserverMock
+
   beforeEach(() => {
     vi.clearAllMocks()
-
-    // Create mock observer
-    observerInstance = {
-      observe: vi.fn(),
-      unobserve: vi.fn(),
-      disconnect: vi.fn(),
-    }
-
-    // Mock IntersectionObserver
-    vi.stubGlobal(
-      'IntersectionObserver',
-      vi.fn((callback, _options) => {
-        observerCallback = callback
-        return observerInstance
-      })
-    )
+    observerMock = createMockIntersectionObserver()
   })
 
   afterEach(() => {
-    vi.unstubAllGlobals()
+    cleanupBrowserMocks()
   })
-
-  // Helper to simulate intersection
-  const simulateIntersection = (isIntersecting: boolean, target?: Element) => {
-    observerCallback(
-      [
-        {
-          isIntersecting,
-          target: target || document.createElement('div'),
-          boundingClientRect: {} as DOMRectReadOnly,
-          intersectionRatio: isIntersecting ? 1 : 0,
-          intersectionRect: {} as DOMRectReadOnly,
-          rootBounds: null,
-          time: Date.now(),
-        },
-      ],
-      observerInstance as unknown as IntersectionObserver
-    )
-  }
 
   describe('with default options', () => {
     it('should use default threshold of 0.1', async () => {
@@ -124,7 +86,7 @@ describe('useScrollReveal (Nuxt)', () => {
     it('should set isVisible to true when element intersects', async () => {
       const wrapper = await mountSuspended(TestComponent)
 
-      simulateIntersection(true)
+      observerMock.simulateIntersection(true)
       await nextTick()
 
       expect(wrapper.find('#visibility').text()).toBe('visible')
@@ -136,12 +98,12 @@ describe('useScrollReveal (Nuxt)', () => {
       })
 
       // Become visible
-      simulateIntersection(true)
+      observerMock.simulateIntersection(true)
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('visible')
 
       // Leave viewport - should stay visible
-      simulateIntersection(false)
+      observerMock.simulateIntersection(false)
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('visible')
     })
@@ -151,10 +113,10 @@ describe('useScrollReveal (Nuxt)', () => {
         props: { once: true },
       })
 
-      simulateIntersection(true)
+      observerMock.simulateIntersection(true)
       await nextTick()
 
-      expect(observerInstance.unobserve).toHaveBeenCalled()
+      expect(observerMock.instance.unobserve).toHaveBeenCalled()
     })
   })
 
@@ -165,17 +127,17 @@ describe('useScrollReveal (Nuxt)', () => {
       })
 
       // Become visible
-      simulateIntersection(true)
+      observerMock.simulateIntersection(true)
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('visible')
 
       // Leave viewport
-      simulateIntersection(false)
+      observerMock.simulateIntersection(false)
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('hidden')
 
       // Re-enter viewport
-      simulateIntersection(true)
+      observerMock.simulateIntersection(true)
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('visible')
     })

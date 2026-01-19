@@ -2,43 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { defineComponent, h, ref, nextTick } from 'vue'
 import { useInfiniteScroll } from '~/composables/useInfiniteScroll'
-
-// Mock IntersectionObserver
-class MockIntersectionObserver {
-  callback: IntersectionObserverCallback
-  elements: Element[] = []
-
-  constructor(callback: IntersectionObserverCallback) {
-    this.callback = callback
-  }
-
-  observe(element: Element) {
-    this.elements.push(element)
-  }
-
-  unobserve(element: Element) {
-    this.elements = this.elements.filter((el) => el !== element)
-  }
-
-  disconnect() {
-    this.elements = []
-  }
-
-  trigger(isIntersecting: boolean) {
-    const entries = this.elements.map((element) => ({
-      isIntersecting,
-      target: element,
-      boundingClientRect: {} as DOMRectReadOnly,
-      intersectionRatio: isIntersecting ? 1 : 0,
-      intersectionRect: {} as DOMRectReadOnly,
-      rootBounds: null,
-      time: Date.now(),
-    }))
-    this.callback(entries, this as unknown as IntersectionObserver)
-  }
-}
-
-let mockObserver: MockIntersectionObserver | null = null
+import { installMockIntersectionObserver, cleanupBrowserMocks, type MockIntersectionObserver } from '../../mocks/browser-apis'
 
 const TestComponent = defineComponent({
   props: {
@@ -74,17 +38,15 @@ const TestComponent = defineComponent({
 })
 
 describe('useInfiniteScroll (Nuxt)', () => {
+  let observerHelper: { getLastInstance: () => MockIntersectionObserver | null }
+
   beforeEach(() => {
     vi.clearAllMocks()
-    mockObserver = null
-    vi.stubGlobal('IntersectionObserver', function (callback: IntersectionObserverCallback) {
-      mockObserver = new MockIntersectionObserver(callback)
-      return mockObserver
-    })
+    observerHelper = installMockIntersectionObserver()
   })
 
   afterEach(() => {
-    vi.unstubAllGlobals()
+    cleanupBrowserMocks()
   })
 
   describe('composable structure', () => {
@@ -96,7 +58,7 @@ describe('useInfiniteScroll (Nuxt)', () => {
     it('should create IntersectionObserver on mount', async () => {
       await mountSuspended(TestComponent)
       await nextTick()
-      expect(mockObserver).not.toBeNull()
+      expect(observerHelper.getLastInstance()).not.toBeNull()
     })
   })
 
@@ -107,7 +69,7 @@ describe('useInfiniteScroll (Nuxt)', () => {
       })
       await nextTick()
 
-      mockObserver?.trigger(true)
+      observerHelper.getLastInstance()?.trigger(true)
       await nextTick()
 
       expect(wrapper.vm.loadMoreCalled).toBe(1)
@@ -119,7 +81,7 @@ describe('useInfiniteScroll (Nuxt)', () => {
       })
       await nextTick()
 
-      mockObserver?.trigger(true)
+      observerHelper.getLastInstance()?.trigger(true)
       await nextTick()
 
       expect(wrapper.vm.loadMoreCalled).toBe(0)
@@ -131,7 +93,7 @@ describe('useInfiniteScroll (Nuxt)', () => {
       })
       await nextTick()
 
-      mockObserver?.trigger(true)
+      observerHelper.getLastInstance()?.trigger(true)
       await nextTick()
 
       expect(wrapper.vm.loadMoreCalled).toBe(0)
@@ -143,7 +105,7 @@ describe('useInfiniteScroll (Nuxt)', () => {
       })
       await nextTick()
 
-      mockObserver?.trigger(false)
+      observerHelper.getLastInstance()?.trigger(false)
       await nextTick()
 
       expect(wrapper.vm.loadMoreCalled).toBe(0)

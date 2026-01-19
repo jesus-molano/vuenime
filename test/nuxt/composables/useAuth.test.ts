@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { defineComponent, h } from 'vue'
 import { useAuth } from '~/composables/useAuth'
+import { createMockLocalStorage, cleanupBrowserMocks, type MockLocalStorage } from '../../mocks/browser-apis'
 
 // Test component that uses the composable
 const TestComponent = defineComponent({
@@ -39,26 +40,15 @@ const TestComponent = defineComponent({
 })
 
 describe('useAuth (Nuxt)', () => {
-  let mockStorage: Record<string, string>
+  let storageMock: MockLocalStorage
 
   beforeEach(() => {
     vi.clearAllMocks()
-    mockStorage = {}
-
-    // Mock localStorage
-    vi.stubGlobal('localStorage', {
-      getItem: vi.fn((key: string) => mockStorage[key] ?? null),
-      setItem: vi.fn((key: string, value: string) => {
-        mockStorage[key] = value
-      }),
-      removeItem: vi.fn((key: string) => {
-        mockStorage[key] = undefined as unknown as string
-      }),
-    })
+    storageMock = createMockLocalStorage()
   })
 
   afterEach(() => {
-    vi.unstubAllGlobals()
+    cleanupBrowserMocks()
   })
 
   describe('initial state - unauthenticated', () => {
@@ -128,7 +118,7 @@ describe('useAuth (Nuxt)', () => {
       }
 
       // Should have attempted to save path
-      expect(localStorage.setItem).toHaveBeenCalled()
+      expect(storageMock.setItem).toHaveBeenCalled()
     })
 
     it('should save redirect path to localStorage when signInWithGitHub is called', async () => {
@@ -140,7 +130,7 @@ describe('useAuth (Nuxt)', () => {
         // Expected to fail
       }
 
-      expect(localStorage.setItem).toHaveBeenCalled()
+      expect(storageMock.setItem).toHaveBeenCalled()
     })
   })
 })

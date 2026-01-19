@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { defineComponent, h, nextTick } from 'vue'
 import { useSearchHistory } from '~/composables/useSearchHistory'
+import { createMockLocalStorage, cleanupBrowserMocks, type MockLocalStorage } from '../../mocks/browser-apis'
 
 // Test component that uses the composable
 const TestComponent = defineComponent({
@@ -21,26 +22,15 @@ const TestComponent = defineComponent({
 })
 
 describe('useSearchHistory (Nuxt)', () => {
-  let mockStorage: Record<string, string>
+  let storageMock: MockLocalStorage
 
   beforeEach(() => {
     vi.clearAllMocks()
-    mockStorage = {}
-
-    // Mock localStorage
-    vi.stubGlobal('localStorage', {
-      getItem: vi.fn((key: string) => mockStorage[key] ?? null),
-      setItem: vi.fn((key: string, value: string) => {
-        mockStorage[key] = value
-      }),
-      removeItem: vi.fn((key: string) => {
-        mockStorage[key] = undefined as unknown as string
-      }),
-    })
+    storageMock = createMockLocalStorage()
   })
 
   afterEach(() => {
-    vi.unstubAllGlobals()
+    cleanupBrowserMocks()
   })
 
   describe('initial state', () => {
@@ -52,7 +42,7 @@ describe('useSearchHistory (Nuxt)', () => {
     })
 
     it('should load history from localStorage on mount', async () => {
-      mockStorage.vuenime_search_history = JSON.stringify(['naruto', 'one piece'])
+      storageMock.store.vuenime_search_history = JSON.stringify(['naruto', 'one piece'])
 
       const wrapper = await mountSuspended(TestComponent)
       await nextTick()
@@ -232,7 +222,7 @@ describe('useSearchHistory (Nuxt)', () => {
       wrapper.vm.addToHistory('naruto')
       await nextTick()
 
-      expect(localStorage.setItem).toHaveBeenCalledWith(
+      expect(storageMock.setItem).toHaveBeenCalledWith(
         'vuenime_search_history',
         expect.stringContaining('naruto')
       )
@@ -247,7 +237,7 @@ describe('useSearchHistory (Nuxt)', () => {
       wrapper.vm.removeFromHistory('naruto')
       await nextTick()
 
-      expect(localStorage.setItem).toHaveBeenLastCalledWith('vuenime_search_history', '[]')
+      expect(storageMock.setItem).toHaveBeenLastCalledWith('vuenime_search_history', '[]')
     })
   })
 })

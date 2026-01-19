@@ -4,6 +4,7 @@ import { defineComponent, h, nextTick, ref } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
 import { useFavoriteToggle } from '~/composables/useFavoriteToggle'
 import { createMockFavoritesStore } from '../../mocks/stores'
+import { createMockAnimation, createControllableAnimation } from '../../mocks/browser-apis'
 
 // Mock the favorites store
 const mockFavoritesStore = createMockFavoritesStore()
@@ -11,15 +12,6 @@ const mockFavoritesStore = createMockFavoritesStore()
 vi.mock('~/stores/favorites', () => ({
   useFavoritesStore: () => mockFavoritesStore,
 }))
-
-// Mock animation
-const mockAnimation = {
-  finished: Promise.resolve(),
-  play: vi.fn(),
-  pause: vi.fn(),
-  cancel: vi.fn(),
-  finish: vi.fn(),
-}
 
 // Test component that uses the composable (without cardRef)
 const TestComponentBasic = defineComponent({
@@ -142,16 +134,7 @@ describe('useFavoriteToggle (Nuxt)', () => {
       mockFavoritesStore.isFavorite.mockReturnValue(true)
 
       // Create a pending animation promise we can control
-      let resolveAnimation: () => void
-      const pendingAnimation = {
-        finished: new Promise<void>((resolve) => {
-          resolveAnimation = resolve
-        }),
-        play: vi.fn(),
-        pause: vi.fn(),
-        cancel: vi.fn(),
-        finish: vi.fn(),
-      }
+      const controllableAnimation = createControllableAnimation()
 
       const wrapper = await mountSuspended(TestComponentWithCard, {
         props: { animeId: 1 },
@@ -159,7 +142,7 @@ describe('useFavoriteToggle (Nuxt)', () => {
 
       // Get the card element and mock its animate method
       const cardEl = wrapper.find('.card').element as HTMLElement
-      cardEl.animate = vi.fn().mockReturnValue(pendingAnimation)
+      cardEl.animate = vi.fn().mockReturnValue(controllableAnimation)
 
       // Start toggle (don't await)
       const togglePromise = wrapper.find('#toggle-btn').trigger('click')
@@ -169,7 +152,7 @@ describe('useFavoriteToggle (Nuxt)', () => {
       expect(wrapper.find('#is-removing').text()).toBe('true')
 
       // Resolve animation and wait
-      resolveAnimation!()
+      controllableAnimation.resolve()
       await togglePromise
       await nextTick()
     })
@@ -183,6 +166,7 @@ describe('useFavoriteToggle (Nuxt)', () => {
 
       // Get the card element and mock its animate method
       const cardEl = wrapper.find('.card').element as HTMLElement
+      const mockAnimation = createMockAnimation()
       const animateSpy = vi.fn().mockReturnValue(mockAnimation)
       cardEl.animate = animateSpy
 
@@ -212,6 +196,7 @@ describe('useFavoriteToggle (Nuxt)', () => {
 
       // Get the card element and mock its animate method
       const cardEl = wrapper.find('.card').element as HTMLElement
+      const mockAnimation = createMockAnimation()
       cardEl.animate = vi.fn().mockReturnValue(mockAnimation)
 
       // Click toggle
@@ -233,6 +218,7 @@ describe('useFavoriteToggle (Nuxt)', () => {
 
       // Get the card element and mock its animate method
       const cardEl = wrapper.find('.card').element as HTMLElement
+      const mockAnimation = createMockAnimation()
       cardEl.animate = vi.fn().mockReturnValue(mockAnimation)
 
       // Click toggle

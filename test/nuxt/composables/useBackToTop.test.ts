@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { defineComponent, h, nextTick } from 'vue'
 import { useBackToTop } from '~/composables/useBackToTop'
+import { createMockScrollBehavior, cleanupBrowserMocks, type MockScrollBehavior } from '../../mocks/browser-apis'
 
 // Test component that uses the composable
 const TestComponent = defineComponent({
@@ -24,50 +25,29 @@ const TestComponent = defineComponent({
 })
 
 describe('useBackToTop (Nuxt)', () => {
-  let mockScrollTo: ReturnType<typeof vi.fn>
-  let scrollListeners: Array<() => void> = []
+  let scrollMock: MockScrollBehavior
 
   beforeEach(() => {
     vi.clearAllMocks()
-    scrollListeners = []
-
-    // Mock scrollTo
-    mockScrollTo = vi.fn()
-    vi.stubGlobal('scrollTo', mockScrollTo)
-
-    // Mock addEventListener to capture scroll handlers
-    const originalAddEventListener = window.addEventListener.bind(window)
-    vi.stubGlobal('addEventListener', (event: string, handler: EventListener, options?: boolean | AddEventListenerOptions) => {
-      if (event === 'scroll') {
-        scrollListeners.push(handler as () => void)
-      }
-      return originalAddEventListener(event, handler, options)
-    })
-
-    // Reset scrollY
-    Object.defineProperty(window, 'scrollY', {
-      value: 0,
-      writable: true,
-      configurable: true,
-    })
+    scrollMock = createMockScrollBehavior()
   })
 
   afterEach(() => {
-    vi.unstubAllGlobals()
+    cleanupBrowserMocks()
   })
 
   describe('with default threshold (500)', () => {
     it('should register scroll event listener on mount', async () => {
       await mountSuspended(TestComponent)
-      expect(scrollListeners.length).toBeGreaterThan(0)
+      expect(scrollMock.scrollListeners.length).toBeGreaterThan(0)
     })
 
     it('should show button when scrolled past threshold', async () => {
       const wrapper = await mountSuspended(TestComponent)
 
       // Simulate scroll past threshold
-      Object.defineProperty(window, 'scrollY', { value: 600, configurable: true })
-      scrollListeners.forEach((handler) => handler())
+      scrollMock.setScrollY(600)
+      scrollMock.triggerScroll()
       await nextTick()
 
       expect(wrapper.find('#visibility').text()).toBe('visible')
@@ -77,14 +57,14 @@ describe('useBackToTop (Nuxt)', () => {
       const wrapper = await mountSuspended(TestComponent)
 
       // Scroll past threshold
-      Object.defineProperty(window, 'scrollY', { value: 600, configurable: true })
-      scrollListeners.forEach((handler) => handler())
+      scrollMock.setScrollY(600)
+      scrollMock.triggerScroll()
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('visible')
 
       // Scroll back
-      Object.defineProperty(window, 'scrollY', { value: 400, configurable: true })
-      scrollListeners.forEach((handler) => handler())
+      scrollMock.setScrollY(400)
+      scrollMock.triggerScroll()
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('hidden')
     })
@@ -97,14 +77,14 @@ describe('useBackToTop (Nuxt)', () => {
       })
 
       // Below custom threshold
-      Object.defineProperty(window, 'scrollY', { value: 150, configurable: true })
-      scrollListeners.forEach((handler) => handler())
+      scrollMock.setScrollY(150)
+      scrollMock.triggerScroll()
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('hidden')
 
       // Above custom threshold
-      Object.defineProperty(window, 'scrollY', { value: 250, configurable: true })
-      scrollListeners.forEach((handler) => handler())
+      scrollMock.setScrollY(250)
+      scrollMock.triggerScroll()
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('visible')
     })
@@ -117,14 +97,14 @@ describe('useBackToTop (Nuxt)', () => {
       })
 
       // At exact threshold
-      Object.defineProperty(window, 'scrollY', { value: 500, configurable: true })
-      scrollListeners.forEach((handler) => handler())
+      scrollMock.setScrollY(500)
+      scrollMock.triggerScroll()
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('hidden')
 
       // Just past threshold
-      Object.defineProperty(window, 'scrollY', { value: 501, configurable: true })
-      scrollListeners.forEach((handler) => handler())
+      scrollMock.setScrollY(501)
+      scrollMock.triggerScroll()
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('visible')
     })
@@ -135,8 +115,8 @@ describe('useBackToTop (Nuxt)', () => {
       })
 
       // Any scroll should show button
-      Object.defineProperty(window, 'scrollY', { value: 1, configurable: true })
-      scrollListeners.forEach((handler) => handler())
+      scrollMock.setScrollY(1)
+      scrollMock.triggerScroll()
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('visible')
     })

@@ -1,20 +1,17 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { h } from 'vue'
 import HorizontalCarousel from '~/components/ui/HorizontalCarousel.vue'
-
-// Mock ResizeObserver
-class ResizeObserverMock {
-  observe = vi.fn()
-  unobserve = vi.fn()
-  disconnect = vi.fn()
-}
-
-vi.stubGlobal('ResizeObserver', ResizeObserverMock)
+import { createMockResizeObserver, cleanupBrowserMocks } from '../../../mocks/browser-apis'
 
 describe('HorizontalCarousel', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    createMockResizeObserver()
+  })
+
+  afterEach(() => {
+    cleanupBrowserMocks()
   })
 
   describe('rendering', () => {
