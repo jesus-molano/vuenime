@@ -39,7 +39,7 @@ function formatEntry(entry: LogEntry): string {
   return `${prefix} ${message}`
 }
 
-function log(level: LogLevel, service: string, message: string, context?: LogContext): void {
+function log(level: LogLevel, service: string, message: string, context?: LogContext, error?: unknown): void {
   if (!shouldLog(level)) return
 
   const entry: LogEntry = {
@@ -48,6 +48,17 @@ function log(level: LogLevel, service: string, message: string, context?: LogCon
     message,
     context,
     timestamp: new Date().toISOString(),
+  }
+
+  if (error) {
+    // If context is not defined, initialize it
+    if (!entry.context) entry.context = {}
+    // Add error to context for simple string formatting in current implementation
+    // or keep it separate if we want to print it separately
+    entry.context.error = error instanceof Error ? error.message : String(error)
+    if (error instanceof Error && error.stack) {
+      entry.context.stack = error.stack
+    }
   }
 
   const formatted = formatEntry(entry)
@@ -73,7 +84,7 @@ export function createLogger(service: string) {
     debug: (message: string, context?: LogContext) => log('debug', service, message, context),
     info: (message: string, context?: LogContext) => log('info', service, message, context),
     warn: (message: string, context?: LogContext) => log('warn', service, message, context),
-    error: (message: string, context?: LogContext) => log('error', service, message, context),
+    error: (message: string, error?: unknown, context?: LogContext) => log('error', service, message, context, error),
   }
 }
 
