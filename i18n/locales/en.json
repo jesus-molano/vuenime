@@ -319,5 +319,32 @@
     "goHome": "Return Home",
     "goBack": "Go Back",
     "code": "Error Code"
+  },
+  "notifications": {
+    "favoriteAdded": "Added to favorites",
+    "favoriteAddedDesc": "{title} has been added to your favorites",
+    "favoriteRemoved": "Removed from favorites",
+    "favoriteRemovedDesc": "{title} has been removed from your favorites",
+    "error": "Error",
+    "favoriteErrorDesc": "Could not update favorites. Please try again.",
+    "clearFavorites": "Favorites cleared",
+    "clearFavoritesDesc": "All favorites have been removed",
+    "episodeWatched": "Episode marked as watched",
+    "episodeWatchedDesc": "{title} - Episode {episode} marked as watched",
+    "episodeUnwatched": "Episode unmarked",
+    "episodeUnwatchedDesc": "{title} - Episode {episode} unmarked",
+    "allEpisodesWatched": "All episodes marked",
+    "allEpisodesWatchedDesc": "All episodes of {title} marked as watched",
+    "watchedCleared": "Watch progress cleared",
+    "watchedClearedDesc": "Watch progress for {title} has been cleared",
+    "watchedErrorDesc": "Could not update watch status. Please try again.",
+    "loading": "Interference detected...",
+    "loadingAnimeDesc": "The multiverse database is taking longer than usual. Stay calm, senpai!",
+    "rateLimited": "Too many nakamas!",
+    "rateLimitedDesc": "The server is in a filler arc. Wait a few seconds while it recovers its power.",
+    "serviceUnavailable": "Server is training",
+    "serviceUnavailableDesc": "Our protagonist is in their training arc. They'll be back stronger in a few minutes.",
+    "notFound": "Anime not found",
+    "notFoundDesc": "This anime doesn't appear in our catalog. Are you sure it's not a lost OVA?"
   }
 }

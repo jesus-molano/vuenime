@@ -39,6 +39,7 @@
           :synopsis="anime.synopsis"
           :anime-id="animeId"
           :total-episodes="anime.episodes"
+          :anime-title="anime.title"
         />
         <AnimeDetailTrailer
           :trailer="anime.trailer"
@@ -60,9 +61,56 @@
 
 <script setup lang="ts">
 const route = useRoute()
+const { loadingAnime, rateLimited, serviceUnavailable, animeNotFound } = useNotifications()
 
 const animeId = computed(() => route.params.id as string)
 const { anime, isLoading, error, refresh } = useAnimeDetail(animeId)
+
+// Show loading toast only if it takes longer than 3 seconds
+let loadingTimeout: ReturnType<typeof setTimeout> | null = null
+let dismissToast: (() => void) | null = null
+
+watch(isLoading, (loading) => {
+  if (loading && !anime.value) {
+    loadingTimeout = setTimeout(() => {
+      if (isLoading.value) {
+        dismissToast = loadingAnime()
+      }
+    }, 3000)
+  } else {
+    // Loading finished - dismiss toast and clear timeout
+    if (loadingTimeout) {
+      clearTimeout(loadingTimeout)
+      loadingTimeout = null
+    }
+    if (dismissToast) {
+      dismissToast()
+      dismissToast = null
+    }
+  }
+})
+
+// Show themed error notifications
+watch(error, (err) => {
+  if (!err) return
+
+  // useFetch error can have statusCode at different levels
+  const fetchError = err as { statusCode?: number; data?: { statusCode?: number } }
+  const statusCode = fetchError.statusCode ?? fetchError.data?.statusCode
+
+  if (statusCode === 429) {
+    rateLimited()
+  } else if (statusCode === 503 || statusCode === 502 || statusCode === 504) {
+    serviceUnavailable()
+  } else if (statusCode === 404) {
+    animeNotFound()
+  }
+})
+
+onUnmounted(() => {
+  if (loadingTimeout) clearTimeout(loadingTimeout)
+  if (dismissToast) dismissToast()
+})
 
 useSeoMeta({
   title: () => (anime.value ? `${anime.value.title} | VueNime` : 'Loading... | VueNime'),

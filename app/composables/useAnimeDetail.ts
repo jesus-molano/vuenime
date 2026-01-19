@@ -1,16 +1,17 @@
-import type { AnimeDetailResponse } from '~~/shared/types'
+import type { AnimeDetailResponse, Anime } from '~~/shared/types'
+import { createCachedData, markCacheFresh, CACHE_TTL } from '~/utils/cache'
 
 export const useAnimeDetail = (id: Ref<string> | string) => {
   const animeId = toRef(id)
-  const nuxtApp = useNuxtApp()
 
   const { data, status, error, refresh } = useFetch<AnimeDetailResponse>(() => `/api/jikan/anime/${animeId.value}`, {
-    key: () => `anime-detail-${animeId.value}`,
-    getCachedData: (key) => nuxtApp.payload.data[key] as AnimeDetailResponse | undefined,
-    watch: [animeId], // Re-fetch when animeId changes
+    key: computed(() => `anime-detail-${animeId.value}`),
+    lazy: true,
+    // Cache for 1 hour - anime details rarely change
+    getCachedData: createCachedData(CACHE_TTL.VERY_LONG),
   })
 
-  const anime = computed(() => data.value?.data)
+  const anime = computed<Anime | null>(() => data.value?.data ?? null)
   const isLoading = computed(() => status.value === 'pending')
 
   return {
@@ -49,6 +50,8 @@ export const prefetchAnimeDetail = (id: string | number) => {
       const data = await $fetch<AnimeDetailResponse>(`/api/jikan/anime/${animeId}`)
       // Store in nuxt payload so useFetch picks it up
       nuxtApp.payload.data[cacheKey] = data
+      // Mark cache as fresh for TTL tracking
+      markCacheFresh(cacheKey)
     } catch {
       // Silently fail - prefetch is best effort
       prefetchCache.delete(cacheKey)

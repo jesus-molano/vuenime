@@ -149,8 +149,6 @@ const props = defineProps<{
   anime: Anime
 }>()
 
-const { formatNumber } = useFormatters()
-
 // Extract youtube ID from embed_url if youtube_id is not available
 const extractYoutubeId = (embedUrl: string): string | null => {
   const match = embedUrl.match(/\/embed\/([^?]+)/)

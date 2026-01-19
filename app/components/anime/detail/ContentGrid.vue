@@ -5,10 +5,7 @@
 
     <UContainer class="relative overflow-hidden">
       <div
-        :class="[
-          'grid min-w-0 gap-6 sm:gap-8 lg:gap-12',
-          hasEpisodes || isLoading ? 'lg:grid-cols-2' : 'lg:grid-cols-1',
-        ]"
+        :class="['grid min-w-0 gap-6 sm:gap-8 lg:gap-12', shouldShowTwoColumns ? 'lg:grid-cols-2' : 'lg:grid-cols-1']"
       >
         <!-- Synopsis Column -->
         <div
@@ -261,14 +258,54 @@ const props = defineProps<{
   synopsis: string | null | undefined
   animeId: string
   totalEpisodes: number | null
+  animeTitle?: string
 }>()
 
 const { t } = useI18n()
+const notify = useNotifications()
 const { episodes, isLoading, isLoadingMore, hasEpisodes, hasNextPage, loadMore } = useAnimeEpisodes(props.animeId)
+
+// Prevent hydration mismatch by only applying 2-column layout after mount
+const isMounted = ref(false)
+onMounted(() => {
+  isMounted.value = true
+})
+
+const shouldShowTwoColumns = computed(() => isMounted.value && (hasEpisodes.value || isLoading.value))
 
 // Watched episodes functionality
 const malId = computed(() => parseInt(props.animeId, 10))
-const { isEpisodeWatched, watchedCount, toggleWatched, markAllAsWatched, clearAllWatched } = useWatchedToggle(malId)
+const watchedStore = useWatchedStore()
+const { isEpisodeWatched, watchedCount } = useWatchedToggle(malId)
+
+// Toggle watched with notification
+async function toggleWatched(episodeNumber: number) {
+  const wasWatched = watchedStore.isWatched(malId.value, episodeNumber)
+
+  await watchedStore.toggleWatched({
+    mal_id: malId.value,
+    episode_number: episodeNumber,
+  })
+
+  // Show notification
+  if (props.animeTitle) {
+    if (wasWatched) {
+      notify.episodeMarkedUnwatched(props.animeTitle, episodeNumber)
+    } else {
+      notify.episodeMarkedWatched(props.animeTitle, episodeNumber)
+    }
+  }
+}
+
+// Mark all as watched with notification
+async function markAllAsWatched(total: number) {
+  await watchedStore.markAllAsWatched(malId.value, total, props.animeTitle)
+}
+
+// Clear all watched with notification
+async function clearAllWatched() {
+  await watchedStore.clearWatchedForAnime(malId.value, props.animeTitle)
+}
 
 const initialCount = 10
 const showAll = ref(false)

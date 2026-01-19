@@ -114,6 +114,31 @@
   --color-primary-950: rgb(var(--rp-iris) / 0.5);
 }
 
+/*
+ * Override Nuxt UI semantic colors for Rose Pine theme
+ * Using higher specificity selector to ensure override
+ */
+html.dark,
+.dark {
+  --ui-bg: #191724 !important;
+  --ui-bg-muted: #1f1d2e !important;
+  --ui-bg-elevated: #26233a !important;
+  --ui-bg-accented: #26233a !important;
+  --ui-bg-inverted: #e0def4 !important;
+
+  --ui-text: #e0def4 !important;
+  --ui-text-muted: #908caa !important;
+  --ui-text-dimmed: #6e6a86 !important;
+  --ui-text-toned: #908caa !important;
+  --ui-text-highlighted: #e0def4 !important;
+  --ui-text-inverted: #191724 !important;
+
+  --ui-border: #26233a !important;
+  --ui-border-muted: #1f1d2e !important;
+  --ui-border-accented: #6e6a86 !important;
+  --ui-border-inverted: #e0def4 !important;
+}
+
 /* Utility classes for Rosé Pine */
 .bg-rp-base {
   background-color: rgb(var(--rp-base));

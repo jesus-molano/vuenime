@@ -1,16 +1,20 @@
-import type { AnimeStreamingResponse } from '~~/shared/types'
+import type { AnimeStreamingResponse, StreamingLink } from '~~/shared/types'
+import { createCachedData, CACHE_TTL } from '~/utils/cache'
 
 export const useAnimeStreaming = (id: Ref<string> | string) => {
   const animeId = toRef(id)
 
-  const { data, status, error } = useFetch<AnimeStreamingResponse>(
+  const { data, status, error, refresh } = useFetch<AnimeStreamingResponse>(
     () => `/api/jikan/anime/${animeId.value}/streaming`,
     {
-      key: () => `anime-streaming-${animeId.value}`,
+      key: computed(() => `anime-streaming-${animeId.value}`),
+      lazy: true,
+      // Cache for 1 hour - streaming links rarely change
+      getCachedData: createCachedData(CACHE_TTL.VERY_LONG),
     }
   )
 
-  const streamingLinks = computed(() => data.value?.data ?? [])
+  const streamingLinks = computed<StreamingLink[]>(() => data.value?.data ?? [])
   const isLoading = computed(() => status.value === 'pending')
   const hasLinks = computed(() => streamingLinks.value.length > 0)
 
@@ -19,5 +23,6 @@ export const useAnimeStreaming = (id: Ref<string> | string) => {
     isLoading,
     hasLinks,
     error,
+    refresh,
   }
 }

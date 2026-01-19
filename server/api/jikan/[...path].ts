@@ -1,7 +1,18 @@
 import { RATE_LIMIT } from '~~/shared/constants/api'
+import { jikanPathSchema } from '~~/shared/schemas'
+import { logger } from '~~/server/utils/logger'
 
 const requestQueue: number[] = []
 const ONE_MINUTE_MS = 60 * 1000
+
+const ALLOWED_ENDPOINTS = ['anime', 'top/anime', 'seasons', 'schedules', 'genres/anime', 'random/anime']
+
+function isAllowedEndpoint(path: string): boolean {
+  const normalized = path.replace(/^\/+/, '')
+  return ALLOWED_ENDPOINTS.some(
+    (ep) => normalized === ep || normalized.startsWith(`${ep}/`) || normalized.match(/^anime\/\d+/)
+  )
+}
 
 const waitForRateLimit = async (): Promise<void> => {
   const now = Date.now()
@@ -31,15 +42,85 @@ const waitForRateLimit = async (): Promise<void> => {
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const path = event.context.params?.path
-  const query = getQuery(event)
-  const queryString = new URLSearchParams(query as Record<string, string>).toString()
 
-  await waitForRateLimit()
+  // Validate path with Zod
+  const validation = jikanPathSchema.safeParse(path)
+  if (!validation.success) {
+    logger.jikan.warn('Invalid path', { path, error: validation.error.message })
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Invalid API path',
+    })
+  }
 
-  const url = `${config.jikanApiUrl}/${path}${queryString ? `?${queryString}` : ''}`
+  // Check if endpoint is allowed
+  if (!isAllowedEndpoint(validation.data)) {
+    logger.jikan.warn('Endpoint not allowed', { path: validation.data })
+    throw createError({
+      statusCode: 403,
+      statusMessage: 'Endpoint not allowed',
+    })
+  }
 
-  return await $fetch(url, {
-    retry: RATE_LIMIT.MAX_RETRIES,
-    retryDelay: RATE_LIMIT.RETRY_DELAY,
-  })
+  try {
+    await waitForRateLimit()
+
+    const query = getQuery(event)
+    const queryString = new URLSearchParams(query as Record<string, string>).toString()
+    const url = `${config.jikanApiUrl}/${validation.data}${queryString ? `?${queryString}` : ''}`
+
+    return await $fetch(url, {
+      retry: RATE_LIMIT.MAX_RETRIES,
+      retryDelay: RATE_LIMIT.RETRY_DELAY,
+      timeout: 10000,
+    })
+  } catch (error: unknown) {
+    // Handle FetchError from $fetch
+    if (error && typeof error === 'object' && 'response' in error) {
+      const fetchError = error as { response?: { status?: number }; message?: string }
+      const status = fetchError.response?.status
+
+      // 429 - Rate Limited by Jikan API
+      if (status === 429) {
+        logger.jikan.warn('Rate limited by Jikan API', { path: validation.data })
+        throw createError({
+          statusCode: 429,
+          statusMessage: 'Rate limited - please wait a moment and try again',
+        })
+      }
+
+      // 502/503/504 - Upstream issues (MAL down, Jikan overloaded)
+      if (status && status >= 502 && status <= 504) {
+        logger.jikan.warn('Upstream service unavailable', { path: validation.data, status })
+        throw createError({
+          statusCode: 503,
+          statusMessage: 'Anime database temporarily unavailable - please try again later',
+        })
+      }
+
+      // 404 - Not found
+      if (status === 404) {
+        logger.jikan.info('Resource not found', { path: validation.data })
+        throw createError({
+          statusCode: 404,
+          statusMessage: 'Anime not found',
+        })
+      }
+    }
+
+    logger.jikan.error('Request failed', {
+      path: validation.data,
+      error: error instanceof Error ? error.message : String(error),
+    })
+
+    // Re-throw if it's already a createError
+    if (error && typeof error === 'object' && 'statusCode' in error) {
+      throw error
+    }
+
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to fetch from anime API',
+    })
+  }
 })

@@ -1,6 +1,7 @@
 import type { Anime, AnimeListResponse } from '~~/shared/types'
 import { PAGINATION } from '~~/shared/constants/api'
 import { animeApi } from '~/services/api'
+import { createCachedData, CACHE_TTL } from '~/utils/cache'
 
 export const useAnimeList = () => {
   // Additional anime loaded via "load more" (client-side only)
@@ -23,6 +24,8 @@ export const useAnimeList = () => {
     key: 'anime-list-home',
     query: { page: PAGINATION.DEFAULT_PAGE, limit: PAGINATION.DEFAULT_LIMIT },
     watch: false,
+    // Cache for 10 minutes on client navigation
+    getCachedData: createCachedData(CACHE_TTL.MEDIUM),
   })
 
   // Computed anime list - combines SSR data with additional loaded data

@@ -26,7 +26,41 @@ export default defineNuxtConfig({
     '@nuxtjs/supabase',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
+    'nuxt-security',
   ],
+
+  // Security configuration
+  security: {
+    headers: {
+      // Allow embedding YouTube videos for trailers
+      crossOriginEmbedderPolicy: 'unsafe-none',
+      contentSecurityPolicy: {
+        'img-src': ["'self'", 'https:', 'data:', 'blob:'],
+        'media-src': ["'self'", 'https://www.youtube.com', 'https://youtube.com'],
+        'frame-src': ["'self'", 'https://www.youtube.com', 'https://youtube.com'],
+        'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https:', 'blob:'],
+        'style-src': ["'self'", "'unsafe-inline'"],
+        'font-src': ["'self'", 'https:', 'data:'],
+        'connect-src': ["'self'", 'https:'],
+        'worker-src': ["'self'", 'blob:'],
+      },
+      xFrameOptions: 'SAMEORIGIN',
+      xContentTypeOptions: 'nosniff',
+      referrerPolicy: 'strict-origin-when-cross-origin',
+      permissionsPolicy: {
+        camera: [],
+        microphone: [],
+        geolocation: [],
+      },
+    },
+    // Disable rate limiting (handled by Jikan API proxy)
+    rateLimiter: false,
+    // Allow requests to external APIs
+    requestSizeLimiter: {
+      maxRequestSizeInBytes: 2000000, // 2MB
+      maxUploadFileRequestInBytes: 8000000, // 8MB
+    },
+  },
 
   // Supabase configuration - auth is optional, no forced redirects
   supabase: {
@@ -117,17 +151,65 @@ export default defineNuxtConfig({
   },
 
   // Route rules for ISR (Vercel deployment)
+  // Security headers are handled by nuxt-security module
   routeRules: {
     '/': { prerender: true },
-    '/anime/**': { isr: 3600 }, // Revalidate hourly
+    '/anime/**': {
+      isr: 3600, // Revalidate hourly
+      headers: {
+        'cache-control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+      },
+    },
     '/api/jikan/**': {
-      cache: { maxAge: 600 }, // 10 minute edge cache
-      headers: { 'cache-control': 's-maxage=600, stale-while-revalidate' },
+      cache: { maxAge: 600, staleMaxAge: 3600 },
+      headers: {
+        'cache-control': 's-maxage=600, stale-while-revalidate',
+      },
     },
   },
 
   // Nitro configuration
   nitro: {
     compressPublicAssets: true,
+  },
+
+  // Vite configuration - proper code splitting
+  vite: {
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            // Vue core - separate chunk for framework
+            if (id.includes('node_modules/@vue') || id.includes('node_modules/vue')) {
+              return 'vue-vendor'
+            }
+            // Vue Router
+            if (id.includes('node_modules/vue-router')) {
+              return 'vue-router'
+            }
+            // Reka UI - base primitives for Nuxt UI
+            if (id.includes('node_modules/reka-ui') || id.includes('node_modules/@reka-ui')) {
+              return 'ui-primitives'
+            }
+            // Supabase client
+            if (id.includes('node_modules/@supabase')) {
+              return 'supabase'
+            }
+            // i18n
+            if (id.includes('node_modules/vue-i18n') || id.includes('node_modules/@intlify')) {
+              return 'i18n'
+            }
+            // State management
+            if (id.includes('node_modules/pinia')) {
+              return 'pinia'
+            }
+            // Validation
+            if (id.includes('node_modules/zod')) {
+              return 'zod'
+            }
+          },
+        },
+      },
+    },
   },
 })

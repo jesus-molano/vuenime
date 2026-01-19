@@ -313,5 +313,32 @@
     "goHome": "ホームに戻る",
     "goBack": "戻る",
     "code": "エラーコード"
+  },
+  "notifications": {
+    "favoriteAdded": "お気に入りに追加しました",
+    "favoriteAddedDesc": "{title}をお気に入りに追加しました",
+    "favoriteRemoved": "お気に入りから削除しました",
+    "favoriteRemovedDesc": "{title}をお気に入りから削除しました",
+    "error": "エラー",
+    "favoriteErrorDesc": "お気に入りを更新できませんでした。もう一度お試しください。",
+    "clearFavorites": "お気に入りを削除しました",
+    "clearFavoritesDesc": "すべてのお気に入りが削除されました",
+    "episodeWatched": "エピソードを視聴済みにしました",
+    "episodeWatchedDesc": "{title} - エピソード{episode}を視聴済みにしました",
+    "episodeUnwatched": "エピソードの視聴済みを解除しました",
+    "episodeUnwatchedDesc": "{title} - エピソード{episode}の視聴済みを解除しました",
+    "allEpisodesWatched": "すべてのエピソードを視聴済みにしました",
+    "allEpisodesWatchedDesc": "{title}のすべてのエピソードを視聴済みにしました",
+    "watchedCleared": "視聴履歴をクリアしました",
+    "watchedClearedDesc": "{title}の視聴履歴をクリアしました",
+    "watchedErrorDesc": "視聴状態を更新できませんでした。もう一度お試しください。",
+    "loading": "干渉を検出...",
+    "loadingAnimeDesc": "マルチバースのデータベースが通常より時間がかかっています。落ち着いて、先輩！",
+    "rateLimited": "仲間が多すぎる！",
+    "rateLimitedDesc": "サーバーがフィラーアークに入っています。力を回復するまで数秒お待ちください。",
+    "serviceUnavailable": "サーバーが修行中",
+    "serviceUnavailableDesc": "主人公が修行編に入っています。数分後にパワーアップして戻ってきます。",
+    "notFound": "アニメが見つかりません",
+    "notFoundDesc": "このアニメはカタログにありません。失われたOVAではないですか？"
   }
 }

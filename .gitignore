@@ -29,4 +29,12 @@ coverage/
 # Playwright
 playwright-report/
 test-results/
+
+# AI
+docs/
 .mcp.json
+.claude/
+CLAUDE.md
+skills/
+AGENTS.md
+

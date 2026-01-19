@@ -319,5 +319,32 @@
     "goHome": "Volver al Inicio",
     "goBack": "Regresar",
     "code": "Código de Error"
+  },
+  "notifications": {
+    "favoriteAdded": "Agregado a favoritos",
+    "favoriteAddedDesc": "{title} ha sido agregado a tus favoritos",
+    "favoriteRemoved": "Eliminado de favoritos",
+    "favoriteRemovedDesc": "{title} ha sido eliminado de tus favoritos",
+    "error": "Error",
+    "favoriteErrorDesc": "No se pudo actualizar favoritos. Inténtalo de nuevo.",
+    "clearFavorites": "Favoritos eliminados",
+    "clearFavoritesDesc": "Todos los favoritos han sido eliminados",
+    "episodeWatched": "Episodio marcado como visto",
+    "episodeWatchedDesc": "{title} - Episodio {episode} marcado como visto",
+    "episodeUnwatched": "Episodio desmarcado",
+    "episodeUnwatchedDesc": "{title} - Episodio {episode} desmarcado",
+    "allEpisodesWatched": "Todos los episodios marcados",
+    "allEpisodesWatchedDesc": "Todos los episodios de {title} marcados como vistos",
+    "watchedCleared": "Progreso de visualización limpiado",
+    "watchedClearedDesc": "El progreso de visualización de {title} ha sido limpiado",
+    "watchedErrorDesc": "No se pudo actualizar el estado de visualización. Inténtalo de nuevo.",
+    "loading": "Interferencias detectadas...",
+    "loadingAnimeDesc": "La base de datos del multiverso está tardando más de lo normal. ¡Paciencia, nakama!",
+    "rateLimited": "¡Demasiados nakamas!",
+    "rateLimitedDesc": "El servidor está en un arco de relleno. Espera unos segundos mientras recupera su poder.",
+    "serviceUnavailable": "El servidor está entrenando",
+    "serviceUnavailableDesc": "Nuestro protagonista está en su arco de entrenamiento. Volverá más fuerte en unos minutos.",
+    "notFound": "Anime no encontrado",
+    "notFoundDesc": "Este anime no aparece en nuestro catálogo. ¿Seguro que no es un OVA perdido?"
   }
 }

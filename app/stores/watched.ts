@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
 import type { WatchedEpisode, MarkWatchedInput } from '~/types/watched'
 import type { Database } from '~~/shared/types/database'
+import { markWatchedInputSchema, markAllWatchedInputSchema, markUnwatchedInputSchema } from '~~/shared/schemas'
 import {
   fetchUserWatchedEpisodes,
-  fetchExistingWatchedIds,
   insertWatchedEpisode,
   insertManyWatchedEpisodes,
   deleteWatchedEpisode,
@@ -15,14 +15,13 @@ export const useWatchedStore = defineStore(
   'watched',
   () => {
     const supabase = useSupabaseClient<Database>()
-    const user = useSupabaseUser()
+    const notify = useNotifications()
 
     const watchedEpisodes = ref<WatchedEpisode[]>([])
     const isLoading = ref(false)
     const hasSynced = ref(false)
-
-    // Cached user ID - updated on auth state changes
-    const cachedUserId = ref<string | null>(null)
+    const syncedForUserId = ref<string | null>(null)
+    const isSyncing = ref(false)
 
     // ============================================
     // Computed Properties
@@ -59,53 +58,42 @@ export const useWatchedStore = defineStore(
     })
 
     // ============================================
-    // Helper Functions
-    // ============================================
-
-    async function getCurrentUserId(): Promise<string | null> {
-      if (cachedUserId.value) return cachedUserId.value
-
-      if (user.value?.id) {
-        cachedUserId.value = user.value.id
-        return cachedUserId.value
-      }
-
-      const {
-        data: { user: sessionUser },
-      } = await supabase.auth.getUser()
-      cachedUserId.value = sessionUser?.id ?? null
-      return cachedUserId.value
-    }
-
-    // ============================================
     // Supabase Sync Operations
     // ============================================
 
-    async function fetchFromSupabase() {
-      const userId = await getCurrentUserId()
-      if (!userId) return
+    /**
+     * Sync local data with Supabase (single API call)
+     * - Fetches remote data once
+     * - Uploads local items that don't exist remotely
+     * - Merges: remote is source of truth
+     */
+    async function syncWithSupabase(userId: string) {
+      if (isSyncing.value) return
 
+      isSyncing.value = true
       isLoading.value = true
       try {
-        watchedEpisodes.value = await fetchUserWatchedEpisodes(supabase, userId)
+        // Single API call - fetch all remote data
+        const remoteData = await fetchUserWatchedEpisodes(supabase, userId)
+        const remoteIds = new Set(remoteData.map((ep) => `${ep.mal_id}-${ep.episode_number}`))
+
+        // Find local items that don't exist remotely
+        const localOnly = watchedEpisodes.value.filter((ep) => !remoteIds.has(`${ep.mal_id}-${ep.episode_number}`))
+
+        // Upload local-only items to Supabase
+        if (localOnly.length > 0) {
+          await insertManyWatchedEpisodes(supabase, userId, localOnly)
+        }
+
+        // Merge: remote + local-only (remote is source of truth for existing items)
+        watchedEpisodes.value = [...remoteData, ...localOnly]
+
         hasSynced.value = true
+        syncedForUserId.value = userId
       } finally {
         isLoading.value = false
+        isSyncing.value = false
       }
-    }
-
-    async function syncLocalToSupabase() {
-      const userId = await getCurrentUserId()
-      if (!userId || watchedEpisodes.value.length === 0) return
-
-      const existingIds = await fetchExistingWatchedIds(supabase, userId)
-      const newEpisodes = watchedEpisodes.value.filter((ep) => !existingIds.has(`${ep.mal_id}-${ep.episode_number}`))
-
-      if (newEpisodes.length > 0) {
-        await insertManyWatchedEpisodes(supabase, userId, newEpisodes)
-      }
-
-      await fetchFromSupabase()
     }
 
     // ============================================
@@ -113,43 +101,58 @@ export const useWatchedStore = defineStore(
     // ============================================
 
     async function markAsWatched(input: MarkWatchedInput) {
-      if (isWatched(input.mal_id, input.episode_number)) return
+      // Validate input
+      const validation = markWatchedInputSchema.safeParse(input)
+      if (!validation.success) {
+        console.error('[WatchedStore] Invalid markAsWatched input:', validation.error.flatten())
+        return
+      }
+
+      const { mal_id, episode_number } = validation.data
+      if (isWatched(mal_id, episode_number)) return
 
       const episode: WatchedEpisode = {
-        mal_id: input.mal_id,
-        episode_number: input.episode_number,
+        mal_id,
+        episode_number,
         watched_at: Date.now(),
       }
 
       // Optimistic update
       watchedEpisodes.value.push(episode)
 
-      const userId = await getCurrentUserId()
-      if (userId) {
-        const { success } = await insertWatchedEpisode(supabase, userId, episode)
+      if (syncedForUserId.value) {
+        const { success } = await insertWatchedEpisode(supabase, syncedForUserId.value, episode)
         if (!success) {
           // Rollback on error
           const index = watchedEpisodes.value.findIndex(
-            (ep) => ep.mal_id === input.mal_id && ep.episode_number === input.episode_number
+            (ep) => ep.mal_id === mal_id && ep.episode_number === episode_number
           )
           if (index !== -1) watchedEpisodes.value.splice(index, 1)
+          notify.watchedError()
         }
       }
     }
 
     async function markAsUnwatched(malId: number, episodeNumber: number) {
+      // Validate input
+      const validation = markUnwatchedInputSchema.safeParse({ malId, episodeNumber })
+      if (!validation.success) {
+        console.error('[WatchedStore] Invalid markAsUnwatched input:', validation.error.flatten())
+        return
+      }
+
       const index = watchedEpisodes.value.findIndex((ep) => ep.mal_id === malId && ep.episode_number === episodeNumber)
       if (index === -1) return
 
       const removed = watchedEpisodes.value[index]!
       watchedEpisodes.value.splice(index, 1)
 
-      const userId = await getCurrentUserId()
-      if (userId) {
-        const { success } = await deleteWatchedEpisode(supabase, userId, malId, episodeNumber)
+      if (syncedForUserId.value) {
+        const { success } = await deleteWatchedEpisode(supabase, syncedForUserId.value, malId, episodeNumber)
         if (!success) {
           // Rollback on error
           watchedEpisodes.value.splice(index, 0, removed)
+          notify.watchedError()
         }
       }
     }
@@ -162,14 +165,23 @@ export const useWatchedStore = defineStore(
       }
     }
 
-    async function markAllAsWatched(malId: number, totalEpisodes: number) {
-      const currentWatched = new Set(getWatchedForAnime(malId))
+    async function markAllAsWatched(malId: number, totalEpisodes: number, animeTitle?: string) {
+      // Validate input - CRITICAL: prevents abuse with large totalEpisodes
+      const validation = markAllWatchedInputSchema.safeParse({ malId, totalEpisodes, animeTitle })
+      if (!validation.success) {
+        console.error('[WatchedStore] Invalid markAllAsWatched input:', validation.error.flatten())
+        notify.watchedError()
+        return
+      }
+
+      const { malId: validMalId, totalEpisodes: validTotalEpisodes } = validation.data
+      const currentWatched = new Set(getWatchedForAnime(validMalId))
       const episodesToAdd: WatchedEpisode[] = []
 
-      for (let i = 1; i <= totalEpisodes; i++) {
+      for (let i = 1; i <= validTotalEpisodes; i++) {
         if (!currentWatched.has(i)) {
           episodesToAdd.push({
-            mal_id: malId,
+            mal_id: validMalId,
             episode_number: i,
             watched_at: Date.now(),
           })
@@ -181,28 +193,38 @@ export const useWatchedStore = defineStore(
       // Optimistic update
       watchedEpisodes.value.push(...episodesToAdd)
 
-      const userId = await getCurrentUserId()
-      if (userId) {
-        const { success } = await insertManyWatchedEpisodes(supabase, userId, episodesToAdd)
+      if (syncedForUserId.value) {
+        const { success } = await insertManyWatchedEpisodes(supabase, syncedForUserId.value, episodesToAdd)
         if (!success) {
           // Rollback on error
           watchedEpisodes.value = watchedEpisodes.value.filter(
-            (ep) => ep.mal_id !== malId || currentWatched.has(ep.episode_number)
+            (ep) => ep.mal_id !== validMalId || currentWatched.has(ep.episode_number)
           )
+          notify.watchedError()
+          return
         }
+      }
+
+      if (animeTitle) {
+        notify.allEpisodesMarkedWatched(animeTitle)
       }
     }
 
-    async function clearWatchedForAnime(malId: number) {
+    async function clearWatchedForAnime(malId: number, animeTitle?: string) {
       const backup = watchedEpisodes.value.filter((ep) => ep.mal_id === malId)
       watchedEpisodes.value = watchedEpisodes.value.filter((ep) => ep.mal_id !== malId)
 
-      const userId = await getCurrentUserId()
-      if (userId) {
-        const { success } = await deleteAllWatchedForAnime(supabase, userId, malId)
+      if (syncedForUserId.value) {
+        const { success } = await deleteAllWatchedForAnime(supabase, syncedForUserId.value, malId)
         if (!success) {
           watchedEpisodes.value.push(...backup)
+          notify.watchedError()
+          return
         }
+      }
+
+      if (animeTitle) {
+        notify.watchedCleared(animeTitle)
       }
     }
 
@@ -210,40 +232,56 @@ export const useWatchedStore = defineStore(
       const backup = [...watchedEpisodes.value]
       watchedEpisodes.value = []
 
-      const userId = await getCurrentUserId()
-      if (userId) {
-        const { success } = await deleteAllWatched(supabase, userId)
+      if (syncedForUserId.value) {
+        const { success } = await deleteAllWatched(supabase, syncedForUserId.value)
         if (!success) {
           watchedEpisodes.value = backup
+          notify.watchedError()
         }
       }
     }
 
     // ============================================
-    // Auth State Watcher
+    // Lifecycle (called by plugin)
     // ============================================
 
-    watch(
-      user,
-      async (newUser, oldUser) => {
-        // Update cached user ID on auth state change
-        cachedUserId.value = newUser?.id ?? null
+    /**
+     * Initialize store - called once on app start
+     */
+    async function initialize(userId: string | null) {
+      const needsSync = userId && (!hasSynced.value || syncedForUserId.value !== userId)
 
-        if (newUser?.id && !oldUser?.id) {
-          await syncLocalToSupabase()
-        } else if (!newUser && oldUser) {
+      if (needsSync) {
+        // Clear data if switching users
+        if (syncedForUserId.value && syncedForUserId.value !== userId) {
           watchedEpisodes.value = []
-          hasSynced.value = false
         }
-      },
-      { immediate: false }
-    )
-
-    async function initialize() {
-      const userId = await getCurrentUserId()
-      if (userId && !hasSynced.value) {
-        await fetchFromSupabase()
+        await syncWithSupabase(userId)
+      } else if (userId && hasSynced.value) {
+        // Already synced for this user - use cached data
+        isLoading.value = false
+      } else if (!userId) {
+        // No user - guest mode with localStorage data
+        isLoading.value = false
+        hasSynced.value = true
       }
+    }
+
+    /**
+     * Handle new sign in - sync local guest data to user account
+     */
+    async function handleSignIn(userId: string) {
+      await syncWithSupabase(userId)
+    }
+
+    /**
+     * Handle sign out - clear user data
+     */
+    function handleSignOut() {
+      syncedForUserId.value = null
+      watchedEpisodes.value = []
+      hasSynced.value = false
+      isLoading.value = false
     }
 
     return {
@@ -252,6 +290,10 @@ export const useWatchedStore = defineStore(
       watchedCount,
       isLoading,
       watchedAnimeIds,
+
+      // Sync state (for persistence - required for pick to work)
+      hasSynced,
+      syncedForUserId,
 
       // Checkers
       isWatched,
@@ -266,18 +308,16 @@ export const useWatchedStore = defineStore(
       clearWatchedForAnime,
       clearAllWatched,
 
-      // Sync
-      fetchFromSupabase,
+      // Lifecycle (plugin only)
       initialize,
+      handleSignIn,
+      handleSignOut,
     }
   },
   {
     persist: {
-      storage: persistedState.cookiesWithOptions({
-        maxAge: 60 * 60 * 24 * 365, // 1 year
-        sameSite: 'lax',
-      }),
-      pick: ['watchedEpisodes'],
+      storage: persistedState.localStorage,
+      pick: ['watchedEpisodes', 'hasSynced', 'syncedForUserId'],
     },
   }
 )

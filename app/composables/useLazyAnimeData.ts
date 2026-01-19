@@ -1,3 +1,5 @@
+import { createCachedData, CACHE_TTL } from '~/utils/cache'
+
 /**
  * Generic composable for lazy loading anime-related data from Jikan API
  * Eliminates code duplication across useAnimeNews, useAnimeReviews, etc.
@@ -17,6 +19,8 @@ export function useLazyAnimeData<T, R = T[]>(
       key: computed(() => `anime-${endpoint}-${unref(animeId)}`),
       watch: false,
       lazy: true,
+      // Cache for 30 minutes - characters, news, recommendations, reviews
+      getCachedData: createCachedData(CACHE_TTL.LONG),
     }
   )
 

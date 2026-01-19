@@ -1,9 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { useFormatters } from '../../app/composables/useFormatters'
+import { formatNumber } from '../../app/utils/formatters'
 
-describe('useFormatters', () => {
-  const { formatNumber } = useFormatters()
-
+describe('formatters', () => {
   describe('formatNumber', () => {
     it('should return the number as string for values under 1000', () => {
       expect(formatNumber(0)).toBe('0')
