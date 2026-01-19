@@ -687,8 +687,17 @@ watch(showFilters, (isOpen) => {
   }
 })
 
+const config = useRuntimeConfig()
 useSeoMeta({
   title: () => `${searchTitle.value || t('nav.explore')} | VueNime`,
   description: () => (searchTitle.value ? `${t('search.resultsFor')} ${searchTitle.value}` : t('nav.explore')),
+  ogTitle: () => `${searchTitle.value || t('nav.explore')} | VueNime`,
+  ogDescription: () => (searchTitle.value ? `${t('search.resultsFor')} ${searchTitle.value}` : t('nav.explore')),
+  ogImage: `${config.public.siteUrl}/og-image.png`,
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: () => `${searchTitle.value || t('nav.explore')} | VueNime`,
+  twitterDescription: () => (searchTitle.value ? `${t('search.resultsFor')} ${searchTitle.value}` : t('nav.explore')),
+  twitterImage: `${config.public.siteUrl}/og-image.png`,
 })
 </script>

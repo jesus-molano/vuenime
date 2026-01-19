@@ -146,10 +146,17 @@ const { triggerRef } = useInfiniteScroll({
 })
 
 // SEO
+const config = useRuntimeConfig()
 useSeoMeta({
   title: `VueNime - ${t('home.title')} ${t('home.titleHighlight')}`,
   description: t('home.subtitle'),
   ogTitle: `VueNime - ${t('home.title')} ${t('home.titleHighlight')}`,
   ogDescription: t('home.subtitle'),
+  ogImage: `${config.public.siteUrl}/og-image.png`,
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: `VueNime - ${t('home.title')} ${t('home.titleHighlight')}`,
+  twitterDescription: t('home.subtitle'),
+  twitterImage: `${config.public.siteUrl}/og-image.png`,
 })
 </script>
