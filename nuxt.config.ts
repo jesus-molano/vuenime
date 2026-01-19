@@ -172,4 +172,44 @@ export default defineNuxtConfig({
   nitro: {
     compressPublicAssets: true,
   },
+
+  // Vite configuration - proper code splitting
+  vite: {
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            // Vue core - separate chunk for framework
+            if (id.includes('node_modules/@vue') || id.includes('node_modules/vue')) {
+              return 'vue-vendor'
+            }
+            // Vue Router
+            if (id.includes('node_modules/vue-router')) {
+              return 'vue-router'
+            }
+            // Reka UI - base primitives for Nuxt UI
+            if (id.includes('node_modules/reka-ui') || id.includes('node_modules/@reka-ui')) {
+              return 'ui-primitives'
+            }
+            // Supabase client
+            if (id.includes('node_modules/@supabase')) {
+              return 'supabase'
+            }
+            // i18n
+            if (id.includes('node_modules/vue-i18n') || id.includes('node_modules/@intlify')) {
+              return 'i18n'
+            }
+            // State management
+            if (id.includes('node_modules/pinia')) {
+              return 'pinia'
+            }
+            // Validation
+            if (id.includes('node_modules/zod')) {
+              return 'zod'
+            }
+          },
+        },
+      },
+    },
+  },
 })
