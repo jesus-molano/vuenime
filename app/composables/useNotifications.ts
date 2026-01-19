@@ -164,17 +164,11 @@ export const useNotifications = () => {
   // ============================================
 
   const favoriteAdded = (animeTitle: string) => {
-    success(
-      t('notifications.favoriteAdded'),
-      t('notifications.favoriteAddedDesc', { title: animeTitle })
-    )
+    success(t('notifications.favoriteAdded'), t('notifications.favoriteAddedDesc', { title: animeTitle }))
   }
 
   const favoriteRemoved = (animeTitle: string) => {
-    success(
-      t('notifications.favoriteRemoved'),
-      t('notifications.favoriteRemovedDesc', { title: animeTitle })
-    )
+    success(t('notifications.favoriteRemoved'), t('notifications.favoriteRemovedDesc', { title: animeTitle }))
   }
 
   const favoriteError = () => {
@@ -210,17 +204,11 @@ export const useNotifications = () => {
   }
 
   const allEpisodesMarkedWatched = (animeTitle: string) => {
-    success(
-      t('notifications.allEpisodesWatched'),
-      t('notifications.allEpisodesWatchedDesc', { title: animeTitle })
-    )
+    success(t('notifications.allEpisodesWatched'), t('notifications.allEpisodesWatchedDesc', { title: animeTitle }))
   }
 
   const watchedCleared = (animeTitle: string) => {
-    info(
-      t('notifications.watchedCleared'),
-      t('notifications.watchedClearedDesc', { title: animeTitle })
-    )
+    info(t('notifications.watchedCleared'), t('notifications.watchedClearedDesc', { title: animeTitle }))
   }
 
   const watchedError = () => {

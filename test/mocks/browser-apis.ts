@@ -105,10 +105,13 @@ export class MockIntersectionObserver {
 export function installMockIntersectionObserver(): { getLastInstance: () => MockIntersectionObserver | null } {
   let lastInstance: MockIntersectionObserver | null = null
 
-  vi.stubGlobal('IntersectionObserver', function (callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
-    lastInstance = new MockIntersectionObserver(callback, options)
-    return lastInstance
-  })
+  vi.stubGlobal(
+    'IntersectionObserver',
+    function (callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
+      lastInstance = new MockIntersectionObserver(callback, options)
+      return lastInstance
+    }
+  )
 
   return {
     getLastInstance: () => lastInstance,
@@ -192,12 +195,15 @@ export function createMockScrollBehavior(): MockScrollBehavior {
   vi.stubGlobal('scrollTo', scrollTo)
 
   const originalAddEventListener = window.addEventListener.bind(window)
-  vi.stubGlobal('addEventListener', (event: string, handler: EventListener, options?: boolean | AddEventListenerOptions) => {
-    if (event === 'scroll') {
-      scrollListeners.push(handler as () => void)
+  vi.stubGlobal(
+    'addEventListener',
+    (event: string, handler: EventListener, options?: boolean | AddEventListenerOptions) => {
+      if (event === 'scroll') {
+        scrollListeners.push(handler as () => void)
+      }
+      return originalAddEventListener(event, handler, options)
     }
-    return originalAddEventListener(event, handler, options)
-  })
+  )
 
   Object.defineProperty(window, 'scrollY', {
     value: 0,

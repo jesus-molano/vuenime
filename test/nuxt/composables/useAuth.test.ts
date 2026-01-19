@@ -252,8 +252,7 @@ describe('useAuth', () => {
 
       const wrapper = await mountSuspended(TestComponent)
 
-      await expect(wrapper.vm.signInWithEmail('test@example.com', 'wrong'))
-        .rejects.toThrow('Invalid credentials')
+      await expect(wrapper.vm.signInWithEmail('test@example.com', 'wrong')).rejects.toThrow('Invalid credentials')
     })
   })
 
@@ -278,8 +277,9 @@ describe('useAuth', () => {
 
       const wrapper = await mountSuspended(TestComponent)
 
-      await expect(wrapper.vm.signUpWithEmail('existing@example.com', 'password'))
-        .rejects.toThrow('Email already in use')
+      await expect(wrapper.vm.signUpWithEmail('existing@example.com', 'password')).rejects.toThrow(
+        'Email already in use'
+      )
     })
   })
 
@@ -303,8 +303,7 @@ describe('useAuth', () => {
 
       const wrapper = await mountSuspended(TestComponent)
 
-      await expect(wrapper.vm.resetPassword('nonexistent@example.com'))
-        .rejects.toThrow('User not found')
+      await expect(wrapper.vm.resetPassword('nonexistent@example.com')).rejects.toThrow('User not found')
     })
   })
 
@@ -325,8 +324,7 @@ describe('useAuth', () => {
 
       const wrapper = await mountSuspended(TestComponent)
 
-      await expect(wrapper.vm.updatePassword('weak'))
-        .rejects.toThrow('Password too weak')
+      await expect(wrapper.vm.updatePassword('weak')).rejects.toThrow('Password too weak')
     })
   })
 

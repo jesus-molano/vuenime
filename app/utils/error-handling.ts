@@ -7,7 +7,7 @@ import { logger } from '~/services/logger'
 
 interface FriendlyError {
   message: string // User facing message or i18n key
-  code?: string   // Internal error code
+  code?: string // Internal error code
   originalError?: unknown
 }
 
@@ -50,7 +50,7 @@ export function getFriendlyError(error: unknown, context: string = 'Operation'):
     // Supabase / Auth specific errors (PostgrestError)
     // We check properties dynamically since we might not have the strict type imported here
     const sbError = error as { code?: string; message?: string; details?: string; hint?: string }
-    
+
     if (sbError.code) {
       // Postgres error codes
       switch (sbError.code) {
@@ -65,8 +65,8 @@ export function getFriendlyError(error: unknown, context: string = 'Operation'):
   }
 
   // Fallback
-  return { 
-    message: ERROR_MESSAGES.DEFAULT, 
-    originalError: error 
+  return {
+    message: ERROR_MESSAGES.DEFAULT,
+    originalError: error,
   }
 }

@@ -38,7 +38,7 @@ describe('Watched Store', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     vi.clearAllMocks()
-    
+
     // Default mock implementations
     mockWatchedServices.fetchUserWatchedEpisodes.mockResolvedValue([])
     mockWatchedServices.insertWatchedEpisode.mockResolvedValue({ success: true })
@@ -47,7 +47,7 @@ describe('Watched Store', () => {
     mockWatchedServices.deleteAllWatchedForAnime.mockResolvedValue({ success: true })
     mockWatchedServices.deleteAllWatched.mockResolvedValue({ success: true })
   })
-  
+
   afterEach(() => {
     vi.unstubAllGlobals()
   })
@@ -64,10 +64,8 @@ describe('Watched Store', () => {
   describe('Getters', () => {
     it('isWatched returns correct status', () => {
       const store = useWatchedStore()
-      store.watchedEpisodes = [
-        { mal_id: 1, episode_number: 1, watched_at: Date.now() }
-      ]
-      
+      store.watchedEpisodes = [{ mal_id: 1, episode_number: 1, watched_at: Date.now() }]
+
       expect(store.isWatched(1, 1)).toBe(true)
       expect(store.isWatched(1, 2)).toBe(false)
       expect(store.isWatched(2, 1)).toBe(false)
@@ -80,23 +78,23 @@ describe('Watched Store', () => {
         { mal_id: 1, episode_number: 2, watched_at: Date.now() },
         { mal_id: 2, episode_number: 1, watched_at: Date.now() },
       ]
-      
+
       expect(store.getWatchedForAnime(1)).toEqual([1, 2])
       expect(store.getWatchedForAnime(2)).toEqual([1])
       expect(store.getWatchedForAnime(3)).toEqual([])
     })
-    
+
     it('getWatchedCountForAnime returns correct count', () => {
       const store = useWatchedStore()
       store.watchedEpisodes = [
         { mal_id: 1, episode_number: 1, watched_at: Date.now() },
         { mal_id: 1, episode_number: 2, watched_at: Date.now() },
       ]
-      
+
       expect(store.getWatchedCountForAnime(1)).toBe(2)
       expect(store.getWatchedCountForAnime(2)).toBe(0)
     })
-    
+
     it('watchedAnimeIds returns unique IDs', () => {
       const store = useWatchedStore()
       store.watchedEpisodes = [
@@ -104,7 +102,7 @@ describe('Watched Store', () => {
         { mal_id: 1, episode_number: 2, watched_at: Date.now() },
         { mal_id: 2, episode_number: 1, watched_at: Date.now() },
       ]
-      
+
       expect(store.watchedAnimeIds).toEqual([1, 2])
     })
   })
@@ -113,11 +111,11 @@ describe('Watched Store', () => {
     it('optimistically adds episode', async () => {
       const store = useWatchedStore()
       await store.markAsWatched({ mal_id: 1, episode_number: 1 })
-      
+
       expect(store.watchedEpisodes).toHaveLength(1)
       expect(store.watchedEpisodes[0]).toMatchObject({
         mal_id: 1,
-        episode_number: 1
+        episode_number: 1,
       })
     })
 
@@ -125,16 +123,16 @@ describe('Watched Store', () => {
       const store = useWatchedStore()
       await store.markAsWatched({ mal_id: 1, episode_number: 1 })
       await store.markAsWatched({ mal_id: 1, episode_number: 1 })
-      
+
       expect(store.watchedEpisodes).toHaveLength(1)
     })
 
     it('calls sync service when user is logged in', async () => {
       const store = useWatchedStore()
       store.syncedForUserId = 'user-123'
-      
+
       await store.markAsWatched({ mal_id: 1, episode_number: 1 })
-      
+
       expect(mockWatchedServices.insertWatchedEpisode).toHaveBeenCalled()
     })
 
@@ -142,9 +140,9 @@ describe('Watched Store', () => {
       const store = useWatchedStore()
       store.syncedForUserId = 'user-123'
       mockWatchedServices.insertWatchedEpisode.mockResolvedValueOnce({ success: false })
-      
+
       await store.markAsWatched({ mal_id: 1, episode_number: 1 })
-      
+
       expect(store.watchedEpisodes).toHaveLength(0)
       expect(mockNotify.error).toHaveBeenCalled()
     })
@@ -153,68 +151,60 @@ describe('Watched Store', () => {
   describe('Actions - Mark as Unwatched', () => {
     it('optimistically removes episode', async () => {
       const store = useWatchedStore()
-      store.watchedEpisodes = [
-        { mal_id: 1, episode_number: 1, watched_at: Date.now() }
-      ]
-      
+      store.watchedEpisodes = [{ mal_id: 1, episode_number: 1, watched_at: Date.now() }]
+
       await store.markAsUnwatched(1, 1)
-      
+
       expect(store.watchedEpisodes).toHaveLength(0)
     })
 
     it('calls delete service when user is logged in', async () => {
       const store = useWatchedStore()
       store.syncedForUserId = 'user-123'
-      store.watchedEpisodes = [
-        { mal_id: 1, episode_number: 1, watched_at: Date.now() }
-      ]
-      
+      store.watchedEpisodes = [{ mal_id: 1, episode_number: 1, watched_at: Date.now() }]
+
       await store.markAsUnwatched(1, 1)
-      
+
       expect(mockWatchedServices.deleteWatchedEpisode).toHaveBeenCalled()
     })
 
     it('rolls back on sync failure', async () => {
       const store = useWatchedStore()
       store.syncedForUserId = 'user-123'
-      store.watchedEpisodes = [
-        { mal_id: 1, episode_number: 1, watched_at: Date.now() }
-      ]
+      store.watchedEpisodes = [{ mal_id: 1, episode_number: 1, watched_at: Date.now() }]
       mockWatchedServices.deleteWatchedEpisode.mockResolvedValueOnce({ success: false })
-      
+
       await store.markAsUnwatched(1, 1)
-      
+
       expect(store.watchedEpisodes).toHaveLength(1)
       expect(mockNotify.error).toHaveBeenCalled()
     })
   })
-  
+
   describe('Actions - Mark All as Watched', () => {
     it('marks all unwatched episodes', async () => {
       const store = useWatchedStore()
       // Already watched ep 1
-      store.watchedEpisodes = [
-        { mal_id: 1, episode_number: 1, watched_at: Date.now() }
-      ]
-      
+      store.watchedEpisodes = [{ mal_id: 1, episode_number: 1, watched_at: Date.now() }]
+
       // Mark 1-3
       await store.markAllAsWatched(1, 3, 'Anime Title')
-      
+
       expect(store.watchedEpisodes).toHaveLength(3)
       expect(mockNotify.allEpisodesMarkedWatched).toHaveBeenCalled()
     })
-    
+
     it('calls insertMany service when logged in', async () => {
       const store = useWatchedStore()
       store.syncedForUserId = 'user-123'
-      
+
       await store.markAllAsWatched(1, 3) // 3 episodes
-      
+
       expect(mockWatchedServices.insertManyWatchedEpisodes).toHaveBeenCalled()
       // Should add 3 episodes
       const args = mockWatchedServices.insertManyWatchedEpisodes.mock.calls[0]
       expect(args).toBeDefined()
-      expect(args![2]).toHaveLength(3) 
+      expect(args![2]).toHaveLength(3)
     })
   })
 
@@ -222,16 +212,16 @@ describe('Watched Store', () => {
     it('syncWithSupabase merges remote data', async () => {
       const store = useWatchedStore()
       store.watchedEpisodes = [
-        { mal_id: 1, episode_number: 1, watched_at: Date.now() } // Local only
+        { mal_id: 1, episode_number: 1, watched_at: Date.now() }, // Local only
       ]
-      
+
       // Remote has ep 2
       mockWatchedServices.fetchUserWatchedEpisodes.mockResolvedValue([
-        { mal_id: 1, episode_number: 2, watched_at: Date.now() }
+        { mal_id: 1, episode_number: 2, watched_at: Date.now() },
       ])
-      
+
       await store.handleSignIn('user-123')
-      
+
       // Should have both
       expect(store.watchedEpisodes).toHaveLength(2)
       expect(mockWatchedServices.insertManyWatchedEpisodes).toHaveBeenCalled() // Should upload local ep 1
@@ -242,13 +232,11 @@ describe('Watched Store', () => {
     it('handleSignOut should clear all data', () => {
       const store = useWatchedStore()
       store.syncedForUserId = 'user-123'
-      store.watchedEpisodes = [
-        { mal_id: 1, episode_number: 1, watched_at: Date.now() }
-      ]
+      store.watchedEpisodes = [{ mal_id: 1, episode_number: 1, watched_at: Date.now() }]
       store.hasSynced = true
-      
+
       store.handleSignOut()
-      
+
       expect(store.syncedForUserId).toBeNull()
       expect(store.watchedEpisodes).toEqual([])
       expect(store.hasSynced).toBe(false)

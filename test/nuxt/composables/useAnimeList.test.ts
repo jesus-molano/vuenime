@@ -6,17 +6,8 @@ import { useAnimeList } from '~/composables/useAnimeList'
 // Test component that uses the composable
 const TestComponent = defineComponent({
   setup() {
-    const {
-      animeList,
-      isLoading,
-      isLoadingMore,
-      hasNextPage,
-      totalItems,
-      error,
-      loadMoreError,
-      loadMore,
-      refresh,
-    } = useAnimeList()
+    const { animeList, isLoading, isLoadingMore, hasNextPage, totalItems, error, loadMoreError, loadMore, refresh } =
+      useAnimeList()
 
     return {
       animeList,

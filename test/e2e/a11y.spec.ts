@@ -18,16 +18,16 @@ test.describe('Accessibility (A11y)', () => {
 
   test('anime detail page should be accessible', async ({ page }) => {
     // Naruto (id: 20)
-    await page.goto('/anime/20') 
+    await page.goto('/anime/20')
     await page.waitForLoadState('networkidle')
-    
-    // Wait for content 
+
+    // Wait for content
     await expect(page.locator('h1').first()).toBeVisible()
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
       // Exclude generic third-party iframes if any (like youtube embeds which might have issues out of our control)
-      .exclude('iframe') 
+      .exclude('iframe')
       .analyze()
 
     if (accessibilityScanResults.violations.length > 0) {
@@ -53,11 +53,11 @@ test.describe('Accessibility (A11y)', () => {
   test('search modal should be accessible', async ({ page }) => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
-    
+
     // Open modal
     await page.keyboard.press('Control+k')
     await page.waitForTimeout(500)
-    
+
     const modal = page.locator('[role="dialog"]')
     await expect(modal).toBeVisible()
 

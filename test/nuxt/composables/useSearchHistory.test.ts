@@ -222,10 +222,7 @@ describe('useSearchHistory (Nuxt)', () => {
       wrapper.vm.addToHistory('naruto')
       await nextTick()
 
-      expect(storageMock.setItem).toHaveBeenCalledWith(
-        'vuenime_search_history',
-        expect.stringContaining('naruto')
-      )
+      expect(storageMock.setItem).toHaveBeenCalledWith('vuenime_search_history', expect.stringContaining('naruto'))
     })
 
     it('should save history to localStorage on remove', async () => {

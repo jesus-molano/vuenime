@@ -37,9 +37,7 @@ const handleScroll = () => {
 
   // Keep dock visible when footer is visible (footerHeight > 0)
   // Otherwise, show on scroll up or near top
-  isDockVisible.value = footerHeight.value > 0
-    || currentScrollY < lastScrollY.value
-    || currentScrollY < 100
+  isDockVisible.value = footerHeight.value > 0 || currentScrollY < lastScrollY.value || currentScrollY < 100
   lastScrollY.value = currentScrollY
 }
 

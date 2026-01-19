@@ -117,7 +117,7 @@ export const useFavoritesStore = defineStore(
           // Rollback on error
           const index = favorites.value.findIndex((f) => f.mal_id === anime.mal_id)
           if (index !== -1) favorites.value.splice(index, 1)
-          
+
           const friendlyError = getFriendlyError(error, 'addFavorite')
           notify.error(friendlyError.message)
           return
