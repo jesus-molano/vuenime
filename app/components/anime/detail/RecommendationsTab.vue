@@ -3,6 +3,7 @@
     id="tabpanel-recommendations"
     role="tabpanel"
     aria-labelledby="tab-recommendations"
+    class="pb-20 sm:pb-0"
   >
     <!-- Loading State -->
     <div

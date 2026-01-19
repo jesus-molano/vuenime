@@ -25,13 +25,26 @@
             v-if="hasTrailer"
             class="relative aspect-video overflow-hidden rounded-xl bg-rp-surface shadow-lg ring-1 ring-white/10"
           >
+            <!-- Loading skeleton -->
+            <div
+              v-if="!isIframeLoaded"
+              class="absolute inset-0 flex animate-pulse items-center justify-center bg-rp-overlay"
+            >
+              <UIcon
+                name="i-heroicons-play-circle"
+                class="size-12 text-rp-muted"
+                aria-hidden="true"
+              />
+            </div>
             <iframe
               :src="playerVideoUrl"
               :title="$t('anime.trailer')"
-              class="size-full"
+              class="size-full transition-opacity duration-300"
+              :class="isIframeLoaded ? 'opacity-100' : 'opacity-0'"
               allowfullscreen
               loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              @load="isIframeLoaded = true"
             />
           </div>
 
@@ -148,6 +161,9 @@ const props = defineProps<{
   trailer?: AnimeTrailer | null
   anime: Anime
 }>()
+
+// Loading state for iframe
+const isIframeLoaded = ref(false)
 
 // Extract youtube ID from embed_url if youtube_id is not available
 const extractYoutubeId = (embedUrl: string): string | null => {

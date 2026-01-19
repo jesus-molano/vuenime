@@ -101,6 +101,7 @@
     "viewDetails": "詳細を見る",
     "coverAlt": "{title}のカバー",
     "watchOn": "視聴する",
+    "watchOnMal": "MyAnimeListでエピソード{id}を見る",
     "watchTrailer": "予告編を見る",
     "trailer": "予告編",
     "type": "タイプ",
@@ -119,7 +120,9 @@
     "episodesCount": "総エピソード数",
     "episodeDuration": "1話あたりの長さ",
     "rankTooltip": "スコアに基づくランキング",
-    "popularityTooltip": "メンバー数による人気ランキング"
+    "popularityTooltip": "メンバー数による人気ランキング",
+    "viewList": "リスト表示",
+    "viewGrid": "グリッド表示"
   },
   "detail": {
     "tabs": "コンテンツタブ",
@@ -332,13 +335,19 @@
     "watchedCleared": "視聴履歴をクリアしました",
     "watchedClearedDesc": "{title}の視聴履歴をクリアしました",
     "watchedErrorDesc": "視聴状態を更新できませんでした。もう一度お試しください。",
-    "loading": "干渉を検出...",
-    "loadingAnimeDesc": "マルチバースのデータベースが通常より時間がかかっています。落ち着いて、先輩！",
-    "rateLimited": "仲間が多すぎる！",
-    "rateLimitedDesc": "サーバーがフィラーアークに入っています。力を回復するまで数秒お待ちください。",
+    "loading": "気を集めている！",
+    "loadingAnimeDesc": "悟空が元気玉のエネルギーを集めています。少々お待ちください...",
+    "rateLimited": "覇王色の覇気！",
+    "rateLimitedDesc": "リクエストが多すぎます。覇気でサーバーを倒してしまいました。数秒お待ちください。",
     "serviceUnavailable": "サーバーが修行中",
     "serviceUnavailableDesc": "主人公が修行編に入っています。数分後にパワーアップして戻ってきます。",
-    "notFound": "アニメが見つかりません",
-    "notFoundDesc": "このアニメはカタログにありません。失われたOVAではないですか？"
+    "notFound": "分身の術失敗！",
+    "notFoundDesc": "お探しの巻物はこの里にありません。幻術かもしれません？",
+    "networkError": "電伝虫が切断された！",
+    "networkErrorDesc": "グランドラインに連絡できません。インターネット接続を確認してください。",
+    "loginRequired": "天下一武道会！",
+    "loginRequiredDesc": "このエリアに入るには大会（ログイン）に登録する必要があります。",
+    "generalError": "ワンピースが見つからない！",
+    "generalErrorDesc": "新世界で何かがうまくいきませんでした。ルフィが調査中です。"
   }
 }

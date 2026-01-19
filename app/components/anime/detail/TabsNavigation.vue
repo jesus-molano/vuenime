@@ -17,7 +17,7 @@
     >
       <UIcon
         :name="tab.icon"
-        class="size-4 sm:size-5"
+        class="size-5 sm:size-6"
         aria-hidden="true"
       />
       <span class="hidden sm:inline">{{ tab.label }}</span>

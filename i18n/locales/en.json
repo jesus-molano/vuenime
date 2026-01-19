@@ -101,6 +101,7 @@
     "viewDetails": "View Details",
     "coverAlt": "Cover art for {title}",
     "watchOn": "Watch On",
+    "watchOnMal": "Watch episode {id} on MyAnimeList",
     "watchTrailer": "Watch Trailer",
     "watchTrailerDesc": "Watch the official trailer",
     "trailer": "Trailer",
@@ -125,7 +126,9 @@
     "episodesCount": "Total number of episodes",
     "episodeDuration": "Duration per episode",
     "rankTooltip": "Ranking based on score",
-    "popularityTooltip": "Popularity ranking by members"
+    "popularityTooltip": "Popularity ranking by members",
+    "viewList": "List view",
+    "viewGrid": "Grid view"
   },
   "detail": {
     "tabs": "Content tabs",
@@ -338,13 +341,19 @@
     "watchedCleared": "Watch progress cleared",
     "watchedClearedDesc": "Watch progress for {title} has been cleared",
     "watchedErrorDesc": "Could not update watch status. Please try again.",
-    "loading": "Interference detected...",
-    "loadingAnimeDesc": "The multiverse database is taking longer than usual. Stay calm, senpai!",
-    "rateLimited": "Too many nakamas!",
-    "rateLimitedDesc": "The server is in a filler arc. Wait a few seconds while it recovers its power.",
+    "loading": "Gathering Ki!",
+    "loadingAnimeDesc": "Goku is gathering energy for the Spirit Bomb. This will take a moment...",
+    "rateLimited": "Conqueror's Haki!",
+    "rateLimitedDesc": "Too many requests. You've knocked out the server with your Haki. Wait a few seconds.",
     "serviceUnavailable": "Server is training",
     "serviceUnavailableDesc": "Our protagonist is in their training arc. They'll be back stronger in a few minutes.",
-    "notFound": "Anime not found",
-    "notFoundDesc": "This anime doesn't appear in our catalog. Are you sure it's not a lost OVA?"
+    "notFound": "Clone Jutsu failed!",
+    "notFoundDesc": "The scroll you seek doesn't exist in this village. Perhaps it was a Genjutsu?",
+    "networkError": "Den Den Mushi Disconnected!",
+    "networkErrorDesc": "We can't contact the Grand Line. Check your internet connection.",
+    "loginRequired": "Martial Arts Tournament!",
+    "loginRequiredDesc": "You need to register for the Tournament (Sign In) to enter this zone.",
+    "generalError": "The One Piece isn't showing up!",
+    "generalErrorDesc": "Something went wrong in the New World. Luffy is investigating."
   }
 }

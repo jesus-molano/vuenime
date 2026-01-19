@@ -3,75 +3,75 @@
 
 /* Streaming platform colors */
 .bg-crunchyroll {
-  background-color: #f47521;
+  background-color: #a84200;
 }
 .bg-crunchyroll:hover,
 .hover\:bg-crunchyroll-hover:hover {
-  background-color: #ff8533;
+  background-color: #c75200;
 }
 
 .bg-netflix {
-  background-color: #e50914;
+  background-color: #b0060e;
 }
 .bg-netflix:hover,
 .hover\:bg-netflix-hover:hover {
-  background-color: #ff1a1a;
+  background-color: #e50914;
 }
 
 .bg-hulu {
-  background-color: #1ce783;
+  background-color: #15b063;
 }
 .bg-hulu:hover,
 .hover\:bg-hulu-hover:hover {
-  background-color: #3dffa0;
+  background-color: #19c972;
 }
 
 .bg-prime {
-  background-color: #00a8e1;
+  background-color: #0076a0;
 }
 .bg-prime:hover,
 .hover\:bg-prime-hover:hover {
-  background-color: #1ab8f0;
+  background-color: #008dba;
 }
 
 .bg-funimation {
-  background-color: #5b0bb5;
+  background-color: #4a0994;
 }
 .bg-funimation:hover,
 .hover\:bg-funimation-hover:hover {
-  background-color: #7a1ed6;
+  background-color: #5b0bb5;
 }
 
 .bg-disney {
-  background-color: #113ccf;
+  background-color: #0d2ea3;
 }
 .bg-disney:hover,
 .hover\:bg-disney-hover:hover {
-  background-color: #2952e0;
+  background-color: #113ccf;
 }
 
 .bg-hbo {
-  background-color: #b017e6;
+  background-color: #8c10b8;
 }
 .bg-hbo:hover,
 .hover\:bg-hbo-hover:hover {
-  background-color: #c73df0;
+  background-color: #b017e6;
 }
 
 .bg-tubi {
-  background-color: #fa382f;
+  background-color: #d11f16;
 }
 .bg-tubi:hover,
 .hover\:bg-tubi-hover:hover {
-  background-color: #ff5349;
+  background-color: #fa382f;
 }
 
 .bg-hidive {
-  background-color: #00baff;
+  background-color: #0093cc;
 }
 .bg-hidive:hover,
 .hover\:bg-hidive-hover:hover {
-  background-color: #33c7ff;
+  background-color: #00baff;
 }
 
 /*
@@ -86,9 +86,9 @@
   --rp-overlay: 38 35 58; /* #26233a */
 
   /* Rosé Pine Text */
-  --rp-muted: 110 106 134; /* #6e6a86 */
-  --rp-subtle: 144 140 170; /* #908caa */
-  --rp-text: 224 222 244; /* #e0def4 */
+  --rp-muted: 152 147 165;
+  --rp-subtle: 176 174 193;
+  --rp-text: 224 222 244;
 
   /* Rosé Pine Accents */
   --rp-love: 235 111 146; /* #eb6f92 */
@@ -148,6 +148,10 @@ html.dark,
 }
 .bg-rp-overlay {
   background-color: rgb(var(--rp-overlay));
+}
+
+.text-rp-base {
+  color: rgb(var(--rp-base));
 }
 
 .text-rp-text {

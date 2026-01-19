@@ -98,46 +98,38 @@
                   :items="watchedMenuItems"
                   :content="{ align: 'end' }"
                 >
-                  <div class="flex h-6 items-center justify-center rounded-md bg-rp-surface px-1.5">
-                    <button
-                      type="button"
-                      class="flex items-center gap-0.5 text-rp-subtle transition-colors hover:text-rp-text"
-                      :title="$t('watched.markAsWatched')"
-                    >
-                      <UIcon
-                        name="i-heroicons-eye"
-                        class="size-4"
-                      />
-                      <UIcon
-                        name="i-heroicons-chevron-down"
-                        class="size-3"
-                      />
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    class="flex h-6 items-center gap-0.5 rounded-md bg-rp-surface px-1.5 text-rp-subtle transition-colors hover:text-rp-text"
+                    :title="$t('watched.markAsWatched')"
+                  >
+                    <UIcon
+                      name="i-heroicons-eye"
+                      class="size-4"
+                    />
+                    <UIcon
+                      name="i-heroicons-chevron-down"
+                      class="size-3"
+                    />
+                  </button>
                 </UDropdownMenu>
 
                 <!-- View toggle -->
                 <div class="flex h-6 items-center gap-0.5 rounded-md bg-rp-surface px-0.5">
                   <button
+                    v-for="mode in viewModes"
+                    :key="mode.value"
                     type="button"
                     class="flex size-5 items-center justify-center rounded transition-colors"
-                    :class="viewMode === 'list' ? 'bg-rp-overlay text-rp-text' : 'text-rp-subtle hover:text-rp-text'"
-                    @click="viewMode = 'list'"
+                    :class="viewMode === mode.value ? 'bg-rp-overlay text-rp-text' : 'text-rp-subtle hover:text-rp-text'"
+                    :title="mode.label"
+                    :aria-label="mode.label"
+                    @click="viewMode = mode.value"
                   >
                     <UIcon
-                      name="i-heroicons-bars-3"
+                      :name="mode.icon"
                       class="size-4"
-                    />
-                  </button>
-                  <button
-                    type="button"
-                    class="flex size-5 items-center justify-center rounded transition-colors"
-                    :class="viewMode === 'grid' ? 'bg-rp-overlay text-rp-text' : 'text-rp-subtle hover:text-rp-text'"
-                    @click="viewMode = 'grid'"
-                  >
-                    <UIcon
-                      name="i-heroicons-squares-2x2"
-                      class="size-4"
+                      aria-hidden="true"
                     />
                   </button>
                 </div>
@@ -200,7 +192,7 @@
               <button
                 v-if="filteredEpisodes.length > initialCount && !showAll"
                 type="button"
-                class="group flex items-center gap-1.5 rounded-full bg-rp-iris px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-rp-iris/25 transition-all hover:scale-105 hover:shadow-xl hover:shadow-rp-iris/30 sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm"
+                class="group flex items-center gap-1.5 rounded-full bg-rp-iris px-4 py-2 text-xs font-semibold text-rp-base shadow-lg shadow-rp-iris/25 transition-all hover:scale-105 hover:shadow-xl hover:shadow-rp-iris/30 sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm"
                 @click="showAll = true"
               >
                 {{ $t('anime.showAllEpisodes', { count: filteredEpisodes.length }) }}
@@ -262,7 +254,6 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
-const notify = useNotifications()
 const { episodes, isLoading, isLoadingMore, hasEpisodes, hasNextPage, loadMore } = useAnimeEpisodes(props.animeId)
 
 // Prevent hydration mismatch by only applying 2-column layout after mount
@@ -278,23 +269,12 @@ const malId = computed(() => parseInt(props.animeId, 10))
 const watchedStore = useWatchedStore()
 const { isEpisodeWatched, watchedCount } = useWatchedToggle(malId)
 
-// Toggle watched with notification
+// Toggle watched without notification (UX best practice: avoid repetitive toasts for frequent actions)
 async function toggleWatched(episodeNumber: number) {
-  const wasWatched = watchedStore.isWatched(malId.value, episodeNumber)
-
   await watchedStore.toggleWatched({
     mal_id: malId.value,
     episode_number: episodeNumber,
   })
-
-  // Show notification
-  if (props.animeTitle) {
-    if (wasWatched) {
-      notify.episodeMarkedUnwatched(props.animeTitle, episodeNumber)
-    } else {
-      notify.episodeMarkedWatched(props.animeTitle, episodeNumber)
-    }
-  }
 }
 
 // Mark all as watched with notification
@@ -311,6 +291,11 @@ const initialCount = 10
 const showAll = ref(false)
 const viewMode = ref<'list' | 'grid'>('list')
 const hideFiller = ref(false)
+
+const viewModes = computed(() => [
+  { value: 'list' as const, label: t('anime.viewList'), icon: 'i-heroicons-bars-3' },
+  { value: 'grid' as const, label: t('anime.viewGrid'), icon: 'i-heroicons-squares-2x2' },
+])
 
 // Check if there are any filler episodes
 const hasFillerEpisodes = computed(() => episodes.value.some((ep) => ep.filler))

@@ -96,10 +96,35 @@ export const useNotifications = () => {
     })
   }
 
-  const error = (title: string, description?: string) => {
+  const error = (title?: string, description?: string) => {
+    // Determine title: provided or default
+    // If title looks like an i18n key (contains 'notifications.'), translate it
+    let titleContent: string
+    if (!title) {
+      titleContent = t('notifications.generalError')
+    } else if (title.startsWith('notifications.')) {
+      titleContent = t(title)
+    } else {
+      titleContent = title
+    }
+
+    // Determine description: provided, or auto-find matching Desc key, or default
+    let descContent: string | undefined = undefined
+
+    if (description) {
+      // If description looks like an i18n key, translate it
+      descContent = description.startsWith('notifications.') ? t(description) : description
+    } else if (title?.startsWith('notifications.')) {
+      // Try to find matching description key (e.g., notifications.networkError -> notifications.networkErrorDesc)
+      const descKey = `${title}Desc`
+      descContent = t(descKey)
+    } else if (!title) {
+      descContent = t('notifications.generalErrorDesc')
+    }
+
     showToast({
-      title,
-      description,
+      title: titleContent,
+      description: descContent,
       color: 'error',
       icon: 'i-heroicons-x-circle',
       duration: 6000,
@@ -116,10 +141,13 @@ export const useNotifications = () => {
     })
   }
 
-  const loading = (title: string, description?: string) => {
+  const loading = (title?: string, description?: string) => {
+    const titleContent = title || t('notifications.loading')
+    const descContent = description || (!title ? t('notifications.loadingAnimeDesc') : undefined)
+
     showToast({
-      title,
-      description,
+      title: titleContent,
+      description: descContent,
       color: 'warning',
       icon: 'i-heroicons-sparkles',
       duration: 5000,
@@ -131,11 +159,17 @@ export const useNotifications = () => {
   // ============================================
 
   const favoriteAdded = (animeTitle: string) => {
-    success(t('notifications.favoriteAdded'), t('notifications.favoriteAddedDesc', { title: animeTitle }))
+    success(
+      t('notifications.favoriteAdded'),
+      t('notifications.favoriteAddedDesc', { title: animeTitle })
+    )
   }
 
   const favoriteRemoved = (animeTitle: string) => {
-    success(t('notifications.favoriteRemoved'), t('notifications.favoriteRemovedDesc', { title: animeTitle }))
+    success(
+      t('notifications.favoriteRemoved'),
+      t('notifications.favoriteRemovedDesc', { title: animeTitle })
+    )
   }
 
   const favoriteError = () => {
@@ -171,11 +205,17 @@ export const useNotifications = () => {
   }
 
   const allEpisodesMarkedWatched = (animeTitle: string) => {
-    success(t('notifications.allEpisodesWatched'), t('notifications.allEpisodesWatchedDesc', { title: animeTitle }))
+    success(
+      t('notifications.allEpisodesWatched'),
+      t('notifications.allEpisodesWatchedDesc', { title: animeTitle })
+    )
   }
 
   const watchedCleared = (animeTitle: string) => {
-    info(t('notifications.watchedCleared'), t('notifications.watchedClearedDesc', { title: animeTitle }))
+    info(
+      t('notifications.watchedCleared'),
+      t('notifications.watchedClearedDesc', { title: animeTitle })
+    )
   }
 
   const watchedError = () => {

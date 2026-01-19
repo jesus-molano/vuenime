@@ -1,6 +1,7 @@
 <template>
   <div
-    class="fixed inset-x-0 z-50 flex justify-center md:hidden"
+    class="fixed inset-x-0 z-50 flex justify-center transition-transform duration-300 ease-out md:hidden"
+    :class="{ 'translate-y-[calc(100%+2rem)]': !visible }"
     :style="{ bottom: `calc(${footerHeight}px + max(1rem, env(safe-area-inset-bottom, 0px)))` }"
   >
     <nav
@@ -89,6 +90,7 @@
 <script setup lang="ts">
 defineProps<{
   footerHeight: number
+  visible: boolean
 }>()
 
 defineEmits<{

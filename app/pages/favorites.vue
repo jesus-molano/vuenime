@@ -6,7 +6,7 @@
     <!-- Main Content -->
     <section
       v-scroll-reveal.fade-up
-      class="pb-16 md:pb-24"
+      class="pb-24 md:pb-24"
     >
       <UContainer class="px-4 sm:px-6">
         <ClientOnly>
@@ -67,8 +67,17 @@ const { currentPage, totalPages, displayedFavorites, isEmpty, isLoading, scrollT
 
 const showClearConfirm = ref(false)
 
+const config = useRuntimeConfig()
 useSeoMeta({
   title: () => `${t('favorites.title')} | VueNime`,
   description: () => t('favorites.subtitle'),
+  ogTitle: () => `${t('favorites.title')} | VueNime`,
+  ogDescription: () => t('favorites.subtitle'),
+  ogImage: `${config.public.siteUrl}/og-image.png`,
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: () => `${t('favorites.title')} | VueNime`,
+  twitterDescription: () => t('favorites.subtitle'),
+  twitterImage: `${config.public.siteUrl}/og-image.png`,
 })
 </script>

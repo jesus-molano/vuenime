@@ -145,6 +145,12 @@ export default defineNuxtConfig({
         { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
         { name: 'description', content: 'Discover and track your favorite anime with VueNime' },
         { name: 'theme-color', content: '#191724' },
+        // Open Graph
+        { property: 'og:site_name', content: 'VueNime' },
+        { property: 'og:type', content: 'website' },
+        // Twitter Card
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:site', content: '@vuenime' },
       ],
       link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
     },

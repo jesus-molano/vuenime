@@ -27,6 +27,7 @@
       target="_blank"
       rel="noopener noreferrer"
       class="flex flex-col items-center"
+      :aria-label="$t('anime.watchOnMal', { id: episode.mal_id })"
     >
       <div
         class="mb-1 flex size-8 items-center justify-center rounded-md text-sm font-bold transition-all duration-300 group-hover:scale-110 sm:mb-2 sm:size-10 sm:rounded-lg sm:text-lg"

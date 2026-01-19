@@ -12,8 +12,6 @@
     "test": "vitest run",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
-    "test:unit": "vitest --project unit",
-    "test:nuxt": "vitest --project nuxt",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "lint": "eslint .",
@@ -43,6 +41,7 @@
     "zod": "^4.3.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.0",
     "@iconify-json/heroicons": "^1.2.3",
     "@iconify-json/logos": "^1.2.10",
     "@iconify-json/mdi": "^1.2.3",
@@ -59,6 +58,7 @@
     "playwright-core": "^1.57.0",
     "prettier": "^3.5.3",
     "typescript": "^5.9.3",
+    "unplugin-auto-import": "^21.0.0",
     "vitest": "^3.2.0",
     "vue-tsc": "^3.2.2"
   },

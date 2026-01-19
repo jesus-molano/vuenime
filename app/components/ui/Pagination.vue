@@ -34,7 +34,7 @@
           v-else
           type="button"
           class="flex size-10 items-center justify-center rounded-lg text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris"
-          :class="page === currentPage ? 'bg-rp-iris text-white' : 'bg-rp-surface text-rp-text hover:bg-rp-overlay'"
+          :class="page === currentPage ? 'bg-rp-iris text-rp-base' : 'bg-rp-surface text-rp-text hover:bg-rp-overlay'"
           :aria-current="page === currentPage ? 'page' : undefined"
           @click="$emit('update:currentPage', page as number)"
         >

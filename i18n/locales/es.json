@@ -101,6 +101,7 @@
     "viewDetails": "Ver detalles",
     "coverAlt": "Portada de {title}",
     "watchOn": "Ver en",
+    "watchOnMal": "Ver episodio {id} en MyAnimeList",
     "watchTrailer": "Ver Trailer",
     "watchTrailerDesc": "Mira el trailer oficial",
     "trailer": "Trailer",
@@ -125,7 +126,9 @@
     "episodesCount": "Número total de episodios",
     "episodeDuration": "Duración por episodio",
     "rankTooltip": "Ranking basado en puntuación",
-    "popularityTooltip": "Ranking de popularidad por miembros"
+    "popularityTooltip": "Ranking de popularidad por miembros",
+    "viewList": "Vista de lista",
+    "viewGrid": "Vista de cuadrícula"
   },
   "detail": {
     "tabs": "Pestañas de contenido",
@@ -338,13 +341,19 @@
     "watchedCleared": "Progreso de visualización limpiado",
     "watchedClearedDesc": "El progreso de visualización de {title} ha sido limpiado",
     "watchedErrorDesc": "No se pudo actualizar el estado de visualización. Inténtalo de nuevo.",
-    "loading": "Interferencias detectadas...",
-    "loadingAnimeDesc": "La base de datos del multiverso está tardando más de lo normal. ¡Paciencia, nakama!",
-    "rateLimited": "¡Demasiados nakamas!",
-    "rateLimitedDesc": "El servidor está en un arco de relleno. Espera unos segundos mientras recupera su poder.",
+    "loading": "¡Reuniendo Ki!",
+    "loadingAnimeDesc": "Goku está reuniendo energía para la Genkidama. Esto tomará un momento...",
+    "rateLimited": "¡Haki del Conquistador!",
+    "rateLimitedDesc": "Demasiadas peticiones. Has tumbado el servidor con tu Haki. Espera unos segundos.",
     "serviceUnavailable": "El servidor está entrenando",
     "serviceUnavailableDesc": "Nuestro protagonista está en su arco de entrenamiento. Volverá más fuerte en unos minutos.",
-    "notFound": "Anime no encontrado",
-    "notFoundDesc": "Este anime no aparece en nuestro catálogo. ¿Seguro que no es un OVA perdido?"
+    "notFound": "¡Técnica de Clonación fallida!",
+    "notFoundDesc": "El pergamino que buscas no existe en esta aldea. ¿Quizás fue obra de un Genjutsu?",
+    "networkError": "¡Den Den Mushi Cortado!",
+    "networkErrorDesc": "No podemos contactar con el Grand Line. Revisa tu conexión a internet.",
+    "loginRequired": "¡Torneo de Artes Marciales!",
+    "loginRequiredDesc": "Necesitas inscribirte en el Torneo (Iniciar Sesión) para entrar a esta zona.",
+    "generalError": "¡El One Piece no aparece!",
+    "generalErrorDesc": "Algo salió mal en el Nuevo Mundo. Luffy está investigando."
   }
 }

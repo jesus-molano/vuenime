@@ -7,6 +7,26 @@ const ONE_MINUTE_MS = 60 * 1000
 
 const ALLOWED_ENDPOINTS = ['anime', 'top/anime', 'seasons', 'schedules', 'genres/anime', 'random/anime']
 
+/**
+ * Remove duplicate anime entries from API responses (Jikan sometimes returns duplicates)
+ */
+function deduplicateAnimeData<T extends { data?: Array<{ mal_id: number }> }>(response: T): T {
+  if (!response.data || !Array.isArray(response.data)) {
+    return response
+  }
+
+  const seen = new Set<number>()
+  const uniqueData = response.data.filter((item) => {
+    if (seen.has(item.mal_id)) {
+      return false
+    }
+    seen.add(item.mal_id)
+    return true
+  })
+
+  return { ...response, data: uniqueData }
+}
+
 function isAllowedEndpoint(path: string): boolean {
   const normalized = path.replace(/^\/+/, '')
   return ALLOWED_ENDPOINTS.some(
@@ -69,11 +89,14 @@ export default defineEventHandler(async (event) => {
     const queryString = new URLSearchParams(query as Record<string, string>).toString()
     const url = `${config.jikanApiUrl}/${validation.data}${queryString ? `?${queryString}` : ''}`
 
-    return await $fetch(url, {
+    const response = await $fetch(url, {
       retry: RATE_LIMIT.MAX_RETRIES,
       retryDelay: RATE_LIMIT.RETRY_DELAY,
       timeout: 10000,
     })
+
+    // Deduplicate anime lists (Jikan API sometimes returns duplicates)
+    return deduplicateAnimeData(response as { data?: Array<{ mal_id: number }> })
   } catch (error: unknown) {
     // Handle FetchError from $fetch
     if (error && typeof error === 'object' && 'response' in error) {
@@ -108,9 +131,8 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    logger.jikan.error('Request failed', {
+    logger.jikan.error('Request failed', error, {
       path: validation.data,
-      error: error instanceof Error ? error.message : String(error),
     })
 
     // Re-throw if it's already a createError
