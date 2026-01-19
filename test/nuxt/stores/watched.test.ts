@@ -8,6 +8,10 @@ const mockNotify = {
   watchedError: vi.fn(),
   allEpisodesMarkedWatched: vi.fn(),
   watchedCleared: vi.fn(),
+  error: vi.fn(),
+  success: vi.fn(),
+  info: vi.fn(),
+  loading: vi.fn(),
 }
 mockNuxtImport('useNotifications', () => {
   return () => mockNotify
@@ -142,7 +146,7 @@ describe('Watched Store', () => {
       await store.markAsWatched({ mal_id: 1, episode_number: 1 })
       
       expect(store.watchedEpisodes).toHaveLength(0)
-      expect(mockNotify.watchedError).toHaveBeenCalled()
+      expect(mockNotify.error).toHaveBeenCalled()
     })
   })
 
@@ -181,7 +185,7 @@ describe('Watched Store', () => {
       await store.markAsUnwatched(1, 1)
       
       expect(store.watchedEpisodes).toHaveLength(1)
-      expect(mockNotify.watchedError).toHaveBeenCalled()
+      expect(mockNotify.error).toHaveBeenCalled()
     })
   })
   

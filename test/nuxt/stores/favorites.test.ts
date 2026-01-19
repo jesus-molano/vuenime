@@ -27,6 +27,10 @@ const mockNotify = {
   favoriteRemoved: vi.fn(),
   favoriteError: vi.fn(),
   clearFavoritesSuccess: vi.fn(),
+  error: vi.fn(),
+  success: vi.fn(),
+  info: vi.fn(),
+  loading: vi.fn(),
 }
 mockNuxtImport('useNotifications', () => () => mockNotify)
 
@@ -324,7 +328,7 @@ describe('useFavoritesStore', () => {
 
       await store.addFavorite(mockAnime)
 
-      expect(mockNotify.favoriteError).toHaveBeenCalled()
+      expect(mockNotify.error).toHaveBeenCalled()
       expect(store.favorites).toHaveLength(0)
     })
 
@@ -351,7 +355,7 @@ describe('useFavoritesStore', () => {
 
       await store.removeFavorite(mockAnime.mal_id)
 
-      expect(mockNotify.favoriteError).toHaveBeenCalled()
+      expect(mockNotify.error).toHaveBeenCalled()
       // Should still have the favorite because of rollback
       expect(store.favorites).toHaveLength(1)
     })
