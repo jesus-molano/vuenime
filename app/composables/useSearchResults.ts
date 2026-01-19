@@ -30,26 +30,29 @@ export const useSearchResults = (params: Ref<SearchParams | null> | ComputedRef<
     return apiParams
   }
 
-  // Computed query for useFetch (SSR)
-  const fetchQuery = computed(() => buildApiParams(1))
+  // Generate stable key from params for caching
+  const paramsKey = computed(() => (params.value ? JSON.stringify(params.value) : null))
 
-  // Generate unique cache key based on params
-  const cacheKey = computed(() => {
-    if (!params.value) return 'search-empty'
-    return `search-${JSON.stringify(params.value)}`
-  })
-
-  // SSR: Initial fetch with useFetch
+  // Use useAsyncData for better control over reactivity
+  // Key changes when params change -> triggers new fetch automatically
   const {
     data: initialData,
     status,
     refresh: refetchInitial,
-  } = useFetch<AnimeListResponse>('/api/jikan/anime', {
-    key: cacheKey,
-    query: fetchQuery,
-    immediate: !!params.value,
-    watch: [fetchQuery],
-  })
+  } = useAsyncData<AnimeListResponse | null>(
+    () => `anime-search-${paramsKey.value}`,
+    async () => {
+      const apiParams = buildApiParams(1)
+      if (!apiParams) return null
+      return await animeApi.search(apiParams)
+    },
+    {
+      // Watch paramsKey to refetch when it changes
+      watch: [paramsKey],
+      // Return null when no params instead of making API call
+      immediate: true,
+    }
+  )
 
   // Local state for pagination
   const additionalResults = ref<Anime[]>([])
@@ -70,30 +73,15 @@ export const useSearchResults = (params: Ref<SearchParams | null> | ComputedRef<
     (data) => {
       if (data) {
         hasNextPage.value = data.pagination?.has_next_page ?? false
-        // Reset additional results when params change
-        additionalResults.value = []
-        currentPage.value = 1
+      } else {
+        hasNextPage.value = false
       }
     },
     { immediate: true }
   )
 
-  // Reset when params change (including becoming null)
-  watch(
-    () => params.value,
-    (newParams) => {
-      // Always reset additional results when params change
-      additionalResults.value = []
-      currentPage.value = 1
-
-      if (!newParams) {
-        hasNextPage.value = false
-      }
-    }
-  )
-
-  // Also reset when fetchQuery changes (new search starting)
-  watch(fetchQuery, () => {
+  // Reset pagination state when params change
+  watch(paramsKey, () => {
     additionalResults.value = []
     currentPage.value = 1
   })
