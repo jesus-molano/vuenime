@@ -25,7 +25,8 @@ describe('AnimeCardMobile', () => {
       const wrapper = await mountSuspended(Mobile, { props: defaultProps })
 
       const poster = wrapper.findComponent({ name: 'AnimeCardPoster' })
-      expect(poster.props('imageUrl')).toBe(mockAnime.images.webp.large_image_url)
+      // Mobile uses medium-sized images (image_url) for better performance
+      expect(poster.props('imageUrl')).toBe(mockAnime.images.webp.image_url)
       expect(poster.props('title')).toBe('Test Anime')
       expect(poster.props('score')).toBe(8.5)
     })

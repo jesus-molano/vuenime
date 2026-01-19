@@ -23,3 +23,15 @@ export const PAGINATION = {
   MAX_LIMIT: 25,
   MAX_PAGES_TO_RESTORE: 5,
 } as const
+
+// Mobile-optimized limits for faster initial load
+// Desktop gets full content, mobile gets reduced for better FCP
+export const MOBILE_LIMITS = {
+  TRENDING: 12, // vs 24 on desktop - user sees 1-2 cards initially
+  CAROUSEL: 8, // vs 15 on desktop - user sees 2-3 cards initially
+} as const
+
+export const DESKTOP_LIMITS = {
+  TRENDING: 24,
+  CAROUSEL: 15,
+} as const
