@@ -10,6 +10,8 @@ import {
   deleteAllWatchedForAnime,
   deleteAllWatched,
 } from '~/services/supabase/watched'
+import { logger } from '~/services/logger'
+import { getFriendlyError } from '~/utils/error-handling'
 
 export const useWatchedStore = defineStore(
   'watched',
@@ -104,7 +106,7 @@ export const useWatchedStore = defineStore(
       // Validate input
       const validation = markWatchedInputSchema.safeParse(input)
       if (!validation.success) {
-        console.error('[WatchedStore] Invalid markAsWatched input:', validation.error.flatten())
+        logger.error('[WatchedStore] Invalid markAsWatched input', validation.error.flatten())
         return
       }
 
@@ -121,14 +123,16 @@ export const useWatchedStore = defineStore(
       watchedEpisodes.value.push(episode)
 
       if (syncedForUserId.value) {
-        const { success } = await insertWatchedEpisode(supabase, syncedForUserId.value, episode)
+        const { success, error } = await insertWatchedEpisode(supabase, syncedForUserId.value, episode)
         if (!success) {
           // Rollback on error
           const index = watchedEpisodes.value.findIndex(
             (ep) => ep.mal_id === mal_id && ep.episode_number === episode_number
           )
           if (index !== -1) watchedEpisodes.value.splice(index, 1)
-          notify.watchedError()
+          
+          const friendlyError = getFriendlyError(error, 'markAsWatched')
+          notify.error(friendlyError.message)
         }
       }
     }
@@ -137,7 +141,7 @@ export const useWatchedStore = defineStore(
       // Validate input
       const validation = markUnwatchedInputSchema.safeParse({ malId, episodeNumber })
       if (!validation.success) {
-        console.error('[WatchedStore] Invalid markAsUnwatched input:', validation.error.flatten())
+        logger.error('[WatchedStore] Invalid markAsUnwatched input', validation.error.flatten())
         return
       }
 
@@ -148,11 +152,12 @@ export const useWatchedStore = defineStore(
       watchedEpisodes.value.splice(index, 1)
 
       if (syncedForUserId.value) {
-        const { success } = await deleteWatchedEpisode(supabase, syncedForUserId.value, malId, episodeNumber)
+        const { success, error } = await deleteWatchedEpisode(supabase, syncedForUserId.value, malId, episodeNumber)
         if (!success) {
           // Rollback on error
           watchedEpisodes.value.splice(index, 0, removed)
-          notify.watchedError()
+          const friendlyError = getFriendlyError(error, 'markAsUnwatched')
+          notify.error(friendlyError.message)
         }
       }
     }
@@ -169,7 +174,7 @@ export const useWatchedStore = defineStore(
       // Validate input - CRITICAL: prevents abuse with large totalEpisodes
       const validation = markAllWatchedInputSchema.safeParse({ malId, totalEpisodes, animeTitle })
       if (!validation.success) {
-        console.error('[WatchedStore] Invalid markAllAsWatched input:', validation.error.flatten())
+        logger.error('[WatchedStore] Invalid markAllAsWatched input', validation.error.flatten())
         notify.watchedError()
         return
       }
@@ -194,13 +199,14 @@ export const useWatchedStore = defineStore(
       watchedEpisodes.value.push(...episodesToAdd)
 
       if (syncedForUserId.value) {
-        const { success } = await insertManyWatchedEpisodes(supabase, syncedForUserId.value, episodesToAdd)
+        const { success, error } = await insertManyWatchedEpisodes(supabase, syncedForUserId.value, episodesToAdd)
         if (!success) {
           // Rollback on error
           watchedEpisodes.value = watchedEpisodes.value.filter(
             (ep) => ep.mal_id !== validMalId || currentWatched.has(ep.episode_number)
           )
-          notify.watchedError()
+          const friendlyError = getFriendlyError(error, 'markAllAsWatched')
+          notify.error(friendlyError.message)
           return
         }
       }
@@ -215,10 +221,11 @@ export const useWatchedStore = defineStore(
       watchedEpisodes.value = watchedEpisodes.value.filter((ep) => ep.mal_id !== malId)
 
       if (syncedForUserId.value) {
-        const { success } = await deleteAllWatchedForAnime(supabase, syncedForUserId.value, malId)
+        const { success, error } = await deleteAllWatchedForAnime(supabase, syncedForUserId.value, malId)
         if (!success) {
           watchedEpisodes.value.push(...backup)
-          notify.watchedError()
+          const friendlyError = getFriendlyError(error, 'clearWatchedForAnime')
+          notify.error(friendlyError.message)
           return
         }
       }
@@ -233,10 +240,11 @@ export const useWatchedStore = defineStore(
       watchedEpisodes.value = []
 
       if (syncedForUserId.value) {
-        const { success } = await deleteAllWatched(supabase, syncedForUserId.value)
+        const { success, error } = await deleteAllWatched(supabase, syncedForUserId.value)
         if (!success) {
           watchedEpisodes.value = backup
-          notify.watchedError()
+          const friendlyError = getFriendlyError(error, 'clearAllWatched')
+          notify.error(friendlyError.message)
         }
       }
     }

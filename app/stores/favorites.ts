@@ -10,6 +10,8 @@ import {
   deleteFavorite,
   deleteAllFavorites,
 } from '~/services/supabase/favorites'
+import { logger } from '~/services/logger'
+import { getFriendlyError } from '~/utils/error-handling'
 
 export type { FavoriteAnime, AddFavoriteInput } from '~/types/favorites'
 
@@ -83,7 +85,7 @@ export const useFavoritesStore = defineStore(
       // Validate input
       const validation = addFavoriteInputSchema.safeParse(anime)
       if (!validation.success) {
-        console.error('[FavoritesStore] Invalid addFavorite input:', validation.error.flatten())
+        logger.error('[FavoritesStore] Invalid addFavorite input', validation.error.flatten())
         notify.favoriteError()
         return
       }
@@ -110,12 +112,14 @@ export const useFavoritesStore = defineStore(
 
       // Sync to Supabase if user is authenticated
       if (syncedForUserId.value) {
-        const { success } = await insertFavorite(supabase, syncedForUserId.value, favorite)
+        const { success, error } = await insertFavorite(supabase, syncedForUserId.value, favorite)
         if (!success) {
           // Rollback on error
           const index = favorites.value.findIndex((f) => f.mal_id === anime.mal_id)
           if (index !== -1) favorites.value.splice(index, 1)
-          notify.favoriteError()
+          
+          const friendlyError = getFriendlyError(error, 'addFavorite')
+          notify.error(friendlyError.message)
           return
         }
       }
@@ -126,7 +130,7 @@ export const useFavoritesStore = defineStore(
       // Validate input
       const validation = removeFavoriteInputSchema.safeParse({ malId })
       if (!validation.success) {
-        console.error('[FavoritesStore] Invalid removeFavorite input:', validation.error.flatten())
+        logger.error('[FavoritesStore] Invalid removeFavorite input', validation.error.flatten())
         return
       }
 
@@ -137,11 +141,12 @@ export const useFavoritesStore = defineStore(
       favorites.value.splice(index, 1)
 
       if (syncedForUserId.value) {
-        const { success } = await deleteFavorite(supabase, syncedForUserId.value, malId)
+        const { success, error } = await deleteFavorite(supabase, syncedForUserId.value, malId)
         if (!success) {
           // Rollback on error
           favorites.value.splice(index, 0, removed)
-          notify.favoriteError()
+          const friendlyError = getFriendlyError(error, 'removeFavorite')
+          notify.error(friendlyError.message)
           return
         }
       }
@@ -161,10 +166,11 @@ export const useFavoritesStore = defineStore(
       favorites.value = []
 
       if (syncedForUserId.value) {
-        const { success } = await deleteAllFavorites(supabase, syncedForUserId.value)
+        const { success, error } = await deleteAllFavorites(supabase, syncedForUserId.value)
         if (!success) {
           favorites.value = backup
-          notify.favoriteError()
+          const friendlyError = getFriendlyError(error, 'clearFavorites')
+          notify.error(friendlyError.message)
           return
         }
       }
