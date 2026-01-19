@@ -15,11 +15,19 @@ interface I18nInstance {
  * - SIGNED_IN: New login - sync guest data to user account
  * - SIGNED_OUT: Logout - clear user data
  */
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin(async (nuxtApp) => {
   const supabase = useSupabaseClient<Database>()
   const favoritesStore = useFavoritesStore()
   const watchedStore = useWatchedStore()
   const preferencesStore = usePreferencesStore()
+
+  // Validate session before setting up listeners - clears invalid tokens
+  try {
+    await supabase.auth.getSession()
+  } catch {
+    // Invalid refresh token - sign out to clear corrupted session data
+    await supabase.auth.signOut({ scope: 'local' })
+  }
 
   let currentUserId: string | null = null
   let initialized = false
