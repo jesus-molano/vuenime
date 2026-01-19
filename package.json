@@ -52,6 +52,7 @@
     "@types/node": "^25.0.9",
     "@vitest/coverage-v8": "^3.2.0",
     "@vue/test-utils": "^2.4.6",
+    "happy-dom": "^20.3.3",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.1",
     "nuxt-security": "^2.5.1",
