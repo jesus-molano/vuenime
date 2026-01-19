@@ -5,17 +5,10 @@ import { defineVitestProject } from '@nuxt/test-utils/config'
 export default defineConfig({
   test: {
     projects: [
-      {
-        test: {
-          name: 'unit',
-          include: ['test/unit/*.{test,spec}.ts'],
-          environment: 'node',
-        },
-      },
       await defineVitestProject({
         test: {
           name: 'nuxt',
-          include: ['test/nuxt/*.{test,spec}.ts'],
+          include: ['test/nuxt/**/*.{test,spec}.ts'],
           environment: 'nuxt',
           environmentOptions: {
             nuxt: {
@@ -29,6 +22,14 @@ export default defineConfig({
     coverage: {
       enabled: true,
       provider: 'v8',
+      reporter: ['text', 'html', 'lcov'],
+      include: ['app/composables/**/*.ts', 'app/components/**/*.vue', 'app/stores/**/*.ts', 'app/utils/**/*.ts'],
+      exclude: ['**/node_modules/**', '**/test/**', '**/*.d.ts'],
+      thresholds: {
+        lines: 50,
+        functions: 50,
+        branches: 40,
+      },
     },
   },
 })

@@ -1,10 +1,5 @@
 import { expect, test } from '@playwright/test'
 
-/**
- * Comprehensive E2E tests for VueNime
- * Tests run with 3 workers for balance of speed and stability
- */
-
 // ============================================
 // NAVIGATION TESTS
 // ============================================
