@@ -183,9 +183,9 @@ describe('RecommendationsTab', () => {
       } as unknown as ReturnType<typeof useAnimeRecommendations>)
 
       const mappedAnime = singleRec.map((rec) => ({
-        mal_id: rec.entry.mal_id,
-        title: rec.entry.title,
-        images: rec.entry.images,
+        mal_id: rec?.entry?.mal_id,
+        title: rec?.entry?.title,
+        images: rec?.entry?.images,
         url: '',
         trailer: { youtube_id: null, url: null, embed_url: null, images: { image_url: null, small_image_url: null, medium_image_url: null, large_image_url: null, maximum_image_url: null } },
         approved: true,
