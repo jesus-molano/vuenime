@@ -111,9 +111,9 @@ describe('useFavoritesStore', () => {
       await store.addFavorite(mockAnime)
 
       expect(store.favorites).toHaveLength(1)
-      expect(store.favorites[0].mal_id).toBe(mockAnime.mal_id)
-      expect(store.favorites[0].title).toBe(mockAnime.title)
-      expect(store.favorites[0].addedAt).toBeDefined()
+      expect(store.favorites[0]!.mal_id).toBe(mockAnime.mal_id)
+      expect(store.favorites[0]!.title).toBe(mockAnime.title)
+      expect(store.favorites[0]!.addedAt).toBeDefined()
     })
 
     it('should not add duplicate anime', async () => {
@@ -150,7 +150,7 @@ describe('useFavoritesStore', () => {
       await store.removeFavorite(mockAnime.mal_id)
 
       expect(store.favorites).toHaveLength(1)
-      expect(store.favorites[0].mal_id).toBe(mockAnime2.mal_id)
+      expect(store.favorites[0]!.mal_id).toBe(mockAnime2.mal_id)
     })
 
     it('should do nothing when removing non-existent anime', async () => {
@@ -243,8 +243,8 @@ describe('useFavoritesStore', () => {
       await store.addFavorite(mockAnime3)
 
       const sorted = store.sortedByRecent
-      expect(sorted[0].mal_id).toBe(mockAnime3.mal_id)
-      expect(sorted[2].mal_id).toBe(mockAnime.mal_id)
+      expect(sorted[0]!.mal_id).toBe(mockAnime3.mal_id)
+      expect(sorted[2]!.mal_id).toBe(mockAnime.mal_id)
     })
 
     it('should sort by score (highest first)', async () => {
@@ -254,9 +254,9 @@ describe('useFavoritesStore', () => {
       await store.addFavorite(mockAnime3) // score: 7.0
 
       const sorted = store.sortedByScore
-      expect(sorted[0].mal_id).toBe(mockAnime2.mal_id) // 9.0
-      expect(sorted[1].mal_id).toBe(mockAnime.mal_id) // 8.5
-      expect(sorted[2].mal_id).toBe(mockAnime3.mal_id) // 7.0
+      expect(sorted[0]!.mal_id).toBe(mockAnime2.mal_id) // 9.0
+      expect(sorted[1]!.mal_id).toBe(mockAnime.mal_id) // 8.5
+      expect(sorted[2]!.mal_id).toBe(mockAnime3.mal_id) // 7.0
     })
 
     it('should sort by title (alphabetically)', async () => {
@@ -266,9 +266,9 @@ describe('useFavoritesStore', () => {
       await store.addFavorite(mockAnime2) // Another Anime
 
       const sorted = store.sortedByTitle
-      expect(sorted[0].title).toBe('Another Anime')
-      expect(sorted[1].title).toBe('Test Anime')
-      expect(sorted[2].title).toBe('Zeta Anime')
+      expect(sorted[0]!.title).toBe('Another Anime')
+      expect(sorted[1]!.title).toBe('Test Anime')
+      expect(sorted[2]!.title).toBe('Zeta Anime')
     })
   })
 })

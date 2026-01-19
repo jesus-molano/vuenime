@@ -67,9 +67,9 @@ describe('useWatchedStore', () => {
       await store.markAsWatched(mockWatchedInput)
 
       expect(store.watchedEpisodes).toHaveLength(1)
-      expect(store.watchedEpisodes[0].mal_id).toBe(mockWatchedInput.mal_id)
-      expect(store.watchedEpisodes[0].episode_number).toBe(mockWatchedInput.episode_number)
-      expect(store.watchedEpisodes[0].watched_at).toBeDefined()
+      expect(store.watchedEpisodes[0]!.mal_id).toBe(mockWatchedInput.mal_id)
+      expect(store.watchedEpisodes[0]!.episode_number).toBe(mockWatchedInput.episode_number)
+      expect(store.watchedEpisodes[0]!.watched_at).toBeDefined()
     })
 
     it('should not add duplicate watched episodes', async () => {
@@ -99,7 +99,7 @@ describe('useWatchedStore', () => {
       await store.markAsUnwatched(mockWatchedInput.mal_id, mockWatchedInput.episode_number)
 
       expect(store.watchedEpisodes).toHaveLength(1)
-      expect(store.watchedEpisodes[0].episode_number).toBe(mockWatchedInput2.episode_number)
+      expect(store.watchedEpisodes[0]!.episode_number).toBe(mockWatchedInput2.episode_number)
     })
 
     it('should do nothing when removing non-existent episode', async () => {
@@ -240,7 +240,7 @@ describe('useWatchedStore', () => {
       await store.clearWatchedForAnime(1)
 
       expect(store.watchedEpisodes).toHaveLength(1)
-      expect(store.watchedEpisodes[0].mal_id).toBe(2)
+      expect(store.watchedEpisodes[0]!.mal_id).toBe(2)
     })
 
     it('should show notification with anime title', async () => {
