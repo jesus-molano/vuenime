@@ -66,9 +66,6 @@
                 @click.stop
                 @mousemove="handleMouseMove"
                 @mouseleave="handleMouseLeave"
-                @touchstart.passive="handleTouchStart"
-                @touchmove.prevent="handleTouchMove"
-                @touchend.passive="handleTouchEnd"
               >
                 <!-- Full character image (poster style) -->
                 <div class="relative aspect-3/4 w-full overflow-hidden bg-rp-overlay">
@@ -124,10 +121,6 @@ const {
   glareStyle,
   handleMouseMove,
   handleMouseLeave,
-  handleTouchStart,
-  handleTouchMove,
-  handleTouchEnd,
-  enableGyroscopeListener,
   cleanup,
   triggerShine,
 } = useCard3DTilt({
@@ -143,9 +136,7 @@ const openCard = async () => {
   isExpanded.value = true
   triggerShine()
 
-  if (isMobileDevice.value) {
-    await enableGyroscopeListener()
-  }
+  triggerShine()
 }
 
 const closeCard = () => {
