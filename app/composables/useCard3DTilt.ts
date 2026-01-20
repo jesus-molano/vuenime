@@ -215,6 +215,10 @@ export function useCard3DTilt(
     resetTilt()
   }
 
+  onScopeDispose(() => {
+    cleanup()
+  })
+
   return {
     cardRef,
     isHovering,
