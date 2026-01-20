@@ -1,17 +1,13 @@
 import type { Anime, AnimeListResponse } from '~~/shared/types'
-import { PAGINATION, MOBILE_LIMITS, DESKTOP_LIMITS } from '~~/shared/constants/api'
+import { PAGINATION, DESKTOP_LIMITS } from '~~/shared/constants/api'
 import { animeApi } from '~/services/api'
 import { createCachedData, CACHE_TTL } from '~/utils/cache'
 import { CACHE_KEYS } from '~/utils/cache-keys'
-import { isMobileUserAgent } from '~/utils/device-detection'
 
 export const useAnimeList = () => {
-  // Detect mobile via User-Agent for SSR optimization
-  const headers = useRequestHeaders(['user-agent'])
-  const isMobileDevice = isMobileUserAgent(headers['user-agent'])
-
-  // Use responsive limits: mobile gets fewer items for faster FCP
-  const initialLimit = isMobileDevice ? MOBILE_LIMITS.TRENDING : DESKTOP_LIMITS.TRENDING
+  // Use stable cache key with DESKTOP_LIMITS for SSR/hydration consistency
+  // Responsiveness is handled via CSS, not different data payloads
+  const initialLimit = DESKTOP_LIMITS.TRENDING
 
   // Additional anime loaded via "load more" (client-side only)
   const additionalAnime = useState<Anime[]>('home-additional-anime', () => [])
@@ -24,14 +20,13 @@ export const useAnimeList = () => {
   const loadMoreError = ref<string | null>(null)
 
   // SSR fetch - this blocks rendering until data is available
-  // Mobile devices get fewer items initially for faster load
   const {
     data,
     status,
     error,
     refresh: refetch,
   } = useFetch<AnimeListResponse>('/api/jikan/anime', {
-    key: isMobileDevice ? `${CACHE_KEYS.ANIME_LIST_HOME}-mobile` : CACHE_KEYS.ANIME_LIST_HOME,
+    key: CACHE_KEYS.ANIME_LIST_HOME,
     query: { page: PAGINATION.DEFAULT_PAGE, limit: initialLimit },
     watch: false,
     // Cache for 10 minutes on client navigation
