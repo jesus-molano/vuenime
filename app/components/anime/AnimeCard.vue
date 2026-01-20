@@ -73,7 +73,7 @@ const props = withDefaults(defineProps<AnimeCardProps>(), {
 
 const wrapperRef = ref<HTMLElement | null>(null)
 
-const { cardRef, isHovering, cardTransform, glareStyle, borderMaskStyle, handleMouseMove, handleMouseLeave } =
+const { cardRef, isHovering, cardTransform, glareStyle, borderMaskStyle, handleMouseMove, handleMouseLeave, cleanup: cleanupTilt } =
   useCard3DTilt({ maxRotation: 6, minWidth: 640 })
 
 const animeRef = toRef(props, 'anime')
@@ -91,6 +91,11 @@ const onMouseLeave = () => {
   cancelPrefetchAnimeDetail(props.anime.mal_id)
   handleMouseLeave()
 }
+
+// Cleanup composable resources on unmount
+onUnmounted(() => {
+  cleanupTilt()
+})
 </script>
 
 <style scoped>

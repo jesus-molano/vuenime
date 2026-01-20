@@ -52,9 +52,24 @@ export const useAnimeDetail = (id: Ref<string> | string) => {
 }
 
 // Prefetch anime detail data - call on hover to warm the cache
+// Use LRU-style cleanup to prevent unbounded growth
 const prefetchCache = new Set<string>()
 const pendingPrefetch = new Map<string, ReturnType<typeof setTimeout>>()
 const PREFETCH_DELAY = 400 // ms to wait before prefetching
+const MAX_PREFETCH_CACHE_SIZE = 50
+
+// Cleanup old entries when cache grows too large
+function cleanupPrefetchCache() {
+  if (prefetchCache.size > MAX_PREFETCH_CACHE_SIZE) {
+    const iterator = prefetchCache.values()
+    // Remove oldest half of entries
+    const toRemove = Math.floor(prefetchCache.size / 2)
+    for (let i = 0; i < toRemove; i++) {
+      const value = iterator.next().value
+      if (value) prefetchCache.delete(value)
+    }
+  }
+}
 
 export const prefetchAnimeDetail = (id: string | number) => {
   const animeId = String(id)
@@ -80,6 +95,7 @@ export const prefetchAnimeDetail = (id: string | number) => {
     }
 
     prefetchCache.add(cacheKey)
+    cleanupPrefetchCache()
 
     try {
       // Use shared fetchAnimeDetail to deduplicate with useAsyncData

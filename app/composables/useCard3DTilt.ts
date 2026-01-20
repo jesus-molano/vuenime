@@ -23,6 +23,9 @@ export function useCard3DTilt(
   const showShine = ref(false)
   const useGyroscopeActive = ref(false)
 
+  // Track active timeouts for cleanup
+  const activeTimeouts = new Set<ReturnType<typeof setTimeout>>()
+
   // 3D transform style
   const cardTransform = computed(() => ({
     transform: isHovering.value
@@ -167,14 +170,16 @@ export function useCard3DTilt(
 
       // Fallback: disable after timeout if no events received
       const timeout = setTimeout(() => {
+        activeTimeouts.delete(timeout)
         if (lastBeta.value === 0 && lastGamma.value === 0) {
           if (import.meta.dev) console.warn('[useCard3DTilt] No gyroscope events received, disabling')
           disableGyroscopeListener()
         }
       }, 1000)
+      activeTimeouts.add(timeout)
 
       if (import.meta.dev) console.log('[useCard3DTilt] Gyroscope listener enabled (no permission required)')
-      return () => clearTimeout(timeout)
+      return true
     }
   }
 
@@ -189,16 +194,23 @@ export function useCard3DTilt(
   const triggerShine = () => {
     if (!enableShine) return
     showShine.value = false
-    setTimeout(() => {
+    const outerTimeout = setTimeout(() => {
+      activeTimeouts.delete(outerTimeout)
       showShine.value = true
-      setTimeout(() => {
+      const innerTimeout = setTimeout(() => {
+        activeTimeouts.delete(innerTimeout)
         showShine.value = false
       }, 900)
+      activeTimeouts.add(innerTimeout)
     }, 50)
+    activeTimeouts.add(outerTimeout)
   }
 
   // Cleanup
   const cleanup = () => {
+    // Clear all pending timeouts
+    activeTimeouts.forEach((timeout) => clearTimeout(timeout))
+    activeTimeouts.clear()
     disableGyroscopeListener()
     resetTilt()
   }
