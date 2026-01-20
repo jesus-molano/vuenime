@@ -98,20 +98,21 @@ describe('useCard3DTilt', () => {
       await nextTick()
 
       // Simulate tilt/roll from useParallax (values are -0.5 to 0.5)
-      // Max rotation default is 6, sensitivity is 1.2
-      // rotateX = tilt * 6 * 1.2
-      // rotateY = roll * 6 * 1.2
+      // Based on VueUse source:
+      // - tilt = Mouse X (left=-0.5, right=+0.5)
+      // - roll = Inverted Mouse Y (top=+0.5, bottom=-0.5)
+      // rotateX = roll * 6 * 1.2
+      // rotateY = tilt * 6 * 1.2
       
-      mockTilt.value = 0.5
-      mockRoll.value = -0.5
+      mockTilt.value = 0.5 // Mouse at right
+      mockRoll.value = -0.5 // Mouse at bottom
       await nextTick()
 
       const transform = wrapper.vm.cardTransform.transform
-      // tilt (X) = 0.5, roll (Y) = -0.5
-      // rX (driven by roll/Y) = -0.5 * 6 * 1.2 * -1 = 3.6
-      // rY (driven by tilt/X) = 0.5 * 6 * 1.2 * -1 = -3.6
-      expect(transform).toContain('rotateX(3.5999999999999996deg)')
-      expect(transform).toContain('rotateY(-3.5999999999999996deg)')
+      // rX = roll * 6 * 1.2 = -0.5 * 7.2 = -3.6
+      // rY = tilt * 6 * 1.2 = 0.5 * 7.2 = +3.6
+      expect(transform).toContain('rotateX(-3.5999999999999996deg)')
+      expect(transform).toContain('rotateY(3.5999999999999996deg)')
     })
 
     it('should reset transform when not hovering/active', async () => {
@@ -146,6 +147,34 @@ describe('useCard3DTilt', () => {
       mockRoll.value = -0.5
       await nextTick()
       expect(wrapper.vm.glareStyle.background).toContain('at 0% 0%')
+    })
+    
+    it('should handle bottom-left hover correctly (sink corner + glare tracking)', async () => {
+      const wrapper = await mountSuspended(TestComponent)
+      wrapper.vm.handleMouseMove()
+      await nextTick()
+
+      // Simulate Bottom-Left Hover
+      // Based on VueUse source: tilt=MouseX, roll=InvertedMouseY
+      // Bottom-Left: Mouse X = left = tilt=-0.5, Mouse Y = bottom = roll=-0.5
+      mockTilt.value = -0.5 // Mouse at left
+      mockRoll.value = -0.5 // Mouse at bottom
+      await nextTick()
+
+      const transform = wrapper.vm.cardTransform.transform
+      const glare = wrapper.vm.glareStyle.background
+
+      // Expectation:
+      // rX = roll * 6 * 1.2 = -0.5 * 7.2 = -3.6 (bottom corner tilts UP)
+      expect(transform).toContain('rotateX(-3.5999999999999996deg)')
+
+      // rY = tilt * 6 * 1.2 = -0.5 * 7.2 = -3.6 (left corner tilts UP)
+      expect(transform).toContain('rotateY(-3.5999999999999996deg)')
+
+      // Glare should be at Bottom-Left (0% X, 100% Y)
+      // x = (tilt + 0.5) * 100 = (-0.5 + 0.5) * 100 = 0%
+      // y = (0.5 - roll) * 100 = (0.5 - (-0.5)) * 100 = 100%
+      expect(glare).toContain('at 0% 100%')
     })
   })
 
