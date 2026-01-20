@@ -23,8 +23,6 @@ export function useCard3DTilt(
   // Automatically handles mouse on desktop and device orientation on mobile
   const { tilt, roll, source } = useParallax(cardRef)
 
-  // Enhance sensitivity for more visual effect
-  const TILT_SENSITIVITY = 1.2
 
   // 3D transform style
   const cardTransform = computed(() => {
@@ -37,16 +35,28 @@ export function useCard3DTilt(
     const shouldAnimate = isHovering.value || (enableGyroscope && isMobile)
 
     if (!shouldAnimate) {
-      return { transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)' }
+      return { 
+        transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
+        transition: 'transform 0.5s ease-out', // Smooth reset
+      }
     }
 
+    // Sensitivity settings
+    const MOUSE_SENSITIVITY = 1.2
+    const GYRO_SENSITIVITY = 2.5 // Increased for mobile to feel more responsive
+
+    const currentSensitivity = isMobile ? GYRO_SENSITIVITY : MOUSE_SENSITIVITY
+
     // Map tilt/roll (-0.5 to 0.5) to rotation degrees
-    // tilt -> rotateX (inverted), roll -> rotateY
-    const rX = tilt.value * maxRotation * TILT_SENSITIVITY // tilt is pitch (x-axis)
-    const rY = roll.value * maxRotation * TILT_SENSITIVITY // roll is roll (y-axis)
+    // Both axes inverted for "natural" 3D feel:
+    // Mouse Right (roll > 0) -> Push Right Side In (rotateY < 0)
+    // Mouse Down (tilt > 0) -> Push Bottom In (rotateX < 0)
+    const rX = tilt.value * maxRotation * currentSensitivity * -1 * (isMobile ? 1.5 : 1) // Extra boost for gyro
+    const rY = roll.value * maxRotation * currentSensitivity * -1 * (isMobile ? 1.5 : 1)
 
     return {
       transform: `perspective(1000px) rotateX(${rX}deg) rotateY(${rY}deg) scale3d(1.02, 1.02, 1.02)`,
+      // NO transition here during active state to prevent "lag" between cursor/glare and card movement
     }
   })
 

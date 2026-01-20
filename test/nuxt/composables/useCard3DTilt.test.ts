@@ -107,8 +107,8 @@ describe('useCard3DTilt', () => {
       await nextTick()
 
       const transform = wrapper.vm.cardTransform.transform
-      expect(transform).toContain('rotateX(3.5999999999999996deg)') // 0.5 * 6 * 1.2
-      expect(transform).toContain('rotateY(-3.5999999999999996deg)') // -0.5 * 6 * 1.2
+      expect(transform).toContain('rotateX(-3.5999999999999996deg)') // 0.5 * 6 * 1.2 * -1
+      expect(transform).toContain('rotateY(3.5999999999999996deg)') // -0.5 * 6 * 1.2 * -1
     })
 
     it('should reset transform when not hovering/active', async () => {
