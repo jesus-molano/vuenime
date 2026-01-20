@@ -13,6 +13,10 @@ export const useDeviceType = () => {
 
   const MOBILE_BREAKPOINT = 640 // Tailwind 'sm' breakpoint
 
+  // Store cleanup references at composable scope
+  let resizeTimeout: ReturnType<typeof setTimeout> | undefined
+  let handleResize: (() => void) | undefined
+
   const checkDevice = () => {
     if (import.meta.client) {
       isMobile.value = window.innerWidth < MOBILE_BREAKPOINT
@@ -25,17 +29,20 @@ export const useDeviceType = () => {
     checkDevice()
 
     // Debounced resize handler
-    let resizeTimeout: ReturnType<typeof setTimeout>
-    const handleResize = () => {
+    handleResize = () => {
       clearTimeout(resizeTimeout)
       resizeTimeout = setTimeout(checkDevice, 150)
     }
 
     window.addEventListener('resize', handleResize)
-    onUnmounted(() => {
+  })
+
+  // Use onScopeDispose for cleanup - works correctly regardless of where composable is called
+  onScopeDispose(() => {
+    if (handleResize) {
       window.removeEventListener('resize', handleResize)
-      clearTimeout(resizeTimeout)
-    })
+    }
+    clearTimeout(resizeTimeout)
   })
 
   return {

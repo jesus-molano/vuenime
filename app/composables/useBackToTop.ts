@@ -1,3 +1,5 @@
+import { rafThrottle } from '~/utils/throttle'
+
 interface UseBackToTopOptions {
   /** Scroll threshold to show the button */
   threshold?: number
@@ -8,9 +10,12 @@ export const useBackToTop = (options: UseBackToTopOptions = {}) => {
 
   const isVisible = ref(false)
 
-  const handleScroll = () => {
+  const updateVisibility = () => {
     isVisible.value = window.scrollY > threshold
   }
+
+  // Throttle scroll handler to once per animation frame
+  const handleScroll = rafThrottle(updateVisibility)
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -22,6 +27,7 @@ export const useBackToTop = (options: UseBackToTopOptions = {}) => {
 
   onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll)
+    handleScroll.cancel()
   })
 
   return {

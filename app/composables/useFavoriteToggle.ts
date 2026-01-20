@@ -27,6 +27,9 @@ export function useFavoriteToggle(
   const isAnimating = ref(false)
   const isRemoving = ref(false)
 
+  // Store timeout reference for cleanup
+  let animationTimeout: ReturnType<typeof setTimeout> | undefined
+
   const toggleFavorite = async () => {
     isAnimating.value = true
     const animeData = anime.value
@@ -68,10 +71,17 @@ export function useFavoriteToggle(
       })
     }
 
-    setTimeout(() => {
+    // Clear any existing timeout before setting a new one
+    clearTimeout(animationTimeout)
+    animationTimeout = setTimeout(() => {
       isAnimating.value = false
     }, 600)
   }
+
+  // Cleanup timeout on scope dispose
+  onScopeDispose(() => {
+    clearTimeout(animationTimeout)
+  })
 
   return {
     isFavorite,

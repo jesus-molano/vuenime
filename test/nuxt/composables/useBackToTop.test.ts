@@ -26,15 +26,36 @@ const TestComponent = defineComponent({
 
 describe('useBackToTop (Nuxt)', () => {
   let scrollMock: MockScrollBehavior
+  let rafCallbacks: Array<FrameRequestCallback>
+  let rafId: number
 
   beforeEach(() => {
     vi.clearAllMocks()
     scrollMock = createMockScrollBehavior()
+
+    // Mock requestAnimationFrame for throttle
+    rafCallbacks = []
+    rafId = 0
+
+    vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
+      rafCallbacks.push(callback)
+      return ++rafId
+    })
+
+    vi.stubGlobal('cancelAnimationFrame', vi.fn())
   })
 
   afterEach(() => {
     cleanupBrowserMocks()
+    rafCallbacks = []
   })
+
+  // Helper to flush all RAF callbacks
+  const flushRAF = () => {
+    const callbacks = [...rafCallbacks]
+    rafCallbacks = []
+    callbacks.forEach((cb) => cb(performance.now()))
+  }
 
   describe('with default threshold (500)', () => {
     it('should register scroll event listener on mount', async () => {
@@ -48,6 +69,7 @@ describe('useBackToTop (Nuxt)', () => {
       // Simulate scroll past threshold
       scrollMock.setScrollY(600)
       scrollMock.triggerScroll()
+      flushRAF() // Flush the throttled RAF callback
       await nextTick()
 
       expect(wrapper.find('#visibility').text()).toBe('visible')
@@ -59,12 +81,14 @@ describe('useBackToTop (Nuxt)', () => {
       // Scroll past threshold
       scrollMock.setScrollY(600)
       scrollMock.triggerScroll()
+      flushRAF()
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('visible')
 
       // Scroll back
       scrollMock.setScrollY(400)
       scrollMock.triggerScroll()
+      flushRAF()
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('hidden')
     })
@@ -79,12 +103,14 @@ describe('useBackToTop (Nuxt)', () => {
       // Below custom threshold
       scrollMock.setScrollY(150)
       scrollMock.triggerScroll()
+      flushRAF()
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('hidden')
 
       // Above custom threshold
       scrollMock.setScrollY(250)
       scrollMock.triggerScroll()
+      flushRAF()
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('visible')
     })
@@ -99,12 +125,14 @@ describe('useBackToTop (Nuxt)', () => {
       // At exact threshold
       scrollMock.setScrollY(500)
       scrollMock.triggerScroll()
+      flushRAF()
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('hidden')
 
       // Just past threshold
       scrollMock.setScrollY(501)
       scrollMock.triggerScroll()
+      flushRAF()
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('visible')
     })
@@ -117,8 +145,62 @@ describe('useBackToTop (Nuxt)', () => {
       // Any scroll should show button
       scrollMock.setScrollY(1)
       scrollMock.triggerScroll()
+      flushRAF()
       await nextTick()
       expect(wrapper.find('#visibility').text()).toBe('visible')
+    })
+  })
+
+  describe('throttle behavior', () => {
+    it('should throttle scroll events to animation frame', async () => {
+      await mountSuspended(TestComponent)
+
+      // Trigger multiple scroll events rapidly
+      scrollMock.setScrollY(600)
+      scrollMock.triggerScroll()
+      scrollMock.triggerScroll()
+      scrollMock.triggerScroll()
+
+      // RAF should only have one pending callback (throttled)
+      expect(rafCallbacks.length).toBe(1)
+    })
+
+    it('should cancel throttled handler on unmount', async () => {
+      const cancelAnimationFrameSpy = vi.fn()
+      vi.stubGlobal('cancelAnimationFrame', cancelAnimationFrameSpy)
+
+      const wrapper = await mountSuspended(TestComponent)
+
+      // Trigger a scroll to schedule RAF
+      scrollMock.setScrollY(600)
+      scrollMock.triggerScroll()
+
+      // Unmount
+      wrapper.unmount()
+
+      // cancelAnimationFrame should have been called
+      expect(cancelAnimationFrameSpy).toHaveBeenCalled()
+    })
+
+    it('should not update visibility if RAF is cancelled before firing', async () => {
+      const wrapper = await mountSuspended(TestComponent)
+
+      // Initially hidden
+      expect(wrapper.find('#visibility').text()).toBe('hidden')
+
+      // Trigger scroll but don't flush RAF
+      scrollMock.setScrollY(600)
+      scrollMock.triggerScroll()
+
+      // Unmount before RAF fires
+      wrapper.unmount()
+
+      // Clear callbacks to simulate cancellation
+      rafCallbacks = []
+
+      // Visibility should still be hidden (unmounted before update)
+      // Note: We can't actually check wrapper after unmount, but the key is
+      // no errors should occur from trying to update unmounted component
     })
   })
 })

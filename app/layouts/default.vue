@@ -22,6 +22,8 @@
 </template>
 
 <script setup lang="ts">
+import { rafThrottle } from '~/utils/throttle'
+
 const { isSearchOpen, toggleSearch } = useSearch()
 
 const isScrolled = ref(false)
@@ -31,7 +33,7 @@ const footerHeight = ref(0)
 const lastScrollY = ref(0)
 const isDockVisible = ref(true)
 
-const handleScroll = () => {
+const updateScrollState = () => {
   const currentScrollY = window.scrollY
   isScrolled.value = currentScrollY > 100
 
@@ -40,6 +42,9 @@ const handleScroll = () => {
   isDockVisible.value = footerHeight.value > 0 || currentScrollY < lastScrollY.value || currentScrollY < 100
   lastScrollY.value = currentScrollY
 }
+
+// Throttle scroll handler to once per animation frame
+const handleScroll = rafThrottle(updateScrollState)
 
 const handleKeydown = (e: KeyboardEvent) => {
   if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
@@ -54,11 +59,12 @@ const handleKeydown = (e: KeyboardEvent) => {
 onMounted(() => {
   window.addEventListener('scroll', handleScroll, { passive: true })
   window.addEventListener('keydown', handleKeydown)
-  handleScroll()
+  updateScrollState()
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
   window.removeEventListener('keydown', handleKeydown)
+  handleScroll.cancel()
 })
 </script>
