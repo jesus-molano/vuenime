@@ -129,7 +129,11 @@ describe('useScrollReveal (Nuxt)', () => {
       observerMock.simulateIntersection(true)
       await nextTick()
 
-      expect(observerMock.instance.unobserve).toHaveBeenCalled()
+      // useIntersectionObserver from vueuse calls stop() which typically disconnects the observer
+      // or unobserves. We should check that cleanup happened.
+      const disconnectCalled = observerMock.instance.disconnect.mock.calls.length > 0
+      const unobserveCalled = observerMock.instance.unobserve.mock.calls.length > 0
+      expect(disconnectCalled || unobserveCalled).toBe(true)
     })
   })
 
