@@ -105,9 +105,33 @@
   }
 }
 
+/* Mobile optimizations - reduce GPU load */
 @media (max-width: 768px) {
+  .blob {
+    filter: blur(40px);
+    will-change: auto;
+    opacity: 0.35;
+  }
+
+  .blob-1 {
+    animation-duration: 40s;
+  }
+
+  .blob-2 {
+    animation-duration: 50s;
+  }
+
   .blob-3 {
     display: none;
+  }
+}
+
+/* Small devices - disable animations entirely */
+@media (max-width: 480px) {
+  .blob {
+    animation: none;
+    filter: blur(30px);
+    opacity: 0.25;
   }
 }
 </style>

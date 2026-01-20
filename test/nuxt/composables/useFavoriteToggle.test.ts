@@ -80,6 +80,7 @@ describe('useFavoriteToggle (Nuxt)', () => {
   })
 
   afterEach(() => {
+    vi.runOnlyPendingTimers()
     vi.useRealTimers()
   })
 
@@ -203,6 +204,45 @@ describe('useFavoriteToggle (Nuxt)', () => {
       await nextTick()
 
       expect(wrapper.find('#is-removing').text()).toBe('false')
+    })
+  })
+
+  describe('cleanup', () => {
+    it('should cleanup animation timeout on unmount', async () => {
+      mockFavoritesStore.isFavorite.mockReturnValue(false)
+
+      const wrapper = await mountSuspended(TestComponentBasic, {
+        props: { animeId: 1 },
+      })
+
+      // Toggle favorite to start animation timeout
+      await wrapper.find('#toggle-btn').trigger('click')
+      await nextTick()
+
+      // isAnimating should be true before timeout completes
+      expect(wrapper.find('#is-animating').text()).toBe('true')
+
+      // Unmount before timeout completes (before 600ms)
+      wrapper.unmount()
+
+      // Advance timers past the animation duration - should not throw
+      vi.advanceTimersByTime(1000)
+
+      // No error should occur - timeout was cleaned up
+    })
+
+    it('should not throw when unmounting without active timeout', async () => {
+      mockFavoritesStore.isFavorite.mockReturnValue(false)
+
+      const wrapper = await mountSuspended(TestComponentBasic, {
+        props: { animeId: 1 },
+      })
+
+      // Unmount without triggering any toggle
+      wrapper.unmount()
+
+      // Should not throw
+      vi.advanceTimersByTime(1000)
     })
   })
 })

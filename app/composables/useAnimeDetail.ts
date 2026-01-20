@@ -71,6 +71,21 @@ function cleanupPrefetchCache() {
   }
 }
 
+/**
+ * Clear all pending prefetch timeouts
+ * Called on page navigation to prevent stale prefetches
+ */
+export const clearAllPendingPrefetch = () => {
+  pendingPrefetch.forEach((timeoutId) => clearTimeout(timeoutId))
+  pendingPrefetch.clear()
+}
+
+// Register cleanup on page navigation (client-side only)
+if (import.meta.client) {
+  const nuxtApp = useNuxtApp()
+  nuxtApp.hook('page:start', clearAllPendingPrefetch)
+}
+
 export const prefetchAnimeDetail = (id: string | number) => {
   const animeId = String(id)
   const cacheKey = CACHE_KEYS.animeDetail(animeId)
