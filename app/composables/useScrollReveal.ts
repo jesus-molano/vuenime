@@ -43,6 +43,9 @@ export function useScrollReveal(
   return { elementRef, isVisible }
 }
 
+// Store observers for cleanup - use WeakMap to auto-cleanup when elements are GC'd
+const observerMap = new WeakMap<HTMLElement, IntersectionObserver>()
+
 /**
  * Directive for scroll reveal animations
  * Usage: v-scroll-reveal or v-scroll-reveal.fade-up
@@ -119,5 +122,13 @@ export const vScrollReveal = {
     )
 
     observer.observe(el)
+    observerMap.set(el, observer)
+  },
+  unmounted(el: HTMLElement) {
+    const observer = observerMap.get(el)
+    if (observer) {
+      observer.disconnect()
+      observerMap.delete(el)
+    }
   },
 }

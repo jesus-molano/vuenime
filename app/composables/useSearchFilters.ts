@@ -31,13 +31,22 @@ export function useSearchFilters() {
   const selectedYear = ref<string | null>(yearFilter.value || null)
   const selectedGenre = ref(genresFilter.value || '')
 
-  // Debounce search input
+  // Debounce search input with cleanup
   let searchTimeout: ReturnType<typeof setTimeout> | null = null
   watch(searchInput, (newValue) => {
     if (searchTimeout) clearTimeout(searchTimeout)
     searchTimeout = setTimeout(() => {
       debouncedSearch.value = newValue
+      searchTimeout = null
     }, 500)
+  })
+
+  // Cleanup timeout on scope disposal (component unmount)
+  onScopeDispose(() => {
+    if (searchTimeout) {
+      clearTimeout(searchTimeout)
+      searchTimeout = null
+    }
   })
 
   const typeKeys = ANIME_TYPES

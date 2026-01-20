@@ -32,7 +32,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   let currentUserId: string | null = null
   let initialized = false
 
-  supabase.auth.onAuthStateChange(async (event, session) => {
+  const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
     const userId = session?.user?.id ?? null
 
     if (event === 'INITIAL_SESSION' && !initialized) {
@@ -66,5 +66,12 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     } else {
       preferencesStore.setLocale(currentLocale as LocaleCode)
     }
+  })
+
+  // Cleanup auth subscription on app unmount to prevent memory leaks
+  nuxtApp.hook('app:beforeMount', () => {
+    window.addEventListener('beforeunload', () => {
+      subscription.unsubscribe()
+    })
   })
 })
