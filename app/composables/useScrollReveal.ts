@@ -1,3 +1,5 @@
+import { useIntersectionObserver } from '@vueuse/core'
+
 /**
  * Composable for scroll-triggered reveal animations
  * Uses Intersection Observer for performance
@@ -14,37 +16,27 @@ export function useScrollReveal(
   const elementRef = ref<HTMLElement | null>(null)
   const isVisible = ref(false)
 
-  onMounted(() => {
-    if (!elementRef.value) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            isVisible.value = true
-            if (once) {
-              observer.unobserve(entry.target)
-            }
-          } else if (!once) {
-            isVisible.value = false
-          }
-        })
-      },
-      { threshold, rootMargin }
-    )
-
-    observer.observe(elementRef.value)
-
-    onUnmounted(() => {
-      observer.disconnect()
-    })
-  })
+  const { stop } = useIntersectionObserver(
+    elementRef,
+    (entries) => {
+      const isIntersecting = entries[0]?.isIntersecting
+      if (isIntersecting) {
+        isVisible.value = true
+        if (once) {
+          stop()
+        }
+      } else if (!once) {
+        isVisible.value = false
+      }
+    },
+    { threshold, rootMargin }
+  )
 
   return { elementRef, isVisible }
 }
 
-// Store observers for cleanup - use WeakMap to auto-cleanup when elements are GC'd
-const observerMap = new WeakMap<HTMLElement, IntersectionObserver>()
+// Store stop functions for cleanup - use WeakMap to auto-cleanup when elements are GC'd
+const stopMap = new WeakMap<HTMLElement, () => void>()
 
 /**
  * Directive for scroll reveal animations
@@ -108,27 +100,25 @@ export const vScrollReveal = {
       })
     }
 
-    const observer = new IntersectionObserver(
+    const { stop } = useIntersectionObserver(
+      el,
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Small timeout to ensure DOM is ready
-            setTimeout(animate, 50)
-            observer.unobserve(entry.target)
-          }
-        })
+        if (entries[0]?.isIntersecting) {
+          // Small timeout to ensure DOM is ready
+          setTimeout(animate, 50)
+          stop()
+        }
       },
       { threshold: 0.05, rootMargin: '50px 0px 0px 0px' }
     )
 
-    observer.observe(el)
-    observerMap.set(el, observer)
+    stopMap.set(el, stop)
   },
   unmounted(el: HTMLElement) {
-    const observer = observerMap.get(el)
-    if (observer) {
-      observer.disconnect()
-      observerMap.delete(el)
+    const stop = stopMap.get(el)
+    if (stop) {
+      stop()
+      stopMap.delete(el)
     }
   },
 }

@@ -227,9 +227,9 @@ export function useScrollReveal(
     )
 
     observer.observe(elementRef.value)
-
-    onUnmounted(() => observer.disconnect())
   })
+
+  onUnmounted(() => observer.disconnect())
 
   return { elementRef, isVisible }
 }
