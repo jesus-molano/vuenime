@@ -66,12 +66,9 @@
                 @click.stop
                 @mousemove="handleMouseMove"
                 @mouseleave="handleMouseLeave"
-                @touchstart.passive="handleTouchStart"
-                @touchmove.prevent="handleTouchMove"
-                @touchend.passive="handleTouchEnd"
               >
                 <!-- Full character image (poster style) -->
-                <div class="relative aspect-[3/4] w-full overflow-hidden bg-rp-overlay">
+                <div class="relative aspect-3/4 w-full overflow-hidden bg-rp-overlay">
                   <NuxtImg
                     :src="character.character.images.webp?.image_url || character.character.images.jpg.image_url"
                     :alt="character.character.name"
@@ -124,10 +121,6 @@ const {
   glareStyle,
   handleMouseMove,
   handleMouseLeave,
-  handleTouchStart,
-  handleTouchMove,
-  handleTouchEnd,
-  enableGyroscopeListener,
   cleanup,
   triggerShine,
 } = useCard3DTilt({
@@ -143,9 +136,7 @@ const openCard = async () => {
   isExpanded.value = true
   triggerShine()
 
-  if (isMobileDevice.value) {
-    await enableGyroscopeListener()
-  }
+  triggerShine()
 }
 
 const closeCard = () => {
@@ -156,7 +147,7 @@ const closeCard = () => {
 // Watch for modal close
 watch(isExpanded, (expanded) => {
   if (!expanded) {
-    cleanup()
+    // cleanup() - handled by scope disposal or closing logic if needed re-init
   }
 })
 
@@ -174,7 +165,6 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleEscape)
-  cleanup()
 })
 </script>
 
