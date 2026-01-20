@@ -160,18 +160,21 @@ watch(isExpanded, (expanded) => {
   }
 })
 
+// Escape key handler at scope level
+const handleEscape = (e: KeyboardEvent) => {
+  if (e.key === 'Escape' && isExpanded.value) {
+    closeCard()
+  }
+}
+
 // Close modal on escape key
 onMounted(() => {
-  const handleEscape = (e: KeyboardEvent) => {
-    if (e.key === 'Escape' && isExpanded.value) {
-      closeCard()
-    }
-  }
   window.addEventListener('keydown', handleEscape)
-  onUnmounted(() => {
-    window.removeEventListener('keydown', handleEscape)
-    cleanup()
-  })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleEscape)
+  cleanup()
 })
 </script>
 

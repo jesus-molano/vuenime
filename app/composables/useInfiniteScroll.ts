@@ -1,3 +1,5 @@
+import { useIntersectionObserver } from '@vueuse/core'
+
 interface UseInfiniteScrollOptions {
   /** Whether there are more items to load */
   hasMore: Ref<boolean> | ComputedRef<boolean>
@@ -15,54 +17,21 @@ export const useInfiniteScroll = (options: UseInfiniteScrollOptions) => {
   const { hasMore, isLoading, hasError, onLoadMore, rootMargin = '200px' } = options
 
   const triggerRef = ref<HTMLElement | null>(null)
-  let observer: IntersectionObserver | null = null
 
-  const createObserver = () => {
-    // Cleanup previous observer
-    if (observer) {
-      observer.disconnect()
-      observer = null
-    }
-
-    // Don't create if no element
-    if (!triggerRef.value) return
-
-    observer = new IntersectionObserver(
-      (entries) => {
-        const errorValue = hasError?.value
-        const hasErrorBool = typeof errorValue === 'string' ? !!errorValue : !!errorValue
-
-        if (entries[0]?.isIntersecting && hasMore.value && !isLoading.value && !hasErrorBool) {
-          onLoadMore()
-        }
-      },
-      { rootMargin }
-    )
-
-    observer.observe(triggerRef.value)
-  }
-
-  // Watch for trigger element changes (handles v-if/v-else scenarios)
-  watch(
+  useIntersectionObserver(
     triggerRef,
-    (newEl) => {
-      if (newEl) {
-        createObserver()
-      } else if (observer) {
-        observer.disconnect()
-        observer = null
+    (entries) => {
+      const entry = entries[0]
+      const isIntersecting = entry?.isIntersecting
+      const errorValue = hasError?.value
+      const hasErrorBool = typeof errorValue === 'string' ? !!errorValue : !!errorValue
+
+      if (isIntersecting && hasMore.value && !isLoading.value && !hasErrorBool) {
+        onLoadMore()
       }
     },
-    { immediate: true }
+    { rootMargin }
   )
-
-  // Cleanup on unmount
-  onUnmounted(() => {
-    if (observer) {
-      observer.disconnect()
-      observer = null
-    }
-  })
 
   return {
     triggerRef,

@@ -52,6 +52,9 @@ const canScrollLeft = ref(false)
 const canScrollRight = ref(true)
 const hasDragged = ref(false)
 
+// Cleanup references at scope level
+let resizeObserver: ResizeObserver | null = null
+
 const updateScrollState = () => {
   if (!scrollContainer.value) return
   const { scrollLeft, scrollWidth, clientWidth } = scrollContainer.value
@@ -106,13 +109,16 @@ onMounted(() => {
   updateScrollState()
   if (scrollContainer.value) {
     scrollContainer.value.addEventListener('click', handleClick, true)
-    const observer = new ResizeObserver(updateScrollState)
-    observer.observe(scrollContainer.value)
-    onUnmounted(() => {
-      scrollContainer.value?.removeEventListener('click', handleClick, true)
-      observer.disconnect()
-    })
+    resizeObserver = new ResizeObserver(updateScrollState)
+    resizeObserver.observe(scrollContainer.value)
   }
+})
+
+onUnmounted(() => {
+  if (scrollContainer.value) {
+    scrollContainer.value.removeEventListener('click', handleClick, true)
+  }
+  resizeObserver?.disconnect()
 })
 </script>
 

@@ -594,16 +594,19 @@ const { t } = useI18n()
 // Responsive mobile detection
 const isMobile = ref(false)
 
+// Resize handler at scope level
+const checkMobile = () => {
+  isMobile.value = window.innerWidth < 640
+}
+
 onMounted(() => {
-  const checkMobile = () => {
-    isMobile.value = window.innerWidth < 640
-  }
   checkMobile()
   window.addEventListener('resize', checkMobile)
-  onUnmounted(() => {
-    window.removeEventListener('resize', checkMobile)
-    document.body.style.overflow = ''
-  })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
+  document.body.style.overflow = ''
 })
 
 const {
