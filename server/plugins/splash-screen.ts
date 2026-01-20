@@ -1,33 +1,50 @@
 /**
  * Nitro plugin to inject splash screen HTML into SSR response.
  *
- * This is the recommended Nuxt pattern for loading screens with SSR because:
- * 1. The splash is in the initial HTML (no hydration needed to show it)
- * 2. It's removed automatically when Vue hydration completes
- * 3. Works reliably on slow connections
+ * This plugin only injects HTML and CSS (no inline JavaScript) to avoid CSP issues
+ * with pre-rendered pages where the nonce would mismatch.
+ *
+ * The splash hiding logic is handled by the client plugin (splash-handler.client.ts)
+ * which is bundled by Vite and doesn't have CSP issues.
  */
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('render:html', (html, { event }) => {
-    // Get nonce from nuxt-security for CSP compliance
-    const nonce = event.context.security?.nonce || ''
-    const nonceAttr = nonce ? ` nonce="${nonce}"` : ''
+  nitroApp.hooks.hook('render:html', (html) => {
+    // Inject styles in the head (better practice than inline styles)
+    html.head.push(`
+      <style id="splash-styles">
+        #splash-screen {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          min-height: 100vh;
+          min-height: 100dvh;
+          z-index: 9999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #191724;
+        }
+        #splash-screen.hide {
+          opacity: 0;
+          transition: opacity 0.4s ease-out;
+          pointer-events: none;
+        }
+        @keyframes splash-bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-0.5rem); }
+        }
+        @keyframes splash-float {
+          0%, 100% { transform: rotate(18deg) translateY(-0.75rem); }
+          50% { transform: rotate(18deg) translateY(-0.5rem); }
+        }
+      </style>
+    `)
 
-    // Inject splash screen HTML at the start of body
+    // Inject splash screen HTML at the start of body (no JavaScript)
     html.bodyPrepend.push(`
-      <div id="splash-screen" style="
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        min-height: 100vh;
-        min-height: 100dvh;
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #191724;
-      ">
+      <div id="splash-screen">
         <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
           <div style="display: flex; align-items: center; gap: 0.5rem;">
             <span style="font-size: 2.25rem; font-weight: 700; font-family: system-ui, sans-serif;">
@@ -54,49 +71,6 @@ export default defineNitroPlugin((nitroApp) => {
           </div>
         </div>
       </div>
-      <style>
-        @keyframes splash-bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-0.5rem); }
-        }
-        @keyframes splash-float {
-          0%, 100% { transform: rotate(18deg) translateY(-0.75rem); }
-          50% { transform: rotate(18deg) translateY(-0.5rem); }
-        }
-        #splash-screen.hide {
-          opacity: 0 !important;
-          transition: opacity 0.4s ease-out;
-          pointer-events: none;
-        }
-      </style>
-      <script${nonceAttr}>
-        // Remove splash when Vue hydration completes
-        // This runs after Vue has fully hydrated the app
-        (function() {
-          var splash = document.getElementById('splash-screen');
-          if (!splash) return;
-
-          // Block body scroll while splash is visible
-          document.body.style.overflow = 'hidden';
-
-          function hideSplash() {
-            // Restore body scroll
-            document.body.style.overflow = '';
-            splash.classList.add('hide');
-            setTimeout(function() {
-              if (splash.parentNode) splash.remove();
-            }, 400);
-          }
-
-          // Listen for Nuxt ready event
-          window.addEventListener('nuxt:hydrated', hideSplash, { once: true });
-
-          // Fallback: remove after 3 seconds max
-          setTimeout(function() {
-            if (splash.parentNode) hideSplash();
-          }, 3000);
-        })();
-      </script>
     `)
   })
 })
