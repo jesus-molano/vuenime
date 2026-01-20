@@ -10,66 +10,69 @@ interface I18nInstance {
 /**
  * Consolidated plugin for initializing stores and syncing state.
  *
+ * IMPORTANT: This plugin is SYNCHRONOUS to avoid blocking hydration.
+ * All async operations are deferred to app:mounted hook.
+ *
  * Auth events:
  * - INITIAL_SESSION: First load - initialize with cached data or sync
  * - SIGNED_IN: New login - sync guest data to user account
  * - SIGNED_OUT: Logout - clear user data
  */
-export default defineNuxtPlugin(async (nuxtApp) => {
-  const supabase = useSupabaseClient<Database>()
-  const favoritesStore = useFavoritesStore()
-  const watchedStore = useWatchedStore()
-  const preferencesStore = usePreferencesStore()
+export default defineNuxtPlugin((nuxtApp) => {
+  // Plugin is synchronous - does not block hydration
 
-  // Validate session before setting up listeners - clears invalid tokens
-  try {
-    await supabase.auth.getSession()
-  } catch {
-    // Invalid refresh token - sign out to clear corrupted session data
-    await supabase.auth.signOut({ scope: 'local' })
-  }
-
-  let currentUserId: string | null = null
-  let initialized = false
-
-  const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-    const userId = session?.user?.id ?? null
-
-    if (event === 'INITIAL_SESSION' && !initialized) {
-      // First load - initialize stores (uses cache if available)
-      currentUserId = userId
-      initialized = true
-      await Promise.all([favoritesStore.initialize(userId), watchedStore.initialize(userId)])
-    } else if (event === 'SIGNED_IN' && userId && currentUserId !== userId) {
-      // New sign in - sync local guest data to user account
-      currentUserId = userId
-      if (initialized) {
-        await Promise.all([favoritesStore.handleSignIn(userId), watchedStore.handleSignIn(userId)])
-      }
-    } else if (event === 'SIGNED_OUT') {
-      // Sign out - clear user data
-      currentUserId = null
-      favoritesStore.handleSignOut()
-      watchedStore.handleSignOut()
-    }
-  })
-
-  // Sync i18n on mount
   nuxtApp.hook('app:mounted', async () => {
-    const i18n = nuxtApp.$i18n as I18nInstance | undefined
-    if (!i18n) return
+    const supabase = useSupabaseClient<Database>()
+    const favoritesStore = useFavoritesStore()
+    const watchedStore = useWatchedStore()
+    const preferencesStore = usePreferencesStore()
 
-    const currentLocale = i18n.locale.value
-
-    if (preferencesStore.locale && preferencesStore.locale !== currentLocale) {
-      await i18n.setLocale(preferencesStore.locale)
-    } else {
-      preferencesStore.setLocale(currentLocale as LocaleCode)
+    // Validate session AFTER hydration - clears invalid tokens
+    try {
+      await supabase.auth.getSession()
+    } catch {
+      // Invalid refresh token - sign out to clear corrupted session data
+      await supabase.auth.signOut({ scope: 'local' })
     }
-  })
 
-  // Cleanup auth subscription on app unmount to prevent memory leaks
-  nuxtApp.hook('app:beforeMount', () => {
+    let currentUserId: string | null = null
+    let initialized = false
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      const userId = session?.user?.id ?? null
+
+      if (event === 'INITIAL_SESSION' && !initialized) {
+        // First load - initialize stores (uses cache if available)
+        currentUserId = userId
+        initialized = true
+        await Promise.all([favoritesStore.initialize(userId), watchedStore.initialize(userId)])
+      } else if (event === 'SIGNED_IN' && userId && currentUserId !== userId) {
+        // New sign in - sync local guest data to user account
+        currentUserId = userId
+        if (initialized) {
+          await Promise.all([favoritesStore.handleSignIn(userId), watchedStore.handleSignIn(userId)])
+        }
+      } else if (event === 'SIGNED_OUT') {
+        // Sign out - clear user data
+        currentUserId = null
+        favoritesStore.handleSignOut()
+        watchedStore.handleSignOut()
+      }
+    })
+
+    // Sync i18n locale
+    const i18n = nuxtApp.$i18n as I18nInstance | undefined
+    if (i18n) {
+      const currentLocale = i18n.locale.value
+
+      if (preferencesStore.locale && preferencesStore.locale !== currentLocale) {
+        await i18n.setLocale(preferencesStore.locale)
+      } else {
+        preferencesStore.setLocale(currentLocale as LocaleCode)
+      }
+    }
+
+    // Cleanup auth subscription on page unload to prevent memory leaks
     window.addEventListener('beforeunload', () => {
       subscription.unsubscribe()
     })

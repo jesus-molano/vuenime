@@ -41,6 +41,8 @@
 </template>
 
 <script setup lang="ts">
+import { rafThrottle } from '~/utils/throttle'
+
 const footerRef = ref<HTMLElement | null>(null)
 
 const emit = defineEmits<{
@@ -56,12 +58,16 @@ const calculateHeight = () => {
   }
 }
 
+// Throttle scroll handler to prevent jank on mobile
+const handleScroll = rafThrottle(calculateHeight)
+
 onMounted(() => {
-  window.addEventListener('scroll', calculateHeight, { passive: true })
+  window.addEventListener('scroll', handleScroll, { passive: true })
   calculateHeight()
 })
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', calculateHeight)
+  window.removeEventListener('scroll', handleScroll)
+  handleScroll.cancel()
 })
 </script>

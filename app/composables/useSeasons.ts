@@ -1,17 +1,15 @@
 import type { SeasonsResponse, Season } from '~~/shared/types'
-import { MOBILE_LIMITS, DESKTOP_LIMITS } from '~~/shared/constants/api'
+import { DESKTOP_LIMITS } from '~~/shared/constants/api'
 import { createCachedData, CACHE_TTL } from '~/utils/cache'
 import { CACHE_KEYS } from '~/utils/cache-keys'
-import { isMobileUserAgent } from '~/utils/device-detection'
 
 export const useCurrentSeason = () => {
-  // Detect mobile via User-Agent for SSR optimization
-  const headers = useRequestHeaders(['user-agent'])
-  const isMobileDevice = isMobileUserAgent(headers['user-agent'])
-  const carouselLimit = isMobileDevice ? MOBILE_LIMITS.CAROUSEL : DESKTOP_LIMITS.CAROUSEL
+  // Use stable cache key with DESKTOP_LIMITS for SSR/hydration consistency
+  // Responsiveness is handled via CSS, not different data payloads
+  const carouselLimit = DESKTOP_LIMITS.CAROUSEL
 
   const { data, status, error, refresh } = useFetch<SeasonsResponse>('/api/jikan/seasons/now', {
-    key: isMobileDevice ? `${CACHE_KEYS.CURRENT_SEASON}-mobile` : CACHE_KEYS.CURRENT_SEASON,
+    key: CACHE_KEYS.CURRENT_SEASON,
     query: { limit: carouselLimit },
     watch: false,
     // Cache for 10 minutes - season data changes rarely
@@ -45,13 +43,11 @@ export const useCurrentSeason = () => {
 }
 
 export const useUpcomingSeason = () => {
-  // Detect mobile via User-Agent for SSR optimization
-  const headers = useRequestHeaders(['user-agent'])
-  const isMobileDevice = isMobileUserAgent(headers['user-agent'])
-  const carouselLimit = isMobileDevice ? MOBILE_LIMITS.CAROUSEL : DESKTOP_LIMITS.CAROUSEL
+  // Use stable cache key with DESKTOP_LIMITS for SSR/hydration consistency
+  const carouselLimit = DESKTOP_LIMITS.CAROUSEL
 
   const { data, status, error, refresh } = useFetch<SeasonsResponse>('/api/jikan/seasons/upcoming', {
-    key: isMobileDevice ? `${CACHE_KEYS.UPCOMING_SEASON}-mobile` : CACHE_KEYS.UPCOMING_SEASON,
+    key: CACHE_KEYS.UPCOMING_SEASON,
     query: { limit: carouselLimit },
     watch: false,
     // Cache for 10 minutes - upcoming anime changes rarely
