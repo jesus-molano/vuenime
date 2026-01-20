@@ -48,23 +48,26 @@ export function useCard3DTilt(
     const currentSensitivity = isMobile ? GYRO_SENSITIVITY : MOUSE_SENSITIVITY
 
     // Map tilt/roll (-0.5 to 0.5) to rotation degrees
-    // Both axes inverted for "natural" 3D feel:
-    // Mouse Right (roll > 0) -> Push Right Side In (rotateY < 0)
-    // Mouse Down (tilt > 0) -> Push Bottom In (rotateX < 0)
-    const rX = tilt.value * maxRotation * currentSensitivity * -1 * (isMobile ? 1.5 : 1) // Extra boost for gyro
-    const rY = roll.value * maxRotation * currentSensitivity * -1 * (isMobile ? 1.5 : 1)
+    // Fix: correct mapping based on VueUse and User Feedback
+    // tilt = Mouse X (Horizontal) -> drives RotateY (Left/Right tilt)
+    // roll = Mouse Y (Vertical)   -> drives RotateX (Up/Down tilt)
+
+    // Inverted signs for natural "push" feel
+    const rX = roll.value * maxRotation * currentSensitivity * -1 * (isMobile ? 1.5 : 1)
+    const rY = tilt.value * maxRotation * currentSensitivity * (isMobile ? 1.5 : 1)
 
     return {
-      transform: `perspective(1000px) rotateX(${rX}deg) rotateY(${rY}deg) scale3d(1.02, 1.02, 1.02)`,
-      // NO transition here during active state to prevent "lag" between cursor/glare and card movement
+      transform: `perspective(1000px) rotateX(${rX}deg) rotateY(${rY * -1}deg) scale3d(1.02, 1.02, 1.02)`,
+      // NO transition for instant response
     }
   })
 
   // Glare overlay style
   const glareStyle = computed(() => {
     // Convert -0.5...0.5 to 0...100%
-    const x = (roll.value + 0.5) * 100
-    const y = (tilt.value + 0.5) * 100
+    // tilt is X, roll is Y
+    const x = (tilt.value + 0.5) * 100
+    const y = (roll.value + 0.5) * 100
     
     return {
       background: `radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,0.15) 0%, transparent 50%)`,
@@ -73,8 +76,8 @@ export function useCard3DTilt(
 
   // Mask that follows cursor (for border glow effect)
   const borderMaskStyle = computed(() => {
-    const x = (roll.value + 0.5) * 100
-    const y = (tilt.value + 0.5) * 100
+    const x = (tilt.value + 0.5) * 100
+    const y = (roll.value + 0.5) * 100
 
     return {
       maskImage: `radial-gradient(circle at ${x}% ${y}%, black 0%, transparent 40%)`,
