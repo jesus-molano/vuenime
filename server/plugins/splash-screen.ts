@@ -7,12 +7,21 @@
  * 3. Works reliably on slow connections
  */
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('render:html', (html) => {
+  nitroApp.hooks.hook('render:html', (html, { event }) => {
+    // Get nonce from nuxt-security for CSP compliance
+    const nonce = event.context.security?.nonce || ''
+    const nonceAttr = nonce ? ` nonce="${nonce}"` : ''
+
     // Inject splash screen HTML at the start of body
     html.bodyPrepend.push(`
       <div id="splash-screen" style="
         position: fixed;
-        inset: 0;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        min-height: 100vh;
+        min-height: 100dvh;
         z-index: 9999;
         display: flex;
         align-items: center;
@@ -60,30 +69,32 @@ export default defineNitroPlugin((nitroApp) => {
           pointer-events: none;
         }
       </style>
-      <script>
+      <script${nonceAttr}>
         // Remove splash when Vue hydration completes
         // This runs after Vue has fully hydrated the app
         (function() {
           var splash = document.getElementById('splash-screen');
           if (!splash) return;
 
-          // Listen for Nuxt ready event
-          window.addEventListener('nuxt:hydrated', function() {
+          // Block body scroll while splash is visible
+          document.body.style.overflow = 'hidden';
+
+          function hideSplash() {
+            // Restore body scroll
+            document.body.style.overflow = '';
             splash.classList.add('hide');
             setTimeout(function() {
-              splash.remove();
+              if (splash.parentNode) splash.remove();
             }, 400);
-          });
+          }
 
-          // Fallback: remove after 4 seconds max
+          // Listen for Nuxt ready event
+          window.addEventListener('nuxt:hydrated', hideSplash, { once: true });
+
+          // Fallback: remove after 3 seconds max
           setTimeout(function() {
-            if (splash.parentNode) {
-              splash.classList.add('hide');
-              setTimeout(function() {
-                splash.remove();
-              }, 400);
-            }
-          }, 4000);
+            if (splash.parentNode) hideSplash();
+          }, 3000);
         })();
       </script>
     `)
