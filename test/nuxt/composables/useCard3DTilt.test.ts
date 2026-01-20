@@ -142,9 +142,11 @@ describe('useCard3DTilt', () => {
       
       expect(wrapper.vm.glareStyle.background).toContain('at 50% 50%')
 
-      // Top-left (-0.5, -0.5) -> (0%, 0%)
+      // Top-left: tilt=-0.5 (mouse left), roll=+0.5 (mouse top, inverted)
+      // x = (-0.5 + 0.5) * 100 = 0%
+      // y = (0.5 - 0.5) * 100 = 0%
       mockTilt.value = -0.5
-      mockRoll.value = -0.5
+      mockRoll.value = 0.5
       await nextTick()
       expect(wrapper.vm.glareStyle.background).toContain('at 0% 0%')
     })
