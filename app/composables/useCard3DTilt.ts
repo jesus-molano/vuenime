@@ -23,8 +23,6 @@ export function useCard3DTilt(
   // Automatically handles mouse on desktop and device orientation on mobile
   const { tilt, roll, source } = useParallax(cardRef)
 
-  // Enhance sensitivity for more visual effect
-  const TILT_SENSITIVITY = 1.2
 
   // 3D transform style
   const cardTransform = computed(() => {
@@ -37,24 +35,44 @@ export function useCard3DTilt(
     const shouldAnimate = isHovering.value || (enableGyroscope && isMobile)
 
     if (!shouldAnimate) {
-      return { transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)' }
+      return { 
+        transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
+        transition: 'transform 0.5s ease-out', // Smooth reset
+      }
     }
 
+    // Sensitivity settings
+    const MOUSE_SENSITIVITY = 1.2
+    const GYRO_SENSITIVITY = 2.5 // Increased for mobile to feel more responsive
+
+    const currentSensitivity = isMobile ? GYRO_SENSITIVITY : MOUSE_SENSITIVITY
+
     // Map tilt/roll (-0.5 to 0.5) to rotation degrees
-    // tilt -> rotateX (inverted), roll -> rotateY
-    const rX = tilt.value * maxRotation * TILT_SENSITIVITY // tilt is pitch (x-axis)
-    const rY = roll.value * maxRotation * TILT_SENSITIVITY // roll is roll (y-axis)
+    // Based on VueUse source code analysis:
+    // - tilt = Mouse X position (left=-0.5, right=+0.5)
+    // - roll = Inverted Mouse Y position (top=+0.5, bottom=-0.5)
+    
+    // rotateX driven by roll (vertical/Y axis movement)
+    // Positive roll (mouse at top) -> top lifts up -> positive rotateX
+    const rX = roll.value * maxRotation * currentSensitivity * (isMobile ? 1.5 : 1)
+
+    // rotateY driven by tilt (horizontal/X axis movement)
+    // Positive tilt (mouse at right) -> right lifts up -> positive rotateY
+    const rY = tilt.value * maxRotation * currentSensitivity * (isMobile ? 1.5 : 1)
 
     return {
       transform: `perspective(1000px) rotateX(${rX}deg) rotateY(${rY}deg) scale3d(1.02, 1.02, 1.02)`,
+      // NO transition for instant response
     }
   })
 
   // Glare overlay style
   const glareStyle = computed(() => {
-    // Convert -0.5...0.5 to 0...100%
-    const x = (roll.value + 0.5) * 100
-    const y = (tilt.value + 0.5) * 100
+    // Convert tilt/roll to 0...100% for CSS positioning
+    // tilt = Mouse X: left(-0.5)->0%, right(+0.5)->100%
+    // roll = Inverted Mouse Y: top(+0.5)->0%, bottom(-0.5)->100% (need to invert)
+    const x = (tilt.value + 0.5) * 100
+    const y = (0.5 - roll.value) * 100 // Invert roll for correct Y mapping
     
     return {
       background: `radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,0.15) 0%, transparent 50%)`,
@@ -63,8 +81,8 @@ export function useCard3DTilt(
 
   // Mask that follows cursor (for border glow effect)
   const borderMaskStyle = computed(() => {
-    const x = (roll.value + 0.5) * 100
-    const y = (tilt.value + 0.5) * 100
+    const x = (tilt.value + 0.5) * 100
+    const y = (0.5 - roll.value) * 100 // Invert roll for correct Y mapping
 
     return {
       maskImage: `radial-gradient(circle at ${x}% ${y}%, black 0%, transparent 40%)`,
