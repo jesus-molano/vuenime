@@ -129,17 +129,31 @@ Cuando el usuario añade o quita un favorito, actualizamos la UI inmediatamente 
 
 ```typescript
 async function addFavorite(anime: AddFavoriteInput) {
-  // Validate input first
+  // Validate input with Zod schema
   const validation = addFavoriteInputSchema.safeParse(anime)
   if (!validation.success) {
+    logger.error('[FavoritesStore] Invalid addFavorite input', validation.error.flatten())
     notify.favoriteError()
     return
   }
 
   if (isFavorite(anime.mal_id)) return
 
+  // Create favorite object with all required fields
+  const favorite: FavoriteAnime = {
+    mal_id: anime.mal_id,
+    title: anime.title,
+    title_english: anime.title_english,
+    images: anime.images,
+    score: anime.score,
+    year: anime.year,
+    episodes: anime.episodes,
+    genres: anime.genres,
+    airing: anime.airing,
+    addedAt: Date.now(),
+  }
+
   // Optimistic update - UI updates immediately
-  const favorite = createFavoriteFromInput(anime)
   favorites.value.push(favorite)
 
   // Sync to Supabase if authenticated
@@ -151,7 +165,8 @@ async function addFavorite(anime: AddFavoriteInput) {
       const index = favorites.value.findIndex((f) => f.mal_id === anime.mal_id)
       if (index !== -1) favorites.value.splice(index, 1)
 
-      notify.error(getFriendlyError(error, 'addFavorite').message)
+      const friendlyError = getFriendlyError(error, 'addFavorite')
+      notify.error(friendlyError.message)
       return
     }
   }
@@ -167,39 +182,77 @@ La experiencia para el usuario es instantánea. El corazón se llena inmediatame
 `app/plugins/sync-stores.client.ts` maneja los eventos de autenticación:
 
 ```typescript
-export default defineNuxtPlugin(async (nuxtApp) => {
-  const supabase = useSupabaseClient()
-  const favoritesStore = useFavoritesStore()
+/**
+ * IMPORTANT: This plugin is SYNCHRONOUS to avoid blocking hydration.
+ * All async operations are deferred to app:mounted hook.
+ */
+export default defineNuxtPlugin((nuxtApp) => {
+  // Plugin is synchronous - does not block hydration
 
-  let currentUserId: string | null = null
-  let initialized = false
+  nuxtApp.hook('app:mounted', async () => {
+    const supabase = useSupabaseClient<Database>()
+    const favoritesStore = useFavoritesStore()
+    const watchedStore = useWatchedStore()
+    const preferencesStore = usePreferencesStore()
 
-  supabase.auth.onAuthStateChange(async (event, session) => {
-    const userId = session?.user?.id ?? null
-
-    if (event === 'INITIAL_SESSION' && !initialized) {
-      // First load - initialize stores
-      currentUserId = userId
-      initialized = true
-      await favoritesStore.initialize(userId)
-    } else if (event === 'SIGNED_IN' && userId && currentUserId !== userId) {
-      // New sign in - sync local guest data
-      currentUserId = userId
-      await favoritesStore.handleSignIn(userId)
-    } else if (event === 'SIGNED_OUT') {
-      // Sign out - clear user data
-      currentUserId = null
-      favoritesStore.handleSignOut()
+    // Validate session AFTER hydration - clears invalid tokens
+    try {
+      await supabase.auth.getSession()
+    } catch {
+      // Invalid refresh token - sign out to clear corrupted session data
+      await supabase.auth.signOut({ scope: 'local' })
     }
+
+    let currentUserId: string | null = null
+    let initialized = false
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      const userId = session?.user?.id ?? null
+
+      if (event === 'INITIAL_SESSION' && !initialized) {
+        // First load - initialize stores (uses cache if available)
+        currentUserId = userId
+        initialized = true
+        await Promise.all([favoritesStore.initialize(userId), watchedStore.initialize(userId)])
+      } else if (event === 'SIGNED_IN' && userId && currentUserId !== userId) {
+        // New sign in - sync local guest data to user account
+        currentUserId = userId
+        if (initialized) {
+          await Promise.all([favoritesStore.handleSignIn(userId), watchedStore.handleSignIn(userId)])
+        }
+      } else if (event === 'SIGNED_OUT') {
+        // Sign out - clear user data
+        currentUserId = null
+        favoritesStore.handleSignOut()
+        watchedStore.handleSignOut()
+      }
+    })
+
+    // Cleanup auth subscription on page unload to prevent memory leaks
+    window.addEventListener('beforeunload', () => {
+      subscription.unsubscribe()
+    })
   })
 })
 ```
+
+**¿Por qué es síncrono con `app:mounted`?**
+
+Un plugin async bloquea la hidratación de Nuxt. Al usar `app:mounted`, el plugin se registra inmediatamente pero las operaciones async se ejecutan después de que la app esté hidratada. Esto mejora el FCP (First Contentful Paint).
 
 **Eventos que manejamos:**
 
 - `INITIAL_SESSION`: Primera carga de la app
 - `SIGNED_IN`: Usuario acaba de hacer login
 - `SIGNED_OUT`: Usuario cerró sesión
+
+**Stores que sincroniza:**
+
+- `favoritesStore`: Anime favoritos
+- `watchedStore`: Anime vistos/historial
+- `preferencesStore`: Locale del usuario (i18n)
 
 ### Servicio de Supabase
 
@@ -254,14 +307,19 @@ Errores comunes:
 
 ### Usuario con datos corruptos en localStorage
 
-Si el schema de favoritos cambia entre versiones, Zod valida y filtra datos inválidos:
+Si el schema de favoritos cambia entre versiones, Zod valida los inputs antes de añadirlos al store. Datos existentes inválidos se manejan por la persistencia de Pinia que usa `pinia-plugin-persistedstate`:
 
 ```typescript
-const validated = favorites.value.filter((f) => {
-  const result = favoriteSchema.safeParse(f)
-  return result.success
-})
+// La validación ocurre en addFavorite, no al cargar
+const validation = addFavoriteInputSchema.safeParse(anime)
+if (!validation.success) {
+  logger.error('[FavoritesStore] Invalid addFavorite input', validation.error.flatten())
+  notify.favoriteError()
+  return
+}
 ```
+
+**Nota**: Los datos ya guardados en localStorage se cargan directamente. Si hay problemas de compatibilidad entre versiones, el usuario puede limpiar el localStorage o los datos corruptos simplemente no se mostrarán correctamente.
 
 ### Usuario cambia de cuenta
 
@@ -311,13 +369,17 @@ describe('useFavoritesStore', () => {
 
 ## Archivos Relacionados
 
-| Archivo                              | Propósito                          |
-| ------------------------------------ | ---------------------------------- |
-| `app/stores/favorites.ts`            | Store principal con toda la lógica |
-| `app/plugins/sync-stores.client.ts`  | Inicialización y eventos de auth   |
-| `app/services/supabase/favorites.ts` | Operaciones de base de datos       |
-| `shared/types/favorites.ts`          | Tipos TypeScript                   |
-| `shared/schemas/favorites.ts`        | Validación Zod                     |
+| Archivo                              | Propósito                                |
+| ------------------------------------ | ---------------------------------------- |
+| `app/stores/favorites.ts`            | Store de favoritos con sync logic        |
+| `app/stores/watched.ts`              | Store de vistos (misma arquitectura)     |
+| `app/stores/preferences.ts`          | Store de preferencias (locale, theme)    |
+| `app/plugins/sync-stores.client.ts`  | Inicialización y eventos de auth         |
+| `app/services/supabase/favorites.ts` | Operaciones de base de datos (favoritos) |
+| `app/services/supabase/watched.ts`   | Operaciones de base de datos (vistos)    |
+| `shared/types/favorites.ts`          | Tipos TypeScript                         |
+| `shared/schemas/favorites.ts`        | Validación Zod                           |
+| `app/types/favorites.ts`             | Tipos locales (FavoriteAnime, etc.)      |
 
 ## Posibles Mejoras Futuras
 
