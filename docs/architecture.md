@@ -194,8 +194,10 @@ vuenime/
 │       └── ja.json
 │
 ├── test/                       # Tests
-│   ├── unit/                   # Vitest
-│   └── e2e/                    # Playwright
+│   ├── nuxt/                   # Vitest (componentes, composables)
+│   ├── e2e/                    # Playwright
+│   ├── fixtures/               # Datos de prueba
+│   └── mocks/                  # Mocks compartidos
 │
 └── docs/                       # Documentación
 ```
@@ -318,22 +320,15 @@ const { t } = useI18n()
 
 ## Testing
 
-### Unit Tests (Vitest + @nuxt/test-utils)
-
-- Ubicación: `test/unit/`
-- Para: Utils, composables, lógica pura
-
-```bash
-bun run test:unit
-```
-
-### Integration Tests (Vitest + @nuxt/test-utils)
+### Component & Composable Tests (Vitest + @nuxt/test-utils)
 
 - Ubicación: `test/nuxt/`
-- Para: Componentes con contexto Nuxt
+- Para: Componentes Vue, composables, stores, utilidades
 
 ```bash
-bun run test
+bun run test           # Ejecutar todos
+bun run test:watch     # Modo watch
+bun run test:coverage  # Con cobertura
 ```
 
 ### E2E Tests (Playwright)

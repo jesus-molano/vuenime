@@ -21,9 +21,13 @@ Las cards de anime tienen un efecto 3D que responde al movimiento del cursor (o 
 
 ### Composable: `useCard3DTilt`
 
+El composable usa **VueUse `useParallax`** para tracking robusto de mouse y giroscopio.
+
 `app/composables/useCard3DTilt.ts`:
 
 ```typescript
+import { useParallax } from '@vueuse/core'
+
 export function useCard3DTilt(
   options: {
     maxRotation?: number // Max degrees of tilt (default: 6)
@@ -33,117 +37,105 @@ export function useCard3DTilt(
     enableShine?: boolean // Enable shine effect
   } = {}
 ) {
+  const { maxRotation = 6, minWidth = 640, enableGyroscope = false, enableShine = false } = options
+
   const cardRef = ref<HTMLElement | null>(null)
-  const rotateX = ref(0)
-  const rotateY = ref(0)
-  const glareX = ref(50)
-  const glareY = ref(50)
   const isHovering = ref(false)
+  const showShine = ref(false)
+
+  // VueUse useParallax handles mouse AND device orientation automatically
+  const { tilt, roll, source } = useParallax(cardRef)
 
   // 3D transform style
-  const cardTransform = computed(() => ({
-    transform: isHovering.value
-      ? `rotateX(${rotateX.value}deg) rotateY(${rotateY.value}deg) scale3d(1.02, 1.02, 1.02)`
-      : 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
-  }))
+  const cardTransform = computed(() => {
+    const isMobile = source.value === 'deviceOrientation'
+    const shouldAnimate = isHovering.value || (enableGyroscope && isMobile)
 
-  // Glare overlay style
-  const glareStyle = computed(() => ({
-    background: `radial-gradient(circle at ${glareX.value}% ${glareY.value}%, rgba(255,255,255,0.15) 0%, transparent 50%)`,
-  }))
-
-  // ... handlers
-}
-```
-
-### Cálculo de Rotación
-
-El tilt se calcula basado en la posición del cursor relativa al centro de la card:
-
-```typescript
-const updateTilt = (x: number, y: number, rect: DOMRect) => {
-  const centerX = rect.width / 2
-  const centerY = rect.height / 2
-
-  // rotateY: horizontal tilt (cursor left/right of center)
-  rotateY.value = ((x - centerX) / centerX) * maxRotation
-
-  // rotateX: vertical tilt (inverted - cursor up tilts forward)
-  rotateX.value = -((y - centerY) / centerY) * maxRotation
-
-  // Glare follows cursor position
-  glareX.value = (x / rect.width) * 100
-  glareY.value = (y / rect.height) * 100
-
-  isHovering.value = true
-}
-```
-
-### Soporte de Giroscopio (Móvil)
-
-En dispositivos con giroscopio, el efecto responde a la orientación física:
-
-```typescript
-const handleDeviceOrientation = (e: DeviceOrientationEvent) => {
-  if (isTouching.value) return // Touch overrides gyro
-
-  const beta = e.beta ?? 0 // front-back tilt (-180 to 180)
-  const gamma = e.gamma ?? 0 // left-right tilt (-90 to 90)
-
-  // Apply smoothing for natural movement
-  lastBeta.value += (beta - lastBeta.value) * smoothingFactor
-  lastGamma.value += (gamma - lastGamma.value) * smoothingFactor
-
-  // Normalize and limit rotation
-  rotateX.value = Math.max(-maxRotation, Math.min(maxRotation, lastBeta.value * 0.2))
-  rotateY.value = Math.max(-maxRotation, Math.min(maxRotation, lastGamma.value * 0.25))
-
-  // Update glare based on orientation
-  glareX.value = Math.max(0, Math.min(100, 50 + lastGamma.value * 0.8))
-  glareY.value = Math.max(0, Math.min(100, 50 + lastBeta.value * 0.4))
-
-  isHovering.value = true
-}
-```
-
-**Smoothing factor**: `0.15` - Más bajo = más suave pero menos responsivo. Encontramos que 0.15 es un buen balance.
-
-### Permisos en iOS
-
-iOS 13+ requiere permiso explícito para el giroscopio:
-
-```typescript
-const enableGyroscopeListener = async () => {
-  if (typeof DeviceOrientationEvent === 'undefined') {
-    return false
-  }
-
-  // iOS requires permission
-  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-    try {
-      const permission = await DeviceOrientationEvent.requestPermission()
-      if (permission === 'granted') {
-        window.addEventListener('deviceorientation', handleDeviceOrientation, { passive: true })
-        return true
+    if (!shouldAnimate) {
+      return {
+        transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
+        transition: 'transform 0.5s ease-out', // Smooth reset
       }
-      return false
-    } catch {
-      return false
     }
+
+    // Sensitivity settings - higher for mobile
+    const MOUSE_SENSITIVITY = 1.2
+    const GYRO_SENSITIVITY = 2.5
+    const currentSensitivity = isMobile ? GYRO_SENSITIVITY : MOUSE_SENSITIVITY
+
+    // Map tilt/roll (-0.5 to 0.5) to rotation degrees
+    // tilt = Mouse X position (left=-0.5, right=+0.5)
+    // roll = Inverted Mouse Y position (top=+0.5, bottom=-0.5)
+    const rX = roll.value * maxRotation * currentSensitivity * (isMobile ? 1.5 : 1)
+    const rY = tilt.value * maxRotation * currentSensitivity * (isMobile ? 1.5 : 1)
+
+    return {
+      transform: `perspective(1000px) rotateX(${rX}deg) rotateY(${rY}deg) scale3d(1.02, 1.02, 1.02)`,
+      // NO transition for instant response
+    }
+  })
+
+  // Glare overlay follows cursor
+  const glareStyle = computed(() => {
+    const x = (tilt.value + 0.5) * 100
+    const y = (0.5 - roll.value) * 100 // Invert roll for correct Y mapping
+
+    return {
+      background: `radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,0.15) 0%, transparent 50%)`,
+    }
+  })
+
+  // Border mask for glow effect
+  const borderMaskStyle = computed(() => {
+    const x = (tilt.value + 0.5) * 100
+    const y = (0.5 - roll.value) * 100
+
+    return {
+      maskImage: `radial-gradient(circle at ${x}% ${y}%, black 0%, transparent 40%)`,
+      WebkitMaskImage: `radial-gradient(circle at ${x}% ${y}%, black 0%, transparent 40%)`,
+    }
+  })
+
+  return {
+    cardRef,
+    isHovering,
+    showShine,
+    cardTransform,
+    glareStyle,
+    borderMaskStyle,
+    handleMouseMove,
+    handleMouseLeave,
+    triggerShine,
+    resetTilt,
+    cleanup,
   }
-
-  // Android - no permission needed
-  window.addEventListener('deviceorientation', handleDeviceOrientation, { passive: true })
-
-  // Fallback: disable if no events after 1 second
-  setTimeout(() => {
-    if (lastBeta.value === 0 && lastGamma.value === 0) {
-      disableGyroscopeListener()
-    }
-  }, 1000)
-
-  return true
 }
+```
+
+### Por qué VueUse `useParallax`
+
+| Implementación manual    | VueUse useParallax          |
+| ------------------------ | --------------------------- |
+| Código para mouse events | ✅ Incluido                 |
+| Código para giroscopio   | ✅ Incluido                 |
+| Permisos iOS             | ✅ Manejado automáticamente |
+| Smoothing/interpolación  | ✅ Incluido                 |
+| ~100 líneas de código    | ~10 líneas                  |
+
+VueUse abstrae toda la complejidad de tracking de mouse y device orientation.
+
+### Valores de `tilt` y `roll`
+
+```
+useParallax devuelve valores de -0.5 a +0.5:
+
+         roll = +0.5 (top)
+              ↑
+              │
+tilt = -0.5 ←─┼─→ tilt = +0.5
+(left)        │        (right)
+              ↓
+         roll = -0.5 (bottom)
 ```
 
 ### Uso en Componentes
@@ -158,7 +150,7 @@ const { cardRef, cardTransform, glareStyle, borderMaskStyle, handleMouseMove, ha
 <template>
   <div
     ref="cardRef"
-    class="relative transition-transform duration-200 ease-out"
+    class="relative"
     :style="cardTransform"
     @mousemove="handleMouseMove"
     @mouseleave="handleMouseLeave"
@@ -177,12 +169,13 @@ const { cardRef, cardTransform, glareStyle, borderMaskStyle, handleMouseMove, ha
 
 ### Responsive: Deshabilitado en Móvil (por defecto)
 
-El efecto de mouse se desactiva en pantallas pequeñas para evitar problemas con touch:
+El efecto de mouse se desactiva en pantallas pequeñas:
 
 ```typescript
-const handleMouseMove = (e: MouseEvent) => {
-  if (!cardRef.value || window.innerWidth < minWidth) return
-  // ...
+const handleMouseMove = () => {
+  if (window.innerWidth >= minWidth) {
+    isHovering.value = true
+  }
 }
 ```
 
@@ -196,9 +189,11 @@ Elementos aparecen con animaciones suaves cuando entran al viewport.
 
 ### Composable: `useScrollReveal`
 
-Para control programático:
+Usa **VueUse `useIntersectionObserver`** para performance:
 
 ```typescript
+import { useIntersectionObserver } from '@vueuse/core'
+
 export function useScrollReveal(
   options: {
     threshold?: number // % visible to trigger (default: 0.1 = 10%)
@@ -206,30 +201,24 @@ export function useScrollReveal(
     once?: boolean // Animate only once (default: true)
   } = {}
 ) {
+  const { threshold = 0.1, rootMargin = '0px 0px -50px 0px', once = true } = options
+
   const elementRef = ref<HTMLElement | null>(null)
   const isVisible = ref(false)
 
-  onMounted(() => {
-    if (!elementRef.value) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            isVisible.value = true
-            if (once) observer.unobserve(entry.target)
-          } else if (!once) {
-            isVisible.value = false
-          }
-        })
-      },
-      { threshold, rootMargin }
-    )
-
-    observer.observe(elementRef.value)
-  })
-
-  onUnmounted(() => observer.disconnect())
+  const { stop } = useIntersectionObserver(
+    elementRef,
+    (entries) => {
+      const isIntersecting = entries[0]?.isIntersecting
+      if (isIntersecting) {
+        isVisible.value = true
+        if (once) stop()
+      } else if (!once) {
+        isVisible.value = false
+      }
+    },
+    { threshold, rootMargin }
+  )
 
   return { elementRef, isVisible }
 }
@@ -240,9 +229,16 @@ export function useScrollReveal(
 Para uso declarativo en templates:
 
 ```typescript
+// WeakMap para auto-cleanup cuando elementos son garbage collected
+const stopMap = new WeakMap<HTMLElement, () => void>()
+
 export const vScrollReveal = {
+  // SSR-safe
+  getSSRProps() {
+    return {}
+  },
+
   mounted(el: HTMLElement, binding: { modifiers: Record<string, boolean>; value?: number }) {
-    // Skip on server
     if (typeof window === 'undefined') return
 
     // Respect reduced motion preference
@@ -280,19 +276,26 @@ export const vScrollReveal = {
       })
     }
 
-    const observer = new IntersectionObserver(
+    const { stop } = useIntersectionObserver(
+      el,
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setTimeout(animate, 50)
-            observer.unobserve(entry.target)
-          }
-        })
+        if (entries[0]?.isIntersecting) {
+          setTimeout(animate, 50)
+          stop()
+        }
       },
       { threshold: 0.05, rootMargin: '50px 0px 0px 0px' }
     )
 
-    observer.observe(el)
+    stopMap.set(el, stop)
+  },
+
+  unmounted(el: HTMLElement) {
+    const stop = stopMap.get(el)
+    if (stop) {
+      stop()
+      stopMap.delete(el)
+    }
   },
 }
 ```
@@ -340,20 +343,21 @@ export const vScrollReveal = {
 Ambos sistemas respetan `prefers-reduced-motion`:
 
 ```typescript
-// Scroll reveal - early return if motion reduced
+// En v-scroll-reveal
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 if (prefersReducedMotion) {
   el.style.opacity = '1'
-  return
+  return // No animation
 }
 ```
 
 ```css
-/* CSS fallback */
+/* CSS fallback en main.css */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }
 ```
@@ -379,18 +383,17 @@ Las cards mantienen indicadores de foco claros para navegación con teclado:
 
 ## Performance
 
-### Intersection Observer
+### VueUse Intersection Observer
 
-Usamos Intersection Observer en lugar de scroll listeners:
+Usamos `useIntersectionObserver` de VueUse que internamente usa la API nativa:
 
 ```typescript
-// ✓ Bueno - Intersection Observer (off main thread)
-const observer = new IntersectionObserver(callback, options)
-observer.observe(element)
+// ✓ Bueno - Off main thread, optimizado
+const { stop } = useIntersectionObserver(el, callback, options)
 
-// ✗ Malo - Scroll listener (blocks main thread)
+// ✗ Malo - Scroll listener bloquea main thread
 window.addEventListener('scroll', () => {
-  // Runs on every scroll frame
+  /* ... */
 })
 ```
 
@@ -402,83 +405,51 @@ Avisamos al navegador qué propiedades van a cambiar:
 el.style.willChange = 'opacity, transform'
 ```
 
-Esto permite al navegador optimizar el rendering.
-
 ### GPU Acceleration
 
 Usamos `transform` y `opacity` que son GPU-accelerated:
 
 ```typescript
-// ✓ GPU accelerated
+// ✓ GPU accelerated - no layout recalculation
 el.style.transform = 'translateY(20px)'
 el.style.opacity = '0'
 
-// ✗ Triggers layout
+// ✗ Triggers layout - slow
 el.style.top = '20px'
 el.style.marginTop = '20px'
 ```
 
-### Cleanup
+### Cleanup con WeakMap
 
-Los observers se desconectan cuando el componente se desmonta:
+La directiva usa `WeakMap` para auto-cleanup:
 
 ```typescript
-onUnmounted(() => {
-  observer.disconnect()
-})
-```
+const stopMap = new WeakMap<HTMLElement, () => void>()
 
----
-
-## Diagrama: Ciclo de Vida de Card Tilt
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    CARD TILT LIFECYCLE                          │
-│                                                                 │
-│  Mount                                                          │
-│    └── cardRef assigned                                         │
-│                                                                 │
-│  Mouse Enter                                                    │
-│    └── isHovering = false (waiting for move)                   │
-│                                                                 │
-│  Mouse Move                                                     │
-│    ├── Check viewport width (skip if < minWidth)               │
-│    ├── Calculate cursor position relative to card              │
-│    ├── Update rotateX, rotateY based on position               │
-│    ├── Update glareX, glareY                                   │
-│    └── isHovering = true (triggers transform)                  │
-│                                                                 │
-│  Mouse Leave                                                    │
-│    ├── isHovering = false                                       │
-│    └── rotateX = rotateY = 0 (reset with transition)           │
-│                                                                 │
-│  Unmount                                                        │
-│    └── cleanup() - remove gyroscope listener if active         │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+// Cuando el elemento es garbage collected, la entrada se elimina automáticamente
+// No hay memory leaks
 ```
 
 ---
 
 ## Configuración por Defecto
 
-| Parámetro         | Default | Descripción                      |
-| ----------------- | ------- | -------------------------------- |
-| `maxRotation`     | 6°      | Máximo ángulo de rotación        |
-| `minWidth`        | 640px   | Viewport mínimo para activar     |
-| `enableTouch`     | false   | Tilt con arrastre táctil         |
-| `enableGyroscope` | false   | Tilt con giroscopio              |
-| `smoothingFactor` | 0.15    | Suavizado del giroscopio         |
-| `PREFETCH_DELAY`  | 400ms   | Delay antes de iniciar animación |
+| Parámetro           | Default | Descripción                  |
+| ------------------- | ------- | ---------------------------- |
+| `maxRotation`       | 6°      | Máximo ángulo de rotación    |
+| `minWidth`          | 640px   | Viewport mínimo para activar |
+| `enableGyroscope`   | false   | Tilt con giroscopio          |
+| `enableShine`       | false   | Efecto de brillo             |
+| `MOUSE_SENSITIVITY` | 1.2     | Sensibilidad del mouse       |
+| `GYRO_SENSITIVITY`  | 2.5     | Sensibilidad del giroscopio  |
 
 ---
 
 ## Archivos Relacionados
 
-| Archivo                              | Propósito                               |
-| ------------------------------------ | --------------------------------------- |
-| `app/composables/useCard3DTilt.ts`   | Composable del efecto 3D                |
-| `app/composables/useScrollReveal.ts` | Composable y directiva de scroll reveal |
-| `app/components/anime/AnimeCard.vue` | Implementación del card tilt            |
-| `app/assets/css/main.css`            | CSS de animaciones y reduced motion     |
+| Archivo                              | Propósito                             |
+| ------------------------------------ | ------------------------------------- |
+| `app/composables/useCard3DTilt.ts`   | Composable del efecto 3D (usa VueUse) |
+| `app/composables/useScrollReveal.ts` | Composable y directiva (usa VueUse)   |
+| `app/components/anime/AnimeCard.vue` | Implementación del card tilt          |
+| `app/assets/css/main.css`            | CSS de reduced motion                 |

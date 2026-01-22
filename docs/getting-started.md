@@ -86,18 +86,19 @@ Deberías ver la página principal de VueNime con anime listado. Si ves errores 
 
 ## Comandos Disponibles
 
-| Comando             | Qué hace                                       |
-| ------------------- | ---------------------------------------------- |
-| `bun run dev`       | Servidor de desarrollo con hot reload          |
-| `bun run dev:host`  | Dev server accesible en red local (para móvil) |
-| `bun run build`     | Build de producción                            |
-| `bun run preview`   | Preview del build de producción                |
-| `bun run test`      | Todos los tests (Vitest + @nuxt/test-utils)    |
-| `bun run test:e2e`  | Tests E2E con Playwright                       |
-| `bun run lint`      | Verificar código con ESLint                    |
-| `bun run lint:fix`  | Arreglar errores de lint automáticamente       |
-| `bun run typecheck` | Verificar tipos con TypeScript                 |
-| `bun run prepush`   | Verificación completa: lint + types + build    |
+| Comando                 | Qué hace                                       |
+| ----------------------- | ---------------------------------------------- |
+| `bun run dev`           | Servidor de desarrollo con hot reload          |
+| `bun run dev:host`      | Dev server accesible en red local (para móvil) |
+| `bun run build`         | Build de producción                            |
+| `bun run preview`       | Preview del build de producción                |
+| `bun run test`          | Tests de componentes y composables (Vitest)    |
+| `bun run test:coverage` | Tests con reporte de cobertura                 |
+| `bun run test:e2e`      | Tests E2E con Playwright                       |
+| `bun run lint`          | Verificar código con ESLint                    |
+| `bun run lint:fix`      | Arreglar errores de lint automáticamente       |
+| `bun run typecheck`     | Verificar tipos con TypeScript                 |
+| `bun run prepush`       | Verificación completa: lint + types + build    |
 
 ## Estructura del Proyecto
 
